@@ -3,13 +3,15 @@ import { useSelector } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { RootState } from '../redux/store';
+import { COLOR } from '../utils/globalConstants/color';
+import { FontSize, Screen } from '../utils/dimension';
 
 const SplashScreen = ({ onFinish }: { onFinish: (status:boolean) => void }) => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
       onFinish(true); // Trigger the navigation to home after the splash duration
-    }, 5000); // 3 seconds splash screen duration
+    }, 500); // 3 seconds splash screen duration
 
     return () => clearTimeout(timer); // Cleanup timer on unmount
   }, [onFinish]);
@@ -27,15 +29,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: COLOR.white,
   },
   image: {
-    width: 150,
-    height: 150,
+    resizeMode:'contain',
+    width: Screen.width,
+    height: Screen.height *0.4,
   },
   text: {
-    fontSize: 20,
-    color: '#000',
+    fontSize: FontSize.extraLarge,
+    color: COLOR.black,
   },
 });
 

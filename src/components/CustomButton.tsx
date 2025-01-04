@@ -8,6 +8,8 @@ import {
   Animated,
   GestureResponderEvent,
 } from 'react-native';
+import { FontSize, Spacing } from '../utils/dimension';
+import { COLOR } from '../utils/globalConstants/color';
 
 type CustomButtonProps = {
   label: string; // Button label
@@ -81,30 +83,30 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 const styles = StyleSheet.create({
   container: {
     alignSelf: 'center',
-    marginVertical: 10,
+    marginVertical: Spacing.medium,
   },
   button: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
+    paddingVertical: Spacing.medium,
+    paddingHorizontal: Spacing.small,
+    borderRadius: Spacing.small,
     alignItems: 'center',
     justifyContent: 'center',
   },
   activeButton: {
-    backgroundColor: '#6200ee',
+    backgroundColor: COLOR.black,
   },
   disabledButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: COLOR.grey,
   },
   label: {
-    fontSize: 16,
+    fontSize: FontSize.medium,
     fontWeight: 'bold',
   },
   activeLabel: {
-    color: '#fff',
+    color: COLOR.white,
   },
   disabledLabel: {
-    color: '#888',
+    color: COLOR.white,
   },
 });
 

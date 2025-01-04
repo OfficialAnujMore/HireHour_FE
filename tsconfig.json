@@ -17,6 +17,7 @@
       "*": ["node_modules/*", "src/types/*","src/*"]
     }
   },
+  "typeRoots": ["./src/types"],
   "include": [
     "src/**/*",
     "node_modules/react-native/types/**/*.d.ts",

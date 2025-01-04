@@ -1,14 +1,20 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import Config from 'react-native-config';
+import { API_BASE_URL } from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export interface ApiResponse<T> {
   data: T;
   message?: string;
   success?: boolean;
 }
-console.log('Base URL:', Config.API_BASE_URL);
+
+console.log('Base URL:', API_BASE_URL);
+
+// Define a list of unprotected routes (or create a condition based on your needs)
+const unprotectedRoutes = ['/public', '/auth/login', '/auth/register','api/v1/user/loginUser'];
 
 const apiClient = axios.create({
-  baseURL: Config.API_BASE_URL, // Replace with your API base URL
+  baseURL: API_BASE_URL, // Replace with your API base URL
   timeout: 10000, // Timeout after 10 seconds
   headers: {
     'Content-Type': 'application/json',
@@ -17,9 +23,14 @@ const apiClient = axios.create({
 
 // Request Interceptor
 apiClient.interceptors.request.use(
-  (config) => {
-    const token = 'YOUR_AUTH_TOKEN'; // Replace with token retrieval logic
-    if (token) config.headers.Authorization = `Bearer ${token}`;
+  async (config) => {
+    const token = await AsyncStorage.getItem('token'); // Replace with token retrieval logic
+    console.log('Config.url',config.url,config.data);
+    
+    if (!unprotectedRoutes.some((route) => config.url?.includes(route)) && token) {
+      // Only add token for protected routes
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {
@@ -37,7 +48,7 @@ apiClient.interceptors.response.use(
   }
 );
 
- const apiRequest = async <T>(
+const apiRequest = async <T>(
   method: AxiosRequestConfig['method'],
   url: string,
   data?: Record<string, unknown>,
@@ -57,26 +68,25 @@ apiClient.interceptors.response.use(
 };
 
 export const get = async <T>(
-    url: string,
-    config?: AxiosRequestConfig
-  ): Promise<ApiResponse<T>> => apiRequest<T>('GET', url, undefined, config);
-  
-  export const post = async <T>(
-    url: string,
-    data: Record<string, unknown>,
-    config?: AxiosRequestConfig
-  ): Promise<ApiResponse<T>> => apiRequest<T>('POST', url, data, config);
-  
-  export const put = async <T>(
-    url: string,
-    data: Record<string, unknown>,
-    config?: AxiosRequestConfig
-  ): Promise<ApiResponse<T>> => apiRequest<T>('PUT', url, data, config);
-  
-  export const del = async <T>(
-    url: string,
-    config?: AxiosRequestConfig
-  ): Promise<ApiResponse<T>> => apiRequest<T>('DELETE', url, undefined, config);
-  
+  url: string,
+  config?: AxiosRequestConfig
+): Promise<ApiResponse<T>> => apiRequest<T>('GET', url, undefined, config);
+
+export const post = async <T>(
+  url: string,
+  data: Record<string, unknown>,
+  config?: AxiosRequestConfig
+): Promise<ApiResponse<T>> => apiRequest<T>('POST', url, data, config);
+
+export const put = async <T>(
+  url: string,
+  data: Record<string, unknown>,
+  config?: AxiosRequestConfig
+): Promise<ApiResponse<T>> => apiRequest<T>('PUT', url, data, config);
+
+export const del = async <T>(
+  url: string,
+  config?: AxiosRequestConfig
+): Promise<ApiResponse<T>> => apiRequest<T>('DELETE', url, undefined, config);
 
 export default apiClient;
