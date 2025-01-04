@@ -1,12 +1,15 @@
 // SplashScreen.tsx
+import { useSelector } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
+import { RootState } from '../redux/store';
 
 const SplashScreen = ({ onFinish }: { onFinish: (status:boolean) => void }) => {
+
   useEffect(() => {
     const timer = setTimeout(() => {
       onFinish(true); // Trigger the navigation to home after the splash duration
-    }, 3000); // 3 seconds splash screen duration
+    }, 5000); // 3 seconds splash screen duration
 
     return () => clearTimeout(timer); // Cleanup timer on unmount
   }, [onFinish]);

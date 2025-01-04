@@ -4,31 +4,36 @@ import {
   Text,
   View,
   StyleSheet,
-  Animated,
   TextInputProps,
 } from 'react-native';
+import { Screen } from '../utils/dimension';
+import CustomText from './CustomText';
+import { COLOR } from '../utils/globalConstants/color';
 
 type ValidationRule = {
-  rule: (value: string) => boolean; // Validation function
-  message: string; // Error message
+  rule: (value: string) => boolean; 
+  message: string;
 };
 
 type CustomInputProps = TextInputProps & {
-  label?: string; // Label for the input field
-  validationRules?: ValidationRule[]; // Array of validation rules
-  onValueChange?: (value: string) => void; // Callback when input value changes
+  label?: string; 
+  validationRules?: ValidationRule[]; 
+  onValueChange?: (value: string) => void; 
+  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'decimal-pad' | 'ascii-capable'; 
+  secureTextEntry?: boolean; 
 };
 
 const CustomInput: React.FC<CustomInputProps> = ({
   label,
   validationRules = [],
   onValueChange,
+  keyboardType = 'default',
+  secureTextEntry = false,
   ...textInputProps
 }) => {
   const [value, setValue] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isFocused, setIsFocused] = useState(false);
-  const animatedLabelPosition = useRef(new Animated.Value(0)).current;
 
   // Throttle function to limit the frequency of validation
   const throttle = (func: (...args: any[]) => void, delay: number) => {
@@ -45,23 +50,11 @@ const CustomInput: React.FC<CustomInputProps> = ({
   // Handle focus animation
   const handleFocus = () => {
     setIsFocused(true);
-    Animated.timing(animatedLabelPosition, {
-      toValue: -30,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
   };
 
   // Handle blur animation
   const handleBlur = () => {
     setIsFocused(false);
-    if (!value) {
-      Animated.timing(animatedLabelPosition, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
-    }
     throttledValidateInput(value);
   };
 
@@ -77,7 +70,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
   };
 
   // Throttle the validation calls
-  const throttledValidateInput = throttle(validateInput, 500);
+  const throttledValidateInput = throttle(validateInput, 1000);
 
   // Handle input change
   const handleChangeText = (text: string) => {
@@ -90,19 +83,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
   return (
     <View style={styles.container}>
-      {label && (
-        <Animated.Text
-          style={[
-            styles.label,
-            {
-              transform: [{ translateY: animatedLabelPosition }],
-              color: isFocused ? '#6200ee' : '#aaa',
-            },
-          ]}
-        >
-          {label}
-        </Animated.Text>
-      )}
+      <CustomText label={label}/>
       <TextInput
         style={[
           styles.input,
@@ -123,26 +104,18 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 20,
+    backgroundColor:'red'
   },
   input: {
-    height: 50,
+    height: Screen.height /20,
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 12,
     fontSize: 16,
-    backgroundColor: '#fff',
-  },
-  label: {
-    position: 'absolute',
-    left: 12,
-    top: 15,
-    fontSize: 14,
-    backgroundColor: '#fff',
-    paddingHorizontal: 4,
+    backgroundColor: COLOR.white,
   },
   errorText: {
-    color: 'red',
+    color: COLOR.red,
     fontSize: 12,
     marginTop: 5,
   },

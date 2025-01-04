@@ -2,9 +2,10 @@ import React from 'react';
 import { View, Text, Button, Alert } from 'react-native';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
-
-
+import { useDispatch } from 'react-redux';
+import { logout } from '../redux/store';
 const HomeScreen = ({ navigation }: any) => {
+  const dispatch = useDispatch();
   const handlePress = () => {
     Alert.alert('Button Pressed!');
   };
@@ -31,6 +32,12 @@ const HomeScreen = ({ navigation }: any) => {
       <Button
         title="Go to Details"
         onPress={() => navigation.navigate('Details')}
+      />
+        <Button
+        title="Logout"
+        onPress={()=>{
+          dispatch(logout())
+        }}
       />
     </View>
   );
