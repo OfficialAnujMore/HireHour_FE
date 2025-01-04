@@ -1,7 +1,5 @@
 import React from 'react';
-import { View, Text, Button, Alert } from 'react-native';
-import CustomInput from '../components/CustomInput';
-import CustomButton from '../components/CustomButton';
+import { View, Text, Button, Alert } from 'react-native';;
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, RootState } from '../redux/store';
 const HomeScreen = ({ navigation }: any) => {

@@ -8,7 +8,6 @@ export interface ApiResponse<T> {
   success?: boolean;
 }
 
-console.log('Base URL:', API_BASE_URL);
 
 // Define a list of unprotected routes (or create a condition based on your needs)
 const unprotectedRoutes = ['/public', '/auth/login', '/auth/register','api/v1/user/loginUser'];
@@ -25,8 +24,7 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   async (config) => {
     const token = await AsyncStorage.getItem('token'); // Replace with token retrieval logic
-    console.log('Config.url',config.url,config.data);
-    
+
     if (!unprotectedRoutes.some((route) => config.url?.includes(route)) && token) {
       // Only add token for protected routes
       config.headers.Authorization = `Bearer ${token}`;
@@ -34,7 +32,6 @@ apiClient.interceptors.request.use(
     return config;
   },
   (error) => {
-    console.error('Request Error:', error);
     return Promise.reject(error);
   }
 );
@@ -43,7 +40,6 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error) => {
-    console.error('Response Error:', error.response?.data || error.message);
     return Promise.reject(error.response?.data || error.message);
   }
 );

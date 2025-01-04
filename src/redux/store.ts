@@ -3,7 +3,7 @@ import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistReducer, persistStore } from 'redux-persist';
 import { User } from 'interfaces/userInterface';
-
+import snackbarReducer from './snackbarSlice';
 // Auth State Interface
 interface AuthState {
   isAuthenticated: boolean;
@@ -21,7 +21,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<{user:User}>) => {
+    login: (state, action: PayloadAction<{ user: User }>) => {
       state.isAuthenticated = true;
       state.user = action.payload.user;
     },
@@ -47,6 +47,7 @@ const persistedReducer = persistReducer(persistConfig, authSlice.reducer);
 export const store = configureStore({
   reducer: {
     auth: persistedReducer,
+    snackbar: snackbarReducer,
   },
 });
 

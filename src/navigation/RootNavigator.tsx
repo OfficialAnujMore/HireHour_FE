@@ -7,6 +7,8 @@ import SplashScreen from '../screens/SplashScreen';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import LoginScreen from '../screens/LoginScreen'; // Fixed import path
+import CustomSnackbar from '../components/CustomSnackbar';
+import RegisterScreen from '../screens/RegisterScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,7 +18,6 @@ const RootNavigator = () => {
 
   // Handle splash screen finish
   const handleSplashFinish = (loginStatus: boolean) => {
-    console.log('isAuthenticated:', isAuthenticated);
     setIsLoading(false);
   };
 
@@ -34,10 +35,14 @@ const RootNavigator = () => {
               <Stack.Screen name="Details" component={DetailsScreen} />
             </>
           ) : (
-            <Stack.Screen name="Login" component={LoginScreen} />
+            <>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
+            </>
           )}
         </Stack.Navigator>
       )}
+      <CustomSnackbar />
     </NavigationContainer>
   );
 };

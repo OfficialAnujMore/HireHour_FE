@@ -1,23 +1,12 @@
 import React, { useState } from 'react';
-import {
-  TextInput,
-  Text,
-  View,
-  StyleSheet,
-  TextInputProps,
-} from 'react-native';
+import { TextInput, Text, View, StyleSheet, TextInputProps } from 'react-native';
 import { FontSize, Screen, Spacing } from '../utils/dimension';
 import CustomText from './CustomText';
 import { COLOR } from '../utils/globalConstants/color';
 
-type ValidationRule = {
-  pattern: RegExp; // Use regex patterns for validation
-  message: string; // Error message for invalid input
-};
-
 type CustomInputProps = TextInputProps & {
   label?: string; 
-  validationRules?: ValidationRule[]; 
+  errorMessage?: string;  // Accept external error message
   onValueChange?: (value: string) => void; 
   keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'decimal-pad' | 'ascii-capable'; 
   secureTextEntry?: boolean; 
@@ -25,26 +14,14 @@ type CustomInputProps = TextInputProps & {
 
 const CustomInput: React.FC<CustomInputProps> = ({
   label,
-  validationRules = [],
+  errorMessage, // Accept error message from parent
   onValueChange,
   keyboardType = 'default',
   secureTextEntry = false,
   ...textInputProps
 }) => {
   const [value, setValue] = useState('');
-  const [error, setError] = useState<string | null>(null);
   const [isFocused, setIsFocused] = useState(false);
-
-  // Validate input based on regex patterns
-  const validateInput = (input: string) => {
-    for (const rule of validationRules) {
-      if (!rule.pattern.test(input)) {
-        setError(rule.message);
-        return;
-      }
-    }
-    setError(null);
-  };
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -52,7 +29,6 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
   const handleBlur = () => {
     setIsFocused(false);
-    validateInput(value);
   };
 
   const handleChangeText = (text: string) => {
@@ -60,7 +36,6 @@ const CustomInput: React.FC<CustomInputProps> = ({
     if (onValueChange) {
       onValueChange(text);
     }
-    validateInput(text);
   };
 
   return (
@@ -70,7 +45,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
         style={[
           styles.input,
           {
-            borderColor: error ? COLOR.red : isFocused ? '#6200ee' : '#ccc',
+            borderColor: errorMessage ? COLOR.red : isFocused ? COLOR.black : COLOR.grey,
           },
         ]}
         onFocus={handleFocus}
@@ -79,7 +54,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
         value={value}
         {...textInputProps}
       />
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
     </View>
   );
 };
