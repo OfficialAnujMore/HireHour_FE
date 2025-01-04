@@ -20,14 +20,19 @@ const LoginScreen = () => {
     });
 
     const handleLogin = async () => {
-        const response = await loginUser(user)
-        console.log('Handle login, response', response);
-        
-        if (response) {
-            // dispatch(login(response.data));
+        try {
+            const response = await loginUser(user);
+            console.log('Handle login, response', response.data);  // Accessing response data here
 
+            if (response && response.data) {
+                // Dispatch the login action with the user data
+                dispatch(login({user:response.data}));
+            }
+        } catch (error) {
+            console.error('Error during login:', error);  // Handle any errors that occurred during login
         }
     };
+
 
     return (
         <View style={styles.container}>

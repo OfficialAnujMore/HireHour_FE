@@ -2,18 +2,17 @@
 import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistReducer, persistStore } from 'redux-persist';
+import { User } from 'interfaces/userInterface';
 
 // Auth State Interface
 interface AuthState {
   isAuthenticated: boolean;
-  token: string | null;
-  user: { id: string; name: string } | null;
+  user: User | null;
 }
 
 // Initial State
 const initialState: AuthState = {
   isAuthenticated: false,
-  token: null,
   user: null,
 };
 
@@ -22,14 +21,12 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<{ token: string; user: { id: string; name: string } }>) => {
+    login: (state, action: PayloadAction<{user:User}>) => {
       state.isAuthenticated = true;
-      state.token = action.payload.token;
       state.user = action.payload.user;
     },
     logout: (state) => {
       state.isAuthenticated = false;
-      state.token = null;
       state.user = null;
     },
   },

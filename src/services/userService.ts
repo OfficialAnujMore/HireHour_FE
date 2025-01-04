@@ -1,20 +1,17 @@
+import { User } from 'interfaces/userInterface';
 import { ApiResponse, get, post } from './apiClient';
 
-interface User {
-  email: string;
-  password: string;
-}
 
-
-export const loginUser = async (user:any): Promise<ApiResponse<User>> => {
+export const loginUser = async (user: any): Promise<ApiResponse<User>> => {
   try {
     console.log(user);
-    
+
+    // Return the response from the POST request
     const response = await post<User>('api/v1/user/loginUser', user);
     console.log('Added User:', response.data);
-    return response;
+    return response;  // Return the response here
   } catch (error) {
     console.error('Error adding user:', error);
-    throw error;
+    throw error; // It's important to throw the error so handleLogin can catch it
   }
 };
