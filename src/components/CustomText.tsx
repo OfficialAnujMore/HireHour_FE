@@ -3,8 +3,9 @@ import {
     Text,
     View,
     StyleSheet,
-    ViewStyle,
     TouchableOpacity,
+    TextStyle,
+    StyleProp,
 } from 'react-native';
 import { FontSize, Screen, Spacing } from '../utils/dimension';
 import { COLOR } from '../utils/globalConstants/color';
@@ -12,8 +13,8 @@ import { COLOR } from '../utils/globalConstants/color';
 
 
 type CustomTextProps = {
-    label?: string;
-    style?: ViewStyle;
+    label?: string|number;
+    style?:  StyleProp<TextStyle>;
     action?: () => void; // Make this optional
 };
 
@@ -34,11 +35,11 @@ const CustomText: React.FC<CustomTextProps> = ({ label, style, action }) => {
 };
 const styles = StyleSheet.create({
     container: {
-        marginBottom: Spacing.small
+        alignSelf: 'flex-start',
+        marginBottom: Spacing.small/2
     },
     textStyle: {
         fontSize: FontSize.medium,
-        paddingHorizontal: 4,
     },
     clickableText: {
         textDecorationLine: 'underline', // Adds underline to the text

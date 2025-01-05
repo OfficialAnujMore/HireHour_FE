@@ -9,6 +9,7 @@ import { RootState } from '../redux/store';
 import LoginScreen from '../screens/LoginScreen'; // Fixed import path
 import CustomSnackbar from '../components/CustomSnackbar';
 import RegisterScreen from '../screens/RegisterScreen';
+import ServiceDetailsScreen from '../screens/ServiceDetailsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +33,7 @@ const RootNavigator = () => {
           {isAuthenticated ? (
             <>
               <Stack.Screen name="Home" component={HomeScreen} />
+              <Stack.Screen name="ServiceDetails" component={ServiceDetailsScreen} />
               <Stack.Screen name="Details" component={DetailsScreen} />
             </>
           ) : (
