@@ -9,6 +9,7 @@ import { FontSize, Screen, Spacing } from '../utils/dimension';
 import { COLOR } from '../utils/globalConstants/color';
 import CustomSchedule from '../components/CustomSchedule';
 import CustomCarouselSlider from '../components/CustomCarousel';
+import { useNavigation } from '@react-navigation/native';
 interface ServiceDetails {
   id: string;
   title: string;
@@ -23,6 +24,7 @@ interface ServiceDetails {
   previewImages: []
 };
 const ServiceDetailsScreen = (props: ServiceDetails) => {
+  const navigation = useNavigation();
   const item = props.route.params
   console.log(item);
 
@@ -45,8 +47,15 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
           </View>
           <CustomText label={item.description} style={styles.textStyle} />
           <CustomText label={item.location} style={styles.textStyle} />
+          <CustomText label={'Reviews'} style={styles.textStyle} action={() => {
+            navigation.navigate("Reviews")
+          }} />
+          <CustomText label={'CreateServiceScreen'} style={styles.textStyle} action={() => {
+            navigation.navigate("CreateServiceScreen")
+          }} />
+          CreateServiceScreen
         </View>
-       <CustomSchedule/>
+        <CustomSchedule />
       </ScrollView>
 
     </View>
@@ -64,7 +73,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLOR.grey,
   },
   detailsContainer: {
-    marginVertical:Spacing.small
+    marginVertical: Spacing.small
 
   },
   textStyle: {

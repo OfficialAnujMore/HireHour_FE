@@ -10,6 +10,8 @@ import LoginScreen from '../screens/LoginScreen'; // Fixed import path
 import CustomSnackbar from '../components/CustomSnackbar';
 import RegisterScreen from '../screens/RegisterScreen';
 import ServiceDetailsScreen from '../screens/ServiceDetailsScreen';
+import ServiceReviewScreen from '../screens/ServiceReviewsScreen';
+import CreateServiceScreen from '../screens/CreateServiceScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +36,8 @@ const RootNavigator = () => {
             <>
               <Stack.Screen name="Home" component={HomeScreen} />
               <Stack.Screen name="ServiceDetails" component={ServiceDetailsScreen} />
+              <Stack.Screen name="Reviews" component={ServiceReviewScreen} />
+              <Stack.Screen name="CreateServiceScreen" component={CreateServiceScreen} />
               <Stack.Screen name="Details" component={DetailsScreen} />
             </>
           ) : (

@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { TextInput, Text, View, StyleSheet, TextInputProps } from 'react-native';
+import { TextInput, Text, View, StyleSheet, TextInputProps, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { FontSize, Screen, Spacing } from '../utils/dimension';
 import CustomText from './CustomText';
 import { COLOR } from '../utils/globalConstants/color';
 
 type CustomInputProps = TextInputProps & {
-  label?: string; 
+  label?: string;
   errorMessage?: string;  // Accept external error message
-  onValueChange?: (value: string) => void; 
-  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'decimal-pad' | 'ascii-capable'; 
-  secureTextEntry?: boolean; 
+  onValueChange?: (value: string) => void;
+  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'decimal-pad' | 'ascii-capable';
+  secureTextEntry?: boolean;
 };
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -38,24 +38,32 @@ const CustomInput: React.FC<CustomInputProps> = ({
     }
   };
 
+  const dismissKeyboard = () => {
+    Keyboard.dismiss(); // Dismiss the keyboard when touching outside
+  };
+
   return (
-    <View style={styles.container}>
-      <CustomText label={label} />
-      <TextInput
-        style={[
-          styles.input,
-          {
-            borderColor: errorMessage ? COLOR.red : isFocused ? COLOR.black : COLOR.grey,
-          },
-        ]}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        onChangeText={handleChangeText}
-        value={value}
-        {...textInputProps}
-      />
-      {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
-    </View>
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+      <View style={styles.container}>
+        <CustomText label={label} />
+        <TextInput
+          style={[
+            styles.input,
+            {
+              borderColor: errorMessage ? COLOR.red : isFocused ? COLOR.black : COLOR.grey,
+            },
+          ]}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onChangeText={handleChangeText}
+          value={value}
+          keyboardType={keyboardType}
+          secureTextEntry={secureTextEntry}
+          {...textInputProps}
+        />
+        {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
