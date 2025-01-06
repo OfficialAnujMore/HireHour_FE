@@ -1,0 +1,16 @@
+export interface User {
+    id: string,
+    name: string,
+    email: string,
+    username: string,
+    countryCode: string,
+    phoneNumber: string,
+    userRole: string,
+    profileImageURL: string,
+    bannerImageURL: string,
+    token: string,
+    refreshToken: string,
+    lastLogin: string,
+    createdAt: string,
+    updatedAt: string,
+  }

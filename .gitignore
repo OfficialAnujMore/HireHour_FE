@@ -102,3 +102,6 @@ yarn.lock
 *.tmp
 *.temp
 *.log
+
+# Others
+src/screens/Template.tsx
