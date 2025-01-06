@@ -22,7 +22,7 @@
     "src/**/*",
     "node_modules/react-native/types/**/*.d.ts",
     "node_modules/react-native/Libraries/**/*"
-  ],
+, "images.d.ts"  ],
   "exclude": [
     "node_modules",
     "babel.config.js",
