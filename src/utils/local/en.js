@@ -8,5 +8,13 @@ export const WORD_DIR  ={
     login:"Login",
     register:"Register",
     haveAnAccount:"Already have an account ?",
-    dontHaveAnAccount:"Don't have an account ?"
+    dontHaveAnAccount:"Don't have an account ?",
+
+    serviceDetails:"Service Details",
+    title:"Title",
+    description:"Description",
+    costPerHour:"Cost per hour",
+    selectDate:"Select Date",
+    selectTimeSlots:'Select Time Slots',
+    createService:"Create Service",
 }

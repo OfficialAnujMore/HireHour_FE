@@ -10,6 +10,12 @@ import {
     ScrollView,
 } from "react-native";
 import moment from "moment";
+import { FontSize, Spacing } from "../utils/dimension";
+import CustomText from "../components/CustomText";
+import CustomInput from "../components/CustomInput";
+import { WORD_DIR } from "../utils/local/en";
+import { COLOR } from "../utils/globalConstants/color";
+import CustomButton from "../components/CustomButton";
 
 interface TimeSlot {
     id: string;
@@ -21,6 +27,7 @@ interface DateInfo {
     id: string;
     day: string;
     date: string;
+    month: string;
     timeSlots: TimeSlot[];
 }
 
@@ -28,74 +35,40 @@ const generateDates = (): DateInfo[] => {
     const dates: DateInfo[] = [];
     const timeSlots: TimeSlot[] = [
         { id: "1", time: "12:00 AM", available: true },
-        { id: "2", time: "12:30 AM", available: true },
-        { id: "3", time: "01:00 AM", available: true },
-        { id: "4", time: "01:30 AM", available: true },
-        { id: "5", time: "02:00 AM", available: true },
-        { id: "6", time: "02:30 AM", available: true },
-        { id: "7", time: "03:00 AM", available: true },
-        { id: "8", time: "03:30 AM", available: true },
-        { id: "9", time: "04:00 AM", available: true },
-        { id: "10", time: "04:30 AM", available: true },
-        { id: "11", time: "05:00 AM", available: true },
-        { id: "12", time: "05:30 AM", available: true },
-        { id: "13", time: "06:00 AM", available: true },
-        { id: "14", time: "06:30 AM", available: true },
-        { id: "15", time: "07:00 AM", available: true },
-        { id: "16", time: "07:30 AM", available: true },
-        { id: "17", time: "08:00 AM", available: true },
-        { id: "18", time: "08:30 AM", available: true },
-        { id: "19", time: "09:00 AM", available: true },
-        { id: "20", time: "09:30 AM", available: true },
-        { id: "21", time: "10:00 AM", available: true },
-        { id: "22", time: "10:30 AM", available: true },
-        { id: "23", time: "11:00 AM", available: true },
-        { id: "24", time: "11:30 AM", available: true },
-        { id: "25", time: "12:00 PM", available: true },
-        { id: "26", time: "12:30 PM", available: true },
-        { id: "27", time: "01:00 PM", available: true },
-        { id: "28", time: "01:30 PM", available: true },
-        { id: "29", time: "02:00 PM", available: true },
-        { id: "30", time: "02:30 PM", available: true },
-        { id: "31", time: "03:00 PM", available: true },
-        { id: "32", time: "03:30 PM", available: true },
-        { id: "33", time: "04:00 PM", available: true },
-        { id: "34", time: "04:30 PM", available: true },
-        { id: "35", time: "05:00 PM", available: true },
-        { id: "36", time: "05:30 PM", available: true },
-        { id: "37", time: "06:00 PM", available: true },
-        { id: "38", time: "06:30 PM", available: true },
-        { id: "39", time: "07:00 PM", available: true },
-        { id: "40", time: "07:30 PM", available: true },
-        { id: "41", time: "08:00 PM", available: true },
-        { id: "42", time: "08:30 PM", available: true },
-        { id: "43", time: "09:00 PM", available: true },
-        { id: "44", time: "09:30 PM", available: true },
-        { id: "45", time: "10:00 PM", available: true },
-        { id: "46", time: "10:30 PM", available: true },
-        { id: "47", time: "11:00 PM", available: true },
-        { id: "48", time: "11:30 PM", available: true }
-    ];
-
-    // Dates from the next 30 days
-    for (let i = 0; i <= 30; i++) {
+        { id: "2", time: "01:00 AM", available: true },
+        { id: "3", time: "02:00 AM", available: true },
+        { id: "4", time: "03:00 AM", available: true },
+        { id: "5", time: "04:00 AM", available: true },
+        { id: "6", time: "05:00 AM", available: true },
+        { id: "7", time: "06:00 AM", available: true },
+        { id: "8", time: "07:00 AM", available: true },
+        { id: "9", time: "08:00 AM", available: true },
+        { id: "10", time: "09:00 AM", available: true },
+        { id: "11", time: "10:00 AM", available: true },
+        { id: "12", time: "11:00 AM", available: true },
+        { id: "13", time: "12:00 PM", available: true },
+        { id: "14", time: "01:00 PM", available: true },
+        { id: "15", time: "02:00 PM", available: true },
+        { id: "16", time: "03:00 PM", available: true },
+        { id: "17", time: "04:00 PM", available: true },
+        { id: "18", time: "05:00 PM", available: true },
+        { id: "19", time: "06:00 PM", available: true },
+        { id: "20", time: "07:00 PM", available: true },
+        { id: "21", time: "08:00 PM", available: true },
+        { id: "22", time: "09:00 PM", available: true },
+        { id: "23", time: "10:00 PM", available: true },
+        { id: "24", time: "11:00 PM", available: true }
+      ]
+      
+    for (let i = 0; i <= 10; i++) {
         const date = moment().add(i, "days");
         const dateInfo: DateInfo = {
             id: `${i}`,
             day: date.format("ddd"),
             date: date.format("DD"),
+            month: date.format("MMM"),
             timeSlots: [...timeSlots], // Copy all available time slots
         };
-
-        // Modify availability for specific dates (Example for 06 Jan)
-        if (date.format("DD") === "06") {
-            dateInfo.timeSlots[2].available = false; // Example: 01:00 AM slot unavailable on 06 Jan
-            dateInfo.timeSlots[5].available = false; // Example: 02:30 AM slot unavailable on 06 Jan
-        }
-        if (date.format("DD") === "07") {
-            dateInfo.timeSlots[10].available = false; // Example: 05:00 AM slot unavailable on 07 Jan
-        }
-
         dates.push(dateInfo);
     }
 
@@ -109,11 +82,11 @@ const CreateServiceScreen = () => {
     const [serviceDetails, setServiceDetails] = useState({
         title: "",
         description: "",
-        cost: "",
+        costPerHour: "",
     });
 
     const handleServiceCreation = () => {
-        if (!serviceDetails.title || !serviceDetails.description || !serviceDetails.cost) {
+        if (!serviceDetails.title || !serviceDetails.description || !serviceDetails.costPerHour) {
             Alert.alert("Error", "Please fill in all service details.");
             return;
         }
@@ -150,35 +123,33 @@ const CreateServiceScreen = () => {
     return (
         <ScrollView style={styles.container}>
             {/* Service Details */}
-            <Text style={styles.heading}>Service Details</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Title"
-                value={serviceDetails.title}
-                onChangeText={(text) =>
-                    setServiceDetails((prev) => ({ ...prev, title: text }))
-                }
+            <CustomText
+                label={WORD_DIR.serviceDetails}
+                style={styles.heading}
             />
-            <TextInput
-                style={styles.input}
-                placeholder="Description"
-                value={serviceDetails.description}
-                onChangeText={(text) =>
-                    setServiceDetails((prev) => ({ ...prev, description: text }))
-                }
+            <CustomInput
+                label={WORD_DIR.title}
+                placeholder={WORD_DIR.title}
+                onValueChange={(value) => setServiceDetails((prev) => ({ ...prev, title: value }))}
+
             />
-            <TextInput
-                style={styles.input}
-                placeholder="Cost per hour"
+            <CustomInput
+                label={WORD_DIR.description}
+                placeholder={WORD_DIR.description}
+                onValueChange={(value) => setServiceDetails((prev) => ({ ...prev, description: value }))}
+
+            />
+
+            <CustomInput
+                label={WORD_DIR.costPerHour}
+                placeholder={WORD_DIR.costPerHour}
                 keyboardType="numeric"
-                value={serviceDetails.cost}
-                onChangeText={(text) =>
-                    setServiceDetails((prev) => ({ ...prev, cost: text }))
-                }
+                onValueChange={(value) => setServiceDetails((prev) => ({ ...prev, costPerHour: value }))}
+
             />
 
             {/* Date Selection */}
-            <Text style={styles.heading}>Select Date</Text>
+            <CustomText style={styles.heading} label={WORD_DIR.selectDate} />
             <FlatList
                 data={dates}
                 horizontal
@@ -191,9 +162,10 @@ const CreateServiceScreen = () => {
                             selectedDate?.id === item.id && styles.selectedButton,
                         ]}
                     >
-                        <Text style={styles.dateText}>
-                            {item.day}, {item.date}
-                        </Text>
+                        <CustomText
+                            style={selectedDate?.id === item.id ? styles.selectedDateText : styles.dateText}
+                            label={`${item.day}, ${item.date} ${item.month}`}
+                        />
                     </TouchableOpacity>
                 )}
             />
@@ -201,7 +173,10 @@ const CreateServiceScreen = () => {
             {/* Time Slot Selection */}
             {selectedDate && (
                 <>
-                    <Text style={styles.heading}>Select Time Slots</Text>
+                    <CustomText
+                        style={styles.heading}
+                        label={WORD_DIR.selectTimeSlots}
+                    />
                     <FlatList
                         data={selectedDate.timeSlots}
                         numColumns={3}
@@ -211,28 +186,24 @@ const CreateServiceScreen = () => {
                                 onPress={() => handleTimeSelect(item)}
                                 style={[
                                     styles.timeSlotButton,
-                                    selectedTimeSlots.some(
-                                        (slot) => slot.id === item.id
-                                    )
+                                    selectedTimeSlots.some((slot) => slot.id === item.id)
                                         ? styles.selectedButton
                                         : {},
-                                    !item.available
-                                        ? styles.unavailableButton
-                                        : {},
-                                    isPastTime(item.time)
-                                        ? styles.pastTimeButton
-                                        : {},
+                                    !item.available ? styles.unavailableButton : {},
+                                    isPastTime(item.time) ? styles.pastTimeButton : {},
                                 ]}
                                 disabled={!item.available || isPastTime(item.time)}
                             >
-                                <Text
+                                <CustomText
                                     style={[
                                         styles.timeSlotText,
+                                        selectedTimeSlots.some((slot) => slot.id === item.id)
+                                            ? styles.selectedDateText
+                                            : {},
                                         !item.available ? styles.disabledText : {},
                                     ]}
-                                >
-                                    {item.time}
-                                </Text>
+                                    label={item.time}
+                                />
                             </TouchableOpacity>
                         )}
                     />
@@ -240,12 +211,16 @@ const CreateServiceScreen = () => {
             )}
 
             {/* Submit Button */}
-            <TouchableOpacity
+            <CustomButton
+                onPress={handleServiceCreation}
+                label={WORD_DIR.createService}
+            />
+            {/* <TouchableOpacity
                 onPress={handleServiceCreation}
                 style={styles.submitButton}
             >
                 <Text style={styles.submitButtonText}>Create Service</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </ScrollView>
     );
 };
@@ -253,60 +228,53 @@ const CreateServiceScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        padding: Spacing.medium,
+        marginBottom: Spacing.large,
+        backgroundColor:COLOR.white
     },
     heading: {
-        fontSize: 18,
+        fontSize: FontSize.large,
         fontWeight: "bold",
-        marginVertical: 10,
-    },
-    input: {
-        borderWidth: 1,
-        borderRadius: 8,
-        padding: 10,
-        marginVertical: 10,
+        marginVertical: Spacing.small,
     },
     dateButton: {
-        backgroundColor: "#e0e0e0",
-        padding: 15,
-        marginRight: 10,
-        borderRadius: 8,
+        backgroundColor: COLOR.white,
+        padding: Spacing.medium - 6,
+        marginRight: Spacing.small,
+        borderRadius: Spacing.small,
+        borderWidth: 1,
     },
     dateText: {
-        fontSize: 16,
+        fontSize: FontSize.medium - 1,
         fontWeight: "bold",
     },
+    selectedDateText: {
+        color: COLOR.white,
+    },
     selectedButton: {
-        backgroundColor: "#6200ea",
+        backgroundColor: COLOR.black,
     },
     timeSlotButton: {
+        display: 'flex',
         flex: 1,
-        backgroundColor: "#f0f0f0",
-        padding: 10,
-        margin: 5,
-        borderRadius: 8,
-        justifyContent: "center",
-        alignItems: "center",
+        backgroundColor: COLOR.white,
+        borderColor: COLOR.grey,
+        padding: Spacing.small,
+        margin: Spacing.small,
+        borderRadius: Spacing.small,
+        borderWidth: 1,
+        justifyContent: "center", // Vertical centering
+        alignItems: "center",    // Horizontal centering
     },
+    
     timeSlotText: {
-        fontSize: 14,
+        fontSize: FontSize.small,
     },
     unavailableButton: {
-        backgroundColor: "#bdbdbd",
+        backgroundColor: COLOR.lightGrey,
     },
     pastTimeButton: {
-        backgroundColor: "#f44336",
-    },
-    submitButton: {
-        backgroundColor: "#6200ea",
-        paddingVertical: 15,
-        borderRadius: 8,
-        alignItems: "center",
-        marginTop: 20,
-    },
-    submitButtonText: {
-        color: "white",
-        fontSize: 16,
+        backgroundColor: COLOR.lightGrey,
     },
     disabledText: {
         color: "gray",

@@ -64,9 +64,7 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     margin: Spacing.small,
-    // backgroundColor:COLOR.white
   },
   carouselContainer: {
     height: Screen.height / 4,

@@ -82,18 +82,22 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    alignSelf: 'center',
     marginVertical: Spacing.medium,
   },
   button: {
     paddingVertical: Spacing.medium,
     paddingHorizontal: Spacing.small,
     borderRadius: Spacing.small,
+    borderWidth:0.5,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: COLOR.grey,
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
   },
   activeButton: {
-    backgroundColor: COLOR.black,
+    backgroundColor: COLOR.white,
   },
   disabledButton: {
     backgroundColor: COLOR.grey,
@@ -103,10 +107,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   activeLabel: {
-    color: COLOR.white,
+    color: COLOR.black,
   },
   disabledLabel: {
-    color: COLOR.white,
+    color: COLOR.black,
   },
 });
 

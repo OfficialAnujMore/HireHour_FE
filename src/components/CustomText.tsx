@@ -35,7 +35,6 @@ const CustomText: React.FC<CustomTextProps> = ({ label, style, action }) => {
 };
 const styles = StyleSheet.create({
     container: {
-        alignSelf: 'flex-start',
         marginBottom: Spacing.small/2
     },
     textStyle: {
