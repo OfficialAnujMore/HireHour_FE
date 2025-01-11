@@ -26,12 +26,7 @@ const LoginScreen = () => {
         email: '',
         password: '',
     });
-    interface ApiErrorResponse {
-        data: any;
-        message: string;
-        statusCode: number;
-        success: boolean;
-    }
+
 
     const handleLogin = async () => {
         try {
@@ -50,8 +45,6 @@ const LoginScreen = () => {
             ...prevState,
             [field]: value,
         }));
-
-        // Validate the input field and set errors
         validateField(field, value);
     };
 
@@ -107,20 +100,20 @@ const LoginScreen = () => {
                         onValueChange={(value) => handleValueChange('password', value)}
                         errorMessage={errors.password}
                     />
-                    <View style={styles.forgotPasswordContainer}>
+                    {/* TODO: Enable afterwards */}
+                    {/* <View style={styles.forgotPasswordContainer}>
                         <CustomText label={WORD_DIR.forgotPassword} action={() => {
                             console.log(`Forget password clicked`);
                         }} />
-                    </View>
+                    </View> */}
                 </View>
 
                 <View style={styles.buttonContainer}>
                     <CustomButton
                         label={WORD_DIR.login}
                         onPress={handleLogin}
-                        style={{ width: Screen.width * 0.8 }}
                         textStyle={{ fontSize: FontSize.large }}
-                        disabled={!isFormValid}  // Disable button if form is invalid
+                        disabled={!isFormValid}
                     />
                     <View style={styles.actionContainer}>
                         <CustomText label={WORD_DIR.dontHaveAnAccount} />

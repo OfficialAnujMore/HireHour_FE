@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Button, Alert, FlatList, StyleSheet, ScrollView } from 'react-native';;
+import { View, Text, Button, Alert, FlatList, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';;
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, RootState } from '../redux/store';
 import CustomSearchBar from '../components/CustomSearchBar';
@@ -10,6 +10,9 @@ import { COLOR } from '../utils/globalConstants/color';
 import CustomSchedule from '../components/CustomSchedule';
 import CustomCarouselSlider from '../components/CustomCarousel';
 import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { WORD_DIR } from 'utils/local/en';
+import { CustomRatingInfo } from '../components/CustomRatingInfo';
 interface ServiceDetails {
   id: string;
   title: string;
@@ -43,17 +46,9 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
         <View style={styles.detailsContainer}>
           <View style={styles.header}>
             <CustomText label={item.title} style={styles.textStyle} />
-            <CustomText label={`⭐️  ${item.rating}`} style={[styles.ratings, styles.textStyle, styles.ratingStyle]} />
+            <CustomRatingInfo rating={item.rating}/>
           </View>
           <CustomText label={item.description} style={styles.textStyle} />
-          <CustomText label={item.location} style={styles.textStyle} />
-          <CustomText label={'Reviews'} style={styles.textStyle} action={() => {
-            navigation.navigate("Reviews")
-          }} />
-          <CustomText label={'CreateServiceScreen'} style={styles.textStyle} action={() => {
-            navigation.navigate("CreateServiceScreen")
-          }} />
-          CreateServiceScreen
         </View>
         <CustomSchedule />
       </ScrollView>
@@ -80,7 +75,7 @@ const styles = StyleSheet.create({
   },
   ratingStyle: {
     fontSize: FontSize.small,
-    color: COLOR.white
+    color: COLOR.white,
   },
   content: {
     flex: 1,
@@ -90,15 +85,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    // backgroundColor:"red"
   },
-  ratings: {
+  ratingsContainer: {
+    backgroundColor: "green",
     flexDirection: 'row',
-    backgroundColor: 'green',
+    alignItems: 'center',
     justifyContent: 'center',
     borderRadius: Spacing.small,
     padding: Spacing.small / 2,
-    // paddingHorizontal: Spacing.small
   }
 })
 

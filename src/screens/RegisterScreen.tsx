@@ -9,7 +9,7 @@ import CustomButton from '../components/CustomButton';
 import { WORD_DIR } from '../utils/local/en';
 import CustomText from '../components/CustomText';
 import { COLOR } from '../utils/globalConstants/color';
-import { loginUser } from '../services/userService';
+import { loginUser, registerUser } from '../services/userService';
 import { showSnackbar } from '../redux/snackbarSlice';
 import { EMAIL_REGEX } from '../utils/regex';
 import { useNavigation } from '@react-navigation/native';
@@ -24,6 +24,7 @@ const RegisterScreen = () => {
         username: '',
         email: '',
         password: '',
+        phoneNumber: '1121212121212',
         confirmPassword: '',
     });
 
@@ -36,17 +37,24 @@ const RegisterScreen = () => {
         confirmPassword: '',
     });
 
-    const handleLogin = async () => {
+    const handleRegister = async () => {
+        // Prepare the payload without modifying the original `user` object
+        const { confirmPassword, ...payload } = user; // Omit `confirmPassword` from the payload
+
         try {
-            const response = await loginUser(user);
+            const response = await registerUser(payload);
+
             if (response && response.data) {
+                // Dispatch the user data to the Redux store
                 dispatch(login({ user: response.data }));
+                // Navigate to the desired screen or show success
+                navigation.navigate('Home');
             }
         } catch (error: any) {
-            dispatch(showSnackbar(error.message));
+            // Handle error by showing a snackbar message
+            dispatch(showSnackbar(error.message || 'Registration failed. Please try again.'));
         }
     };
-
     const handleValueChange = (field: keyof typeof user, value: string) => {
         setUser((prevState) => ({
             ...prevState,
@@ -124,6 +132,12 @@ const RegisterScreen = () => {
                     errorMessage={errors.email}
                 />
                 <CustomInput
+                    label="Phone Number"
+                    onValueChange={(value) => handleValueChange('phoneNumber', value)}
+                    placeholder="Enter phone number"
+                    keyboardType="phone-pad"
+                />
+                <CustomInput
                     label={WORD_DIR.password}
                     placeholder="Enter password"
                     secureTextEntry
@@ -142,8 +156,7 @@ const RegisterScreen = () => {
             <View style={styles.buttonContainer}>
                 <CustomButton
                     label={WORD_DIR.register}
-                    onPress={handleLogin}
-                    style={{ width: Screen.width * 0.8 }}
+                    onPress={handleRegister}
                     textStyle={{ fontSize: FontSize.large }}
                     disabled={!isFormValid}  // Disable button if form is invalid
                 />

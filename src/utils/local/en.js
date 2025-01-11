@@ -7,8 +7,8 @@ export const WORD_DIR  ={
     forgotPassword:"Forgot Password",
     login:"Login",
     register:"Register",
-    haveAnAccount:"Already have an account ?",
-    dontHaveAnAccount:"Don't have an account ?",
+    haveAnAccount:"Already have an account? ",
+    dontHaveAnAccount:"Don't have an account? ",
 
     serviceDetails:"Service Details",
     title:"Title",

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TouchableOpacity, StyleSheet,GestureResponderEvent } from "react-native";
+import { TouchableOpacity, StyleSheet, GestureResponderEvent } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -18,6 +18,7 @@ import CreateServiceScreen from "../screens/CreateServiceScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import DetailsScreen from "../screens/DetailsScreen";
+import EditProfileScreen from "../screens/EditProfileScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -32,7 +33,7 @@ const CustomTabBarButton: React.FC<CustomTabBarButtonProps> = ({ onPress }) => (
     onPress={onPress}
     activeOpacity={0.8}
   >
-    <Icon name="add" size={28} color="#fff" />
+    <Icon name="add" size={25} color="#fff" />
   </TouchableOpacity>
 );
 
@@ -109,6 +110,10 @@ const RootNavigator = () => {
                 name="CreateServiceScreen"
                 component={CreateServiceScreen}
               />
+              <Stack.Screen
+              name="EditProfile"
+              component={EditProfileScreen}
+            />
             </>
           ) : (
             <>

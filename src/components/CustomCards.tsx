@@ -4,6 +4,7 @@ import { COLOR } from '../utils/globalConstants/color';
 import { FontSize, Screen, Spacing } from '../utils/dimension';
 import CustomText from './CustomText';
 import { useNavigation } from '@react-navigation/native';
+import { CustomRatingInfo } from './CustomRatingInfo';
 
 interface CustomCardsProps {
     onSearch: (query: string) => void; // Function to handle search logic
@@ -23,14 +24,15 @@ interface CardItem {
 const CustomCards: React.FC<{ item: CardItem }> = ({ item }) => {
     const navigation = useNavigation()
     return (
-        <TouchableOpacity style={styles.container} onPress={()=>{
+        <TouchableOpacity style={styles.container} onPress={() => {
             navigation.navigate("ServiceDetails", item)
         }}>
             <Image source={{ uri: item.image }} style={styles.image} />
             <View style={styles.content}>
                 <View style={styles.header}>
                     <CustomText label={item.title} style={styles.textStyle} />
-                    <CustomText label={`⭐️  ${item.rating}`} style={[styles.ratings, styles.textStyle, styles.ratingStyle]} />
+                            <CustomRatingInfo rating={item.rating}/>
+
                 </View>
                 <CustomText label={item.description} style={styles.textStyle} />
                 <CustomText label={item.location} style={styles.textStyle} />
@@ -62,22 +64,7 @@ const styles = StyleSheet.create({
         color: COLOR.white
     },
 
-    // title: {
-    //     fontSize: FontSize.large,
-    //     fontWeight: 'bold',
-    //   },
-    //   description: {
-    //     fontSize: FontSize.medium,
-    //     color: '#555',
-    //   },
-    //   location: {
-    //     fontSize: FontSize.small,
-    //     color: '#888',
-    //     marginVertical: Spacing.small,
-    //   },
-
     image: {
-
         width: Screen.width * 0.25,
         height: Screen.width * 0.25,
         borderRadius: Spacing.small,
@@ -90,15 +77,18 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        // backgroundColor:"red"
     },
     ratings: {
         flexDirection: 'row',
-        backgroundColor: 'green',
+        alignItems: 'center',
+    },
+    ratingsContainer: {
+        backgroundColor: "green",
+        flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'center',
         borderRadius: Spacing.small,
         padding: Spacing.small / 2,
-        // paddingHorizontal: Spacing.small
     }
 });
 

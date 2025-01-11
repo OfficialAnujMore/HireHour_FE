@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import Feather from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { COLOR } from '../utils/globalConstants/color';
 import { FontSize, Screen, Spacing } from '../utils/dimension';
 
@@ -28,7 +28,7 @@ const CustomSearchBar: React.FC<CustomSearchBarProps> = ({ onSearch }) => {
                     onSubmitEditing={handleSearch}
                 />
                 <TouchableOpacity onPress={handleSearch}>
-                    <Feather name="home" size={20} color="#000" />
+                    <Icon name="filter-outline" size={25} color="#000" />
                 </TouchableOpacity>
             </View>
         </View>

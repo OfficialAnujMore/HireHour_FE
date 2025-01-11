@@ -13,7 +13,7 @@ import { COLOR } from '../utils/globalConstants/color';
 
 
 type CustomTextProps = {
-    label?: string|number;
+    label: React.ReactNode;
     style?:  StyleProp<TextStyle>;
     action?: () => void; // Make this optional
 };
