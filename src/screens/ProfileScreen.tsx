@@ -1,81 +1,119 @@
 import React from 'react';
-import { View, StyleSheet, Image, Text } from 'react-native';
-import CustomButton from '../components/CustomButton';
-import { Screen, Spacing, FontSize } from '../utils/dimension';
-import { COLOR } from '../utils/globalConstants/color';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { Screen, Spacing, FontSize } from '../utils/dimension'; // Assuming your dimension code is in a file named dimensions.ts
+import Icon from "react-native-vector-icons/Ionicons";
+import { COLORS } from '../utils/globalConstants/color';
 import { useNavigation } from '@react-navigation/native';
-
-const ProfileScreen: React.FC = () => {    const navigation = useNavigation()
-  const handleEditProfile = () => {
-    navigation.navigate("EditProfile")
-    console.log('Edit Profile Pressed');
-  };
-
+const ProfileScreen: React.FC = () => {
+  const navigation = useNavigation();
   return (
-    <View style={styles.container}>
-      {/* Profile Header */}
-      <View style={styles.header}>
+    <ScrollView style={styles.container}>
+      <TouchableOpacity  style={styles.editItemContainer} onPress={()=>{
+        navigation.navigate('EditProfile')
+      }}>
+          <Icon name={'pencil'} size={FontSize.large} />
+      </TouchableOpacity>
+      <View style={styles.profileContainer}>
         <Image
-          source={require('../assets/logo.jpeg')} // Replace with your profile picture path
-          style={styles.profileImage}
+          source={{ uri: 'https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001882.png' }} // Replace with the actual avatar URL
+          style={styles.avatar}
         />
-        <Text style={styles.profileName}>John Doe</Text>
-        <Text style={styles.profileEmail}>johndoe@example.com</Text>
+        <Text style={styles.name}>Robi</Text>
+        <Text style={styles.phone}>8967452734</Text>
+        <Text style={styles.email}>robi123@gmail.com</Text>
       </View>
 
-      {/* Buttons */}
-      <View style={styles.buttonContainer}>
-        <CustomButton
-          label="Edit Profile"
-          onPress={handleEditProfile}
-          style={styles.editButton}
-        />
-        <CustomButton
-          label="Logout"
-          onPress={() => console.log('Logout Pressed')}
-          style={styles.logoutButton}
-          textStyle={{ color: COLOR.red }}
-        />
+      <View style={styles.menuContainer}>
+        {menuItems.map((item, index) => (
+          <TouchableOpacity key={index} style={styles.menuItem}>
+            <View style={styles.menuIcon}>
+              <Icon name={item.icon} size={FontSize.large} />
+            </View>
+            <Text style={styles.menuText}>{item.label}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
-    </View>
+    </ScrollView>
   );
 };
+
+const menuItems = [
+  { label: 'Transaction History', icon: 'receipt-outline' },
+  { label: 'Create Request', icon: 'add' },
+  { label: 'Privacy Policy', icon: 'lock-closed-outline' },
+  { label: 'Settings', icon: 'settings-outline' },
+  { label: 'Enroll As Service Provider', icon: 'person-add' },
+  { label: 'Log out', icon: 'power-outline' },
+];
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLOR.white,
-    paddingHorizontal: Spacing.large,
-    justifyContent: 'center',
+    backgroundColor: COLORS.white,
   },
-  header: {
+  profileContainer: {
     alignItems: 'center',
-    marginBottom: Spacing.large,
+    marginVertical: Spacing.large,
   },
-  profileImage: {
-    width: Screen.width / 3,
-    height: Screen.width / 3,
-    borderRadius: Screen.width / 6,
-    marginBottom: Spacing.medium,
+  avatar: {
+    width: Screen.moderateScale(100),
+    height: Screen.moderateScale(100),
+    borderRadius: Screen.moderateScale(50),
+    // marginBottom: Spacing.medium,
   },
-  profileName: {
+  name: {
     fontSize: FontSize.large,
     fontWeight: 'bold',
-    color: COLOR.black,
+    color: '#333',
   },
-  profileEmail: {
+  phone: {
     fontSize: FontSize.medium,
-    color: COLOR.grey,
+    color: '#666',
+    marginTop: Spacing.small,
   },
-  buttonContainer: {
+  email: {
+    fontSize: FontSize.medium,
+    color: '#666',
+  },
+  menuContainer: {
     marginTop: Spacing.large,
+    paddingHorizontal: Spacing.medium,
   },
-  editButton: {
-    backgroundColor: COLOR.red,
-    marginBottom: Spacing.medium,
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    padding: Spacing.medium,
+    marginVertical: Spacing.small,
+    borderRadius: Screen.moderateScale(8),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  logoutButton: {
-    backgroundColor: COLOR.lightGrey,
+  menuIcon: {
+    width: Screen.moderateScale(40),
+    height: Screen.moderateScale(40),
+    borderRadius: Screen.moderateScale(20),
+    backgroundColor: '#FCE4EC',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.medium,
+  },
+  iconPlaceholder: {
+    fontSize: FontSize.large,
+  },
+  menuText: {
+    fontSize: FontSize.medium,
+    color: '#333',
+    flex: 1,
+  },
+  editItemContainer: {
+    flexDirection: 'row', 
+    justifyContent: 'flex-end',
+    paddingVertical:Spacing.small,
+    paddingHorizontal: Spacing.medium, 
   },
 });
 

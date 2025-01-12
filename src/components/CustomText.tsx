@@ -8,7 +8,7 @@ import {
     StyleProp,
 } from 'react-native';
 import { FontSize, Screen, Spacing } from '../utils/dimension';
-import { COLOR } from '../utils/globalConstants/color';
+import { COLORS } from '../utils/globalConstants/color';
 
 
 
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     },
     clickableText: {
         textDecorationLine: 'underline', // Adds underline to the text
-        color: COLOR.grey, // Optional: Changes the color for clickable text
+        color: COLORS.grey, // Optional: Changes the color for clickable text
       },
 });
 

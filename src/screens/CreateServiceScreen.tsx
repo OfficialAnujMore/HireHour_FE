@@ -14,7 +14,7 @@ import { FontSize, Spacing } from "../utils/dimension";
 import CustomText from "../components/CustomText";
 import CustomInput from "../components/CustomInput";
 import { WORD_DIR } from "../utils/local/en";
-import { COLOR } from "../utils/globalConstants/color";
+import { COLORS } from "../utils/globalConstants/color";
 import CustomButton from "../components/CustomButton";
 
 interface TimeSlot {
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: Spacing.medium,
         marginBottom: Spacing.large,
-        backgroundColor:COLOR.white
+        backgroundColor:COLORS.white
     },
     heading: {
         fontSize: FontSize.large,
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
         marginVertical: Spacing.small,
     },
     dateButton: {
-        backgroundColor: COLOR.white,
+        backgroundColor: COLORS.white,
         padding: Spacing.medium - 6,
         marginRight: Spacing.small,
         borderRadius: Spacing.small,
@@ -249,16 +249,16 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     selectedDateText: {
-        color: COLOR.white,
+        color: COLORS.white,
     },
     selectedButton: {
-        backgroundColor: COLOR.black,
+        backgroundColor: COLORS.black,
     },
     timeSlotButton: {
         display: 'flex',
         flex: 1,
-        backgroundColor: COLOR.white,
-        borderColor: COLOR.grey,
+        backgroundColor: COLORS.white,
+        borderColor: COLORS.grey,
         padding: Spacing.small,
         margin: Spacing.small,
         borderRadius: Spacing.small,
@@ -271,10 +271,10 @@ const styles = StyleSheet.create({
         fontSize: FontSize.small,
     },
     unavailableButton: {
-        backgroundColor: COLOR.lightGrey,
+        backgroundColor: COLORS.lightGrey,
     },
     pastTimeButton: {
-        backgroundColor: COLOR.lightGrey,
+        backgroundColor: COLORS.lightGrey,
     },
     disabledText: {
         color: "gray",

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Animated, Text, View, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { COLOR } from '../utils/globalConstants/color';
+import { COLORS } from '../utils/globalConstants/color';
 import { RootState } from '../redux/store';
 import { hideSnackbar } from '../redux/snackbarSlice';
 import { FontSize, Screen, Spacing } from '../utils/dimension';
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   snackbarContainer: {
     position: 'absolute',
     bottom: 2,
-    backgroundColor: COLOR.black,
+    backgroundColor: COLORS.black,
     padding: Spacing.medium,
     width:Screen.width,
     flexDirection: 'row',
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   snackbarText: {
-    color: COLOR.white,
+    color: COLORS.white,
     fontSize: FontSize.medium,
   },
 });

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { RootState } from '../redux/store';
-import { COLOR } from '../utils/globalConstants/color';
+import { COLORS } from '../utils/globalConstants/color';
 import { FontSize, Screen } from '../utils/dimension';
 
 const SplashScreen = ({ onFinish }: { onFinish: (status:boolean) => void }) => {
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: COLOR.white,
+    backgroundColor: COLORS.white,
   },
   image: {
     resizeMode:'contain',
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: FontSize.extraLarge,
-    color: COLOR.black,
+    color: COLORS.black,
   },
 });
 

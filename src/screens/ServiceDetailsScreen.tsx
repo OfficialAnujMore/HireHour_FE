@@ -6,7 +6,7 @@ import CustomSearchBar from '../components/CustomSearchBar';
 import CustomCards from '../components/CustomCards';
 import CustomText from '../components/CustomText';
 import { FontSize, Screen, Spacing } from '../utils/dimension';
-import { COLOR } from '../utils/globalConstants/color';
+import { COLORS } from '../utils/globalConstants/color';
 import CustomSchedule from '../components/CustomSchedule';
 import CustomCarouselSlider from '../components/CustomCarousel';
 import { useNavigation } from '@react-navigation/native';
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   },
   carouselContainer: {
     height: Screen.height / 4,
-    backgroundColor: COLOR.grey,
+    backgroundColor: COLORS.grey,
   },
   detailsContainer: {
     marginVertical: Spacing.small
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   },
   ratingStyle: {
     fontSize: FontSize.small,
-    color: COLOR.white,
+    color: COLORS.white,
   },
   content: {
     flex: 1,

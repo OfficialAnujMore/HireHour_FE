@@ -12,7 +12,7 @@ import {
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import { Screen, Spacing } from '../utils/dimension';
-import { COLOR } from '../utils/globalConstants/color';
+import { COLORS } from '../utils/globalConstants/color';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { WORD_DIR } from '../utils/local/en';
@@ -85,7 +85,7 @@ const EditProfileScreen: React.FC = () => {
           style={styles.profileImage}
         />
         <TouchableOpacity style={styles.editIcon} onPress={handleImagePicker}>
-          <Icon name="pencil" size={18} color={COLOR.white} />
+          <Icon name="pencil" size={18} color={COLORS.white} />
         </TouchableOpacity>
       </View>
 
@@ -136,8 +136,8 @@ const EditProfileScreen: React.FC = () => {
           value={user.isServiceProviderEnrolled}
 
           onValueChange={(value) => handleInputChange('isServiceProviderEnrolled', value)}
-          trackColor={{ true: COLOR.red, false: COLOR.grey }}
-          thumbColor={user.isServiceProviderEnrolled ? COLOR.red : COLOR.white}
+          trackColor={{ true: COLORS.red, false: COLORS.grey }}
+          thumbColor={user.isServiceProviderEnrolled ? COLORS.red : COLORS.white}
         />
       </View>
     </ScrollView>
@@ -147,7 +147,7 @@ const EditProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLOR.white,
+    backgroundColor: COLORS.white,
     paddingHorizontal: Spacing.large,
     paddingTop: Spacing.extraLarge,
   },
@@ -160,20 +160,20 @@ const styles = StyleSheet.create({
     height: Screen.width / 4,
     borderRadius: Screen.width / 8,
     borderWidth: 2,
-    borderColor: COLOR.grey,
+    borderColor: COLORS.grey,
   },
   editIcon: {
     position: 'absolute',
     bottom: 0,
     right: -5,
-    backgroundColor: COLOR.grey,
+    backgroundColor: COLORS.grey,
     borderRadius: 15,
     padding: 5,
   },
   header: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: COLOR.black,
+    color: COLORS.black,
     marginTop: Spacing.large,
     marginBottom: Spacing.medium,
     textAlign: 'center',
@@ -187,15 +187,15 @@ const styles = StyleSheet.create({
   toggleLabel: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: COLOR.black,
+    color: COLORS.black,
   },
   saveButton: {
     marginTop: Spacing.extraLarge,
-    backgroundColor: COLOR.red,
+    backgroundColor: COLORS.red,
     borderRadius: 8,
   },
   buttonText: {
-    color: COLOR.white,
+    color: COLORS.white,
     fontSize: 16,
     fontWeight: 'bold',
   },

@@ -12,7 +12,7 @@ import {
 import { FontSize, Screen, Spacing } from '../utils/dimension';
 import CustomText from './CustomText';
 import Icon from 'react-native-vector-icons/Ionicons'; // Import the Icon component
-import { COLOR } from '../utils/globalConstants/color';
+import { COLORS } from '../utils/globalConstants/color';
 
 type CustomInputProps = TextInputProps & {
   label?: string;
@@ -93,11 +93,11 @@ const CustomInput: React.FC<CustomInputProps> = ({
               styles.input,
               {
                 borderColor: errorMessage
-                  ? COLOR.red
+                  ? COLORS.red
                   : isFocused
-                  ? COLOR.black
-                  : COLOR.grey,
-                backgroundColor: disabled ? COLOR.lightGrey : COLOR.white, // Optional: Gray background when disabled
+                  ? COLORS.black
+                  : COLORS.grey,
+                backgroundColor: disabled ? COLORS.lightGrey : COLORS.white, // Optional: Gray background when disabled
               },
             ]}
             onFocus={handleFocus}
@@ -114,7 +114,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
               <Icon
                 name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
                 size={20}
-                color={COLOR.grey}
+                color={COLORS.grey}
               />
             </TouchableOpacity>
           )}
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     right: 10,
   },
   errorText: {
-    color: COLOR.red,
+    color: COLORS.red,
     fontSize: 12,
     marginTop: 5,
   },

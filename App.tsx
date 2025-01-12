@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './src/redux/store'; // Assuming store is defined in src/store.ts
 import RootNavigator from './src/navigation/RootNavigator';
-import { StatusBar } from 'react-native';
+import { SafeAreaView, StatusBar } from 'react-native';
 
 const App = () => (
   <Provider store={store}>
@@ -13,7 +13,9 @@ const App = () => (
 
         {/* Optional: Set status bar color */}
         <StatusBar barStyle="dark-content" backgroundColor="white" />
-        <RootNavigator />
+        {/* <SafeAreaView> */}
+          <RootNavigator />
+        {/* </SafeAreaView> */}
       </SafeAreaProvider>
     </PersistGate>
   </Provider>

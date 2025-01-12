@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { COLOR } from '../utils/globalConstants/color';
+import { COLORS } from '../utils/globalConstants/color';
 import { FontSize, Screen, Spacing } from '../utils/dimension';
 
 interface CustomSearchBarProps {
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     searchBar: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: COLOR.white,
+        backgroundColor: COLORS.white,
         borderRadius: Spacing.small,
         width: Screen.width,
         paddingHorizontal: Spacing.medium,

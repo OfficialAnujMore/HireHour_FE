@@ -9,7 +9,7 @@ import {
   GestureResponderEvent,
 } from 'react-native';
 import { FontSize, Spacing } from '../utils/dimension';
-import { COLOR } from '../utils/globalConstants/color';
+import { COLORS } from '../utils/globalConstants/color';
 
 type CustomButtonProps = {
   label: string; // Button label
@@ -91,26 +91,26 @@ const styles = StyleSheet.create({
     borderWidth:0.5,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: COLOR.grey,
+    shadowColor: COLORS.grey,
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
   },
   activeButton: {
-    backgroundColor: COLOR.white,
+    backgroundColor: COLORS.white,
   },
   disabledButton: {
-    backgroundColor: COLOR.grey,
+    backgroundColor: COLORS.grey,
   },
   label: {
     fontSize: FontSize.medium,
     fontWeight: 'bold',
   },
   activeLabel: {
-    color: COLOR.black,
+    color: COLORS.black,
   },
   disabledLabel: {
-    color: COLOR.black,
+    color: COLORS.black,
   },
 });
 

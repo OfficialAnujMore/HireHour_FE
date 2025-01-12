@@ -8,7 +8,7 @@ import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import { WORD_DIR } from '../utils/local/en';
 import CustomText from '../components/CustomText';
-import { COLOR } from '../utils/globalConstants/color';
+import { COLORS } from '../utils/globalConstants/color';
 import { loginUser, registerUser } from '../services/userService';
 import { showSnackbar } from '../redux/snackbarSlice';
 import { EMAIL_REGEX } from '../utils/regex';
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     container: {
         display: 'flex',
         padding: Spacing.medium,
-        backgroundColor: COLOR.white,
+        backgroundColor: COLORS.white,
         flexGrow: 1,
     },
     logo: {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { COLOR } from '../utils/globalConstants/color';
+import { COLORS } from '../utils/globalConstants/color';
 import { FontSize, Screen, Spacing } from '../utils/dimension';
 import CustomText from './CustomText';
 import { useNavigation } from '@react-navigation/native';
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: COLOR.white,
+        backgroundColor: COLORS.white,
         borderRadius: Spacing.small,
         marginVertical: Spacing.small,
         padding: Spacing.small,
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     },
     ratingStyle: {
         fontSize: FontSize.small,
-        color: COLOR.white
+        color: COLORS.white
     },
 
     image: {
