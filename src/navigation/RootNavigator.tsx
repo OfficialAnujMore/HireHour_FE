@@ -22,6 +22,7 @@ import EditProfileScreen from "../screens/EditProfileScreen";
 import SummaryScreen from "../screens/SummaryScreen";
 import { FontSize, Screen } from "../utils/dimension";
 import { COLORS } from "../utils/globalConstants/color";
+import EnrollAsServiceProvider from "../screens/EnrollAsServiceProvider";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -40,54 +41,62 @@ const CustomTabBarButton: React.FC<CustomTabBarButtonProps> = ({ onPress }) => (
 );
 
 const AuthenticatedTabs = () => {
+  const user = useSelector(
+    (state: RootState) => state.auth.user
+  );
   return (
     <Tab.Navigator
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ color, size }: { color: string; size: number }) => {
-        let iconName = "home";
-  
-        if (route.name === "Home") {
-          iconName = "home-outline";
-        } else if (route.name === "Details") {
-          iconName = "list-outline";
-        } else if (route.name === "Profile") {
-          iconName = "person-outline";
-        } else if (route.name === "Cart") {
-          iconName = "cart-outline";
-        }
-  
-        return <Icon name={iconName} size={size} color={color} />;
-      },
-      tabBarActiveTintColor: COLORS.secondary,
-      tabBarInactiveTintColor: COLORS.ternary,
-      headerShown: false,
-      tabBarStyle: styles.tabBarStyle,
-      tabBarLabel: ({ focused }: { focused: boolean }) => (
-        <Text
-          style={{
-            fontWeight: focused ? "bold" : "normal",
-            fontSize: FontSize.small,
-            color: focused ? COLORS.secondary : COLORS.ternary,
-          }}
-        >
-          {route.name}
-        </Text>
-      ),
-    })}
-  >
-    <Tab.Screen name="Home" component={HomeScreen} />
-    <Tab.Screen name="Details" component={DetailsScreen} />
-    <Tab.Screen
-      name="Create"
-      component={CreateServiceScreen}
-      options={{
-        tabBarButton: (props) => <CustomTabBarButton {...props} />,
-      }}
-    />
-    <Tab.Screen name="Cart" component={SummaryScreen} />
-    <Tab.Screen name="Profile" component={ProfileScreen} />
-  </Tab.Navigator>
-  
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }: { color: string; size: number }) => {
+          let iconName = "home";
+
+          if (route.name === "Home") {
+            iconName = "home-outline";
+          } else if (route.name === "Details") {
+            iconName = "list-outline";
+          } else if (route.name === "Profile") {
+            iconName = "person-outline";
+          } else if (route.name === "Cart") {
+            iconName = "cart-outline";
+          }
+
+          return <Icon name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: COLORS.secondary,
+        tabBarInactiveTintColor: COLORS.ternary,
+        headerShown: false,
+        tabBarStyle: styles.tabBarStyle,
+        tabBarLabel: ({ focused }: { focused: boolean }) => (
+          <Text
+            style={{
+              fontWeight: focused ? "bold" : "normal",
+              fontSize: FontSize.small,
+              color: focused ? COLORS.secondary : COLORS.ternary,
+            }}
+          >
+            {route.name}
+          </Text>
+        ),
+      })}
+    >
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Details" component={DetailsScreen} />
+      {
+        user?.userRole === 'SERVICE_PROVIDER' ?
+
+          <Tab.Screen
+            name="Create"
+            component={CreateServiceScreen}
+            options={{
+              tabBarButton: (props) => <CustomTabBarButton {...props} />,
+            }}
+          />
+          : null
+      }
+      <Tab.Screen name="Cart" component={SummaryScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
+
   );
 };
 
@@ -120,6 +129,9 @@ const RootNavigator = () => {
                 component={ServiceDetailsScreen}
               />
               <Stack.Screen name="Reviews" component={ServiceReviewScreen} />
+              <Stack.Screen name="Settings" component={SettingsScreen} />
+              <Stack.Screen name="Enroll" component={EnrollAsServiceProvider} />
+
               <Stack.Screen
                 name="CreateServiceScreen"
                 component={CreateServiceScreen}
@@ -148,10 +160,10 @@ const RootNavigator = () => {
 const styles = StyleSheet.create({
   tabBarStyle: {
     backgroundColor: COLORS.primary,
-    height: Screen.height/10,
+    height: Screen.height / 10,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
-    justifyContent:'space-between'
+    justifyContent: 'space-between'
   },
   customButton: {
     backgroundColor: COLORS.secondary,

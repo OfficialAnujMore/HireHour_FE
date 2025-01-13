@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout, RootState } from '../redux/store';
+import { RootState } from '../redux/store';
 import CustomSearchBar from '../components/CustomSearchBar';
 import CustomCards from '../components/CustomCards';
 import CustomText from '../components/CustomText';
@@ -19,12 +19,9 @@ const HomeScreen = ({ navigation }: any) => {
 
   const fetchServiceProviders = async () => {
     const categories = ["Photography", "Guitar", "Art", "Music"];
-    console.log(categories);
-
     const response = await getServiceProviders(categories);
     setData(response.data);
-    setFilteredData(response.data); // Set both data and filteredData to the response initially
-    console.log('Service Providers:', response.data);
+    setFilteredData(response.data); 
   };
 
   useEffect(() => {

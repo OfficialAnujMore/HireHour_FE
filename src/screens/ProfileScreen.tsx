@@ -4,17 +4,27 @@ import { Screen, Spacing, FontSize } from '../utils/dimension'; // Assuming your
 import Icon from "react-native-vector-icons/Ionicons";
 import { COLORS } from '../utils/globalConstants/color';
 import { useNavigation } from '@react-navigation/native';
-import { logout } from "../redux/store";
+import { logout, RootState } from "../redux/store";
 import { useDispatch } from "react-redux";
+import { useSelector } from 'react-redux';
 const ProfileScreen: React.FC = () => {
+  const user = useSelector((state: RootState) => state.auth.user)
+  const { name, email, phoneNumber } = user;
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const menuItems = [
     { label: 'Transaction History', icon: 'receipt-outline' },
-    { label: 'Create Request', icon: 'add' },
+    {
+      label: 'Settings', icon: 'settings-outline', callback: () => {
+        navigation.navigate("Settings")
+      }
+    },
+    {
+      label: 'Enroll As Service Provider', icon: 'person-add', callback: () => {
+        navigation.navigate("Enroll")
+      }
+    },
     { label: 'Privacy Policy', icon: 'lock-closed-outline' },
-    { label: 'Settings', icon: 'settings-outline' },
-    { label: 'Enroll As Service Provider', icon: 'person-add' },
     { label: 'Log out', icon: 'power-outline', callback: () => dispatch(logout()) },
   ];
   return (
@@ -29,9 +39,9 @@ const ProfileScreen: React.FC = () => {
           source={{ uri: 'https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001882.png' }} // Replace with the actual avatar URL
           style={styles.avatar}
         />
-        <Text style={styles.name}>Robi</Text>
-        <Text style={styles.phone}>8967452734</Text>
-        <Text style={styles.email}>robi123@gmail.com</Text>
+        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.phone}>{phoneNumber}</Text>
+        <Text style={styles.email}>{email}</Text>
       </View>
 
       <View style={styles.menuContainer}>

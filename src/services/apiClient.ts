@@ -24,14 +24,10 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   async (config) => {
     const token = await AsyncStorage.getItem('token'); // Replace with token retrieval logic
-    console.log(token);
-    
     if (!unprotectedRoutes.some((route) => config.url?.includes(route)) && token) {
       // Only add token for protected routes
       config.headers.Authorization = `Bearer ${token}`;
     }
-    console.log(config.headers);
-    
     return config;
   },
   (error) => {
@@ -53,7 +49,6 @@ const apiRequest = async <T>(
   data?: Record<string, unknown>,
   config?: AxiosRequestConfig
 ): Promise<ApiResponse<T>> => {
-  console.log(url, config?.params);
   
   try {
     const response = await apiClient.request<ApiResponse<T>>({
