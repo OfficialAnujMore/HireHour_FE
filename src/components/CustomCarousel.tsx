@@ -12,34 +12,16 @@ import {
 import { Screen, Spacing } from "../utils/dimension";
 
 const { width } = Dimensions.get("window");
-
 interface CarouselItem {
-  id: string;
-  title: string;
-  image: string;
+  imageURL: string;
 }
 
-const data: CarouselItem[] = [
-  {
-    id: "1",
-    title: "Cleanups",
-    image: "https://dfstudio-d420.kxcdn.com/wordpress/wp-content/uploads/2019/06/digital_camera_photo-1080x675.jpg", // Replace with actual image URLs
-  },
-  {
-    id: "2",
-    title: "Facials",
-    image: "https://next-images.123rf.com/index/_next/image/?url=https://assets-cdn.123rf.com/index/static/assets/top-section-bg.jpeg&w=3840&q=75",
-  },
-  {
-    id: "3",
-    title: "Manicure",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfb1S0-6UMHLRUIZbblK36QTWA7qZOy6fIt-Aj_WSzsuDFGl4M-nZOOmxvFxAMNCeb1iA&usqp=CAU",
-  },
-];
+interface CustomCarouselProps {
+  data: CarouselItem[]; // Define data prop type
+}
 
-const CustomCarousel: React.FC = () => {
+const CustomCarousel: React.FC<CustomCarouselProps> = ({ data }) => {
   const [activeIndex, setActiveIndex] = useState(0);
-
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
     setActiveIndex(slideIndex);
@@ -55,8 +37,8 @@ const CustomCarousel: React.FC = () => {
         scrollEventThrottle={16}
       >
         {data.map((item) => (
-          <View key={item.id} style={styles.card}>
-            <Image source={{ uri: item.image }} style={styles.image} />
+          <View key={item.imageURL} style={styles.card}>
+            <Image source={{ uri: item.imageURL }} style={styles.image} />
           </View>
         ))}
       </ScrollView>
@@ -76,7 +58,6 @@ const CustomCarousel: React.FC = () => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'red',

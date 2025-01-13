@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../utils/globalConstants/color';
 import { FontSize, Screen, Spacing } from '../utils/dimension';
+import CustomInput from './CustomInput';
 
 interface CustomSearchBarProps {
     onSearch: (query: string) => void; // Function to handle search logic
@@ -17,19 +18,25 @@ const CustomSearchBar: React.FC<CustomSearchBarProps> = ({ onSearch }) => {
         }
     };
 
+    useEffect(() => {
+        handleSearch()
+    }, [query])
+
     return (
         <View style={styles.container}>
             <View style={styles.searchBar}>
-                <TextInput
+                <CustomInput
                     style={styles.input}
                     placeholder="Search..."
                     value={query}
                     onChangeText={setQuery}
-                    onSubmitEditing={handleSearch}
+                // onSubmitEditing={handleSearch}
                 />
-                <TouchableOpacity onPress={handleSearch}>
+                <Icon name="search-outline" size={25} color="#000" />
+
+                {/* <TouchableOpacity onPress={handleSearch}>
                     <Icon name="filter-outline" size={25} color="#000" />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
         </View>
     );
@@ -47,8 +54,9 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.white,
         borderRadius: Spacing.small,
         width: Screen.width,
+        height:Screen.height/15,
         paddingHorizontal: Spacing.medium,
-        paddingVertical:Spacing.small
+        paddingVertical: Spacing.small
     },
     input: {
         flex: 1,

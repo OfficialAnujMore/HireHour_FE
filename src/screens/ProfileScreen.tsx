@@ -4,14 +4,25 @@ import { Screen, Spacing, FontSize } from '../utils/dimension'; // Assuming your
 import Icon from "react-native-vector-icons/Ionicons";
 import { COLORS } from '../utils/globalConstants/color';
 import { useNavigation } from '@react-navigation/native';
+import { logout } from "../redux/store";
+import { useDispatch } from "react-redux";
 const ProfileScreen: React.FC = () => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
+  const menuItems = [
+    { label: 'Transaction History', icon: 'receipt-outline' },
+    { label: 'Create Request', icon: 'add' },
+    { label: 'Privacy Policy', icon: 'lock-closed-outline' },
+    { label: 'Settings', icon: 'settings-outline' },
+    { label: 'Enroll As Service Provider', icon: 'person-add' },
+    { label: 'Log out', icon: 'power-outline', callback: () => dispatch(logout()) },
+  ];
   return (
     <ScrollView style={styles.container}>
-      <TouchableOpacity  style={styles.editItemContainer} onPress={()=>{
+      <TouchableOpacity style={styles.editItemContainer} onPress={() => {
         navigation.navigate('EditProfile')
       }}>
-          <Icon name={'pencil'} size={FontSize.large} />
+        <Icon name={'pencil'} size={FontSize.large} />
       </TouchableOpacity>
       <View style={styles.profileContainer}>
         <Image
@@ -25,7 +36,9 @@ const ProfileScreen: React.FC = () => {
 
       <View style={styles.menuContainer}>
         {menuItems.map((item, index) => (
-          <TouchableOpacity key={index} style={styles.menuItem}>
+          <TouchableOpacity key={index} style={styles.menuItem} onPress={
+            item.callback
+          }>
             <View style={styles.menuIcon}>
               <Icon name={item.icon} size={FontSize.large} />
             </View>
@@ -37,14 +50,7 @@ const ProfileScreen: React.FC = () => {
   );
 };
 
-const menuItems = [
-  { label: 'Transaction History', icon: 'receipt-outline' },
-  { label: 'Create Request', icon: 'add' },
-  { label: 'Privacy Policy', icon: 'lock-closed-outline' },
-  { label: 'Settings', icon: 'settings-outline' },
-  { label: 'Enroll As Service Provider', icon: 'person-add' },
-  { label: 'Log out', icon: 'power-outline' },
-];
+
 
 const styles = StyleSheet.create({
   container: {
@@ -110,10 +116,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   editItemContainer: {
-    flexDirection: 'row', 
+    flexDirection: 'row',
     justifyContent: 'flex-end',
-    paddingVertical:Spacing.small,
-    paddingHorizontal: Spacing.medium, 
+    paddingVertical: Spacing.small,
+    paddingHorizontal: Spacing.medium,
   },
 });
 

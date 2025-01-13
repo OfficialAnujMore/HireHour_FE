@@ -13,7 +13,7 @@ export interface ApiResponse<T> {
 const unprotectedRoutes = ['/public', '/auth/login', '/auth/register','api/v1/user/loginUser'];
 
 const apiClient = axios.create({
-  baseURL: API_BASE_URL, // Replace with your API base URL
+  baseURL: 'http://192.168.1.148:3000/', // Replace with your API base URL
   timeout: 10000, // Timeout after 10 seconds
   headers: {
     'Content-Type': 'application/json',
@@ -24,11 +24,14 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   async (config) => {
     const token = await AsyncStorage.getItem('token'); // Replace with token retrieval logic
-
+    console.log(token);
+    
     if (!unprotectedRoutes.some((route) => config.url?.includes(route)) && token) {
       // Only add token for protected routes
       config.headers.Authorization = `Bearer ${token}`;
     }
+    console.log(config.headers);
+    
     return config;
   },
   (error) => {
@@ -50,6 +53,8 @@ const apiRequest = async <T>(
   data?: Record<string, unknown>,
   config?: AxiosRequestConfig
 ): Promise<ApiResponse<T>> => {
+  console.log(url, config?.params);
+  
   try {
     const response = await apiClient.request<ApiResponse<T>>({
       method,
@@ -66,7 +71,12 @@ const apiRequest = async <T>(
 export const get = async <T>(
   url: string,
   config?: AxiosRequestConfig
-): Promise<ApiResponse<T>> => apiRequest<T>('GET', url, undefined, config);
+): Promise<ApiResponse<T>> => apiRequest<T>('GET', url, undefined, {
+  ...config,
+  params: {
+    ...config?.params,
+  }
+});
 
 export const post = async <T>(
   url: string,

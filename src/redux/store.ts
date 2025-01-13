@@ -8,12 +8,14 @@ import snackbarReducer from './snackbarSlice';
 interface AuthState {
   isAuthenticated: boolean;
   user: User | null;
+  token: string | null; // Add token field
 }
 
 // Initial State
 const initialState: AuthState = {
   isAuthenticated: false,
   user: null,
+  token: null, // Initially set to null
 };
 
 // Create Auth Slice
@@ -24,10 +26,12 @@ const authSlice = createSlice({
     login: (state, action: PayloadAction<{ user: User }>) => {
       state.isAuthenticated = true;
       state.user = action.payload.user;
+      state.token = action.payload.user.token; // Store token in state
     },
     logout: (state) => {
       state.isAuthenticated = false;
       state.user = null;
+      state.token = null;
     },
   },
 });

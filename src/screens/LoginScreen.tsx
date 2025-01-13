@@ -13,6 +13,7 @@ import { loginUser } from '../services/userService';
 import { showSnackbar } from '../redux/snackbarSlice';
 import { EMAIL_REGEX } from '../utils/regex';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = () => {
     const dispatch = useDispatch();
@@ -32,6 +33,7 @@ const LoginScreen = () => {
         try {
             const response = await loginUser(user);
             if (response && response.data) {
+                await AsyncStorage.setItem('token', response.data.token);
                 dispatch(login({ user: response.data }));
             }
         } catch (error: any) {

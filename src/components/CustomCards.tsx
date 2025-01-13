@@ -10,32 +10,32 @@ interface CustomCardsProps {
     onSearch: (query: string) => void; // Function to handle search logic
 }
 interface CardItem {
-    id: string;
-    title: string;
-    description: string;
-    location: string;
-    status: string;
-    offer: string | null;
-    rating: number;
-    time: string;
-    distance: string;
-    image: string;
-};
-const CustomCards: React.FC<{ item: CardItem }> = ({ item }) => {
+    id: string;               // Service ID
+    title: string;            // Service title
+    description: string;      // Service description
+    location: string;         // Assuming location data might come from `phoneNumber` or another field
+    status: string;           // Can be "Active", "Inactive", etc. (could come from `isDeleted` or `isDisabled`)
+    offer: string | null;     // Assuming this could be any offers available, null if none
+    rating: number;           // Assuming you might want to include a rating (currently not in the data)
+    time: string;             // The time of the service or availability (could be derived from `schedule`)
+    distance: string;         // Could be computed or stored elsewhere (currently not in the data)
+    image: string;            // Could come from `servicePreview`
+}
+const CustomCards: React.FC<{ item: any }> = ({ item }) => {
     const navigation = useNavigation()
     return (
         <TouchableOpacity style={styles.container} onPress={() => {
             navigation.navigate("ServiceDetails", item)
         }}>
-            <Image source={{ uri: item.image }} style={styles.image} />
+            <Image source={{ uri: item.profileImageURL??'' }} style={styles.image} />
             <View style={styles.content}>
                 <View style={styles.header}>
                     <CustomText label={item.title} style={styles.textStyle} />
-                            <CustomRatingInfo rating={item.rating}/>
-
+                    <CustomRatingInfo rating={'4.5'} />
                 </View>
                 <CustomText label={item.description} style={styles.textStyle} />
-                <CustomText label={item.location} style={styles.textStyle} />
+                <CustomText label={item.category} style={styles.textStyle} />
+                <CustomText label={item.chargesPerHour} style={styles.textStyle} />
             </View>
         </TouchableOpacity>
     );

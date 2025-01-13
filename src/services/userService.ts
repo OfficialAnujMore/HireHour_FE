@@ -23,3 +23,25 @@ export const registerUser = async (user: any): Promise<ApiResponse<User>> => {
     throw error; // It's important to throw the error so handleLogin can catch it
   }
 };
+
+export const getServiceProviders = async (categories?: string[]): Promise<ApiResponse<User[]>> => {
+  try {
+    console.log('Fetching service providers');
+    
+    // If categories exist, serialize the array into a JSON string before passing as query params
+    const serializedCategories = categories ? JSON.stringify(categories) : undefined;
+    
+    // Return the response from the GET request with serialized categories as query params
+    const response = await get<User[]>('api/v1/user/getServiceProviders', {
+      params: {
+        category: serializedCategories,  // Send serialized categories as a query param
+      }
+    });
+    console.log('Response:', response);
+    return response;
+  } catch (error) {
+    console.log('Error fetching service providers:', error);
+    throw error;
+  }
+};
+

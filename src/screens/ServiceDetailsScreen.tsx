@@ -29,7 +29,7 @@ interface ServiceDetails {
 const ServiceDetailsScreen = (props: ServiceDetails) => {
   const navigation = useNavigation();
   const item = props.route.params
-  console.log(item);
+  console.log('Service details data \n',item.schedule);
 
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
@@ -42,15 +42,20 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <CustomCarouselSlider />
+        <CustomCarouselSlider data={item.servicePreview} />
         <View style={styles.detailsContainer}>
           <View style={styles.header}>
             <CustomText label={item.title} style={styles.textStyle} />
-            <CustomRatingInfo rating={item.rating}/>
+            <CustomRatingInfo rating={item.rating} />
           </View>
           <CustomText label={item.description} style={styles.textStyle} />
         </View>
-        <CustomSchedule />
+        <CustomSchedule dateInfo={item.schedule
+
+
+
+
+        }/>
       </ScrollView>
 
     </View>

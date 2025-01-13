@@ -14,7 +14,7 @@ export const WORD_DIR  ={
     title:"Title",
     description:"Description",
     costPerHour:"Cost per hour",
-    selectDate:"Select Date",
+selectDate:"Select Date",
     selectTimeSlots:'Select Time Slots',
     createService:"Create Service",
 }
