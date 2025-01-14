@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     View,
-    Text,
     TouchableOpacity,
-    TextInput,
     FlatList,
     StyleSheet,
     Alert,
@@ -16,6 +14,9 @@ import CustomInput from "../components/CustomInput";
 import { WORD_DIR } from "../utils/local/en";
 import { COLORS } from "../utils/globalConstants/color";
 import CustomButton from "../components/CustomButton";
+import { RootState } from "redux/store";
+import { useSelector } from "react-redux";
+import { addService } from "../services/userService";
 
 interface TimeSlot {
     id: string;
@@ -32,120 +33,173 @@ interface DateInfo {
 }
 
 const generateDates = (): DateInfo[] => {
-    const dates: DateInfo[] = [];
-    const timeSlots: TimeSlot[] = [
-        { id: "1", time: "12:00 AM", available: true },
-        { id: "2", time: "01:00 AM", available: true },
-        { id: "3", time: "02:00 AM", available: true },
-        { id: "4", time: "03:00 AM", available: true },
-        { id: "5", time: "04:00 AM", available: true },
-        { id: "6", time: "05:00 AM", available: true },
-        { id: "7", time: "06:00 AM", available: true },
-        { id: "8", time: "07:00 AM", available: true },
-        { id: "9", time: "08:00 AM", available: true },
-        { id: "10", time: "09:00 AM", available: true },
-        { id: "11", time: "10:00 AM", available: true },
-        { id: "12", time: "11:00 AM", available: true },
-        { id: "13", time: "12:00 PM", available: true },
-        { id: "14", time: "01:00 PM", available: true },
-        { id: "15", time: "02:00 PM", available: true },
-        { id: "16", time: "03:00 PM", available: true },
-        { id: "17", time: "04:00 PM", available: true },
-        { id: "18", time: "05:00 PM", available: true },
-        { id: "19", time: "06:00 PM", available: true },
-        { id: "20", time: "07:00 PM", available: true },
-        { id: "21", time: "08:00 PM", available: true },
-        { id: "22", time: "09:00 PM", available: true },
-        { id: "23", time: "10:00 PM", available: true },
-        { id: "24", time: "11:00 PM", available: true }
-      ]
-      
-    for (let i = 0; i <= 10; i++) {
+    const timeSlots: TimeSlot[] = Array.from({ length: 24 }, (_, i) => ({
+        id: `${i + 1}`,
+        time: moment().startOf("day").add(i, "hours").format("hh:00 A"),
+        available: false,
+    }));
+
+    return Array.from({ length: 10 }, (_, i) => {
         const date = moment().add(i, "days");
-        const dateInfo: DateInfo = {
+        return {
             id: `${i}`,
             day: date.format("ddd"),
             date: date.format("DD"),
             month: date.format("MMM"),
-            timeSlots: [...timeSlots], // Copy all available time slots
+            timeSlots: [...timeSlots],
         };
-        dates.push(dateInfo);
-    }
-
-    return dates;
+    });
 };
 
 const CreateServiceScreen = () => {
-    const [dates, setDates] = useState<DateInfo[]>(generateDates());
-    const [selectedDate, setSelectedDate] = useState<DateInfo | null>(null);
-    const [selectedTimeSlots, setSelectedTimeSlots] = useState<TimeSlot[]>([]);
+    const [dates, setDates] = useState<DateInfo[]>([]);
+    const [selectedDateId, setSelectedDateId] = useState<string | null>(null);
     const [serviceDetails, setServiceDetails] = useState({
         title: "",
         description: "",
         costPerHour: "",
     });
 
-    const handleServiceCreation = () => {
+    const user = useSelector((state: RootState) => state.auth.user);
+
+    // Initialize dates only once
+    useEffect(() => {
+        setDates(generateDates());
+    }, []);
+
+    useEffect(() => {
+        console.log("Dates output array=========>", dates);
+    }, [dates])
+
+    const selectedDate = dates.find((date) => date.id === selectedDateId);
+
+    const handleServiceCreation = async () => {
         if (!serviceDetails.title || !serviceDetails.description || !serviceDetails.costPerHour) {
             Alert.alert("Error", "Please fill in all service details.");
             return;
         }
-        if (!selectedDate || selectedTimeSlots.length === 0) {
-            Alert.alert("Error", "Please select a date and time slots.");
+        if (!selectedDate || selectedDate.timeSlots.every((slot) => slot.available)) {
+            Alert.alert("Error", "Please select a date and at least one available time slot.");
             return;
         }
 
-        Alert.alert(
-            "Success",
-            `Service created on ${selectedDate.day}, ${selectedDate.date} at ${selectedTimeSlots.map((slot) => slot.time).join(", ")}.`
-        );
+        const selectedSlots = selectedDate.timeSlots.filter((slot) => slot.available);
+        const finalSchedule = dates.map((item) => {
+            const filteredTimeSlots = item.timeSlots.filter((slot) => slot.available);
+
+            return {
+                id: item.id,
+                day: item.day,
+                date: item.date,
+                month: item.month,
+                timeSlots: filteredTimeSlots,
+            };
+        }).filter((item) => item.timeSlots.length > 0); // Filter out dates with no available slots
+
+        console.log(finalSchedule);
+
+
+
+
+        try {
+            // Prepare the data for the API call
+            const data = {
+                id: user?.id, // Replace with the actual user ID
+                userRole: "SERVICE_PROVIDER",
+                serviceData: {
+                    title: serviceDetails.title,
+                    description: serviceDetails.description,
+                    chargesPerHour: serviceDetails.costPerHour,
+                    userId: user?.id, // Replace with the actual user ID
+                    category: "Art", // You can dynamically assign this based on your application
+                    servicePreview: [
+                        {
+                            imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWMrZ357DGddYlOKJJpLwZ6nPsEJdH3RYFOWGoX00-6UumyVwUYQNAZBEBlU23tngDdqU&usqp=CAU"
+                        },
+                        {
+                            imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDQjNpHNzb6bZBzjYnv65_tjUwn-fdIvs_-eWmjzHcAftNsBXdaOLb-9Mb8SsmQK9WRb0&usqp=CAU"
+                        },
+                        {
+                            imageURL: "https://static.vecteezy.com/system/resources/thumbnails/030/633/119/small_2x/an-artistic-composition-featuring-an-acoustic-guitar-amidst-nature-with-space-for-text-with-a-textured-background-of-leaves-or-tree-bark-ai-generated-photo.jpg"
+                        }
+                    ],
+                    schedule: finalSchedule.map((item) => {
+                        return {
+                            day: item.day,
+                            month: item.month,
+                            date: item.date,
+                            fullDate: "2025-01-16T00:00:00.000Z", // Adjust this based on the actual year
+                            timeSlots: item.timeSlots.map((slot) => ({
+                                id: slot.id,
+                                time: slot.time,
+                                available: slot.available
+                            }))
+                        };
+                    })
+                }
+            };
+            console.log('Datatatatstasasaasaata', data);
+            const response = await addService(data); // Assuming the addService function is available
+            console.log('REspnse', response);
+
+            Alert.alert("Success", `Service created on ${selectedDate.day}, ${selectedDate.date} at ${selectedSlots.map(slot => slot.time).join(", ")}.`);
+        } catch (error) {
+            console.log("Error creating service:", error);
+            Alert.alert("Error", "There was an issue creating the service.");
+        }
     };
 
-    const isPastTime = (time: string) => {
-        const currentTime = moment();
-        const timeMoment = moment(time, "h:mm A");
-        return currentTime.isAfter(timeMoment);
+
+    const isPastTime = (date: DateInfo, time: string): boolean => {
+        const currentDateTime = moment();
+        const slotDateTime = moment(
+            `${date.date}-${date.month}-${moment().year()} ${time}`,
+            "DD-MMM-YYYY hh:mm A"
+        );
+        return currentDateTime.isAfter(slotDateTime);
     };
 
     const handleDateSelect = (id: string) => {
-        setSelectedDate(dates.find((date) => date.id === id) || null);
-        setSelectedTimeSlots([]); // Reset time slots when a new date is selected
+        setSelectedDateId(id);
     };
 
-    const handleTimeSelect = (timeSlot: TimeSlot) => {
-        if (selectedTimeSlots.some((slot) => slot.id === timeSlot.id)) {
-            setSelectedTimeSlots(selectedTimeSlots.filter((slot) => slot.id !== timeSlot.id));
-        } else {
-            setSelectedTimeSlots([...selectedTimeSlots, timeSlot]);
-        }
+    const toggleTimeSlot = (timeSlot: TimeSlot) => {
+        if (!selectedDate) return;
+        setDates((prevDates) =>
+            prevDates.map((date) =>
+                date.id === selectedDate.id
+                    ? {
+                        ...date,
+                        timeSlots: date.timeSlots.map((slot) =>
+                            slot.id === timeSlot.id
+                                ? { ...slot, available: !slot.available }
+                                : slot
+                        ),
+                    }
+                    : date
+            )
+        );
     };
 
     return (
         <ScrollView style={styles.container}>
             {/* Service Details */}
-            <CustomText
-                label={WORD_DIR.serviceDetails}
-                style={styles.heading}
-            />
+            <CustomText label={WORD_DIR.serviceDetails} style={styles.heading} />
             <CustomInput
                 label={WORD_DIR.title}
                 placeholder={WORD_DIR.title}
                 onValueChange={(value) => setServiceDetails((prev) => ({ ...prev, title: value }))}
-
             />
             <CustomInput
                 label={WORD_DIR.description}
                 placeholder={WORD_DIR.description}
                 onValueChange={(value) => setServiceDetails((prev) => ({ ...prev, description: value }))}
-
             />
-
             <CustomInput
                 label={WORD_DIR.costPerHour}
                 placeholder={WORD_DIR.costPerHour}
                 keyboardType="numeric"
                 onValueChange={(value) => setServiceDetails((prev) => ({ ...prev, costPerHour: value }))}
-
             />
 
             {/* Date Selection */}
@@ -159,11 +213,13 @@ const CreateServiceScreen = () => {
                         onPress={() => handleDateSelect(item.id)}
                         style={[
                             styles.dateButton,
-                            selectedDate?.id === item.id && styles.selectedButton,
+                            selectedDateId === item.id && styles.selectedButton,
                         ]}
                     >
                         <CustomText
-                            style={selectedDate?.id === item.id ? styles.selectedDateText : styles.dateText}
+                            style={
+                                selectedDateId === item.id ? styles.selectedDateText : styles.dateText
+                            }
                             label={`${item.day}, ${item.date} ${item.month}`}
                         />
                     </TouchableOpacity>
@@ -173,34 +229,25 @@ const CreateServiceScreen = () => {
             {/* Time Slot Selection */}
             {selectedDate && (
                 <>
-                    <CustomText
-                        style={styles.heading}
-                        label={WORD_DIR.selectTimeSlots}
-                    />
+                    <CustomText style={styles.heading} label={WORD_DIR.selectTimeSlots} />
                     <FlatList
                         data={selectedDate.timeSlots}
                         numColumns={3}
                         keyExtractor={(item) => item.id}
                         renderItem={({ item }) => (
                             <TouchableOpacity
-                                onPress={() => handleTimeSelect(item)}
+                                onPress={() => toggleTimeSlot(item)}
                                 style={[
                                     styles.timeSlotButton,
-                                    selectedTimeSlots.some((slot) => slot.id === item.id)
-                                        ? styles.selectedButton
-                                        : {},
-                                    !item.available ? styles.unavailableButton : {},
-                                    isPastTime(item.time) ? styles.pastTimeButton : {},
+                                    item.available && styles.selectedButton,
+                                    isPastTime(selectedDate, item.time) && styles.pastTimeButton,
                                 ]}
-                                disabled={!item.available || isPastTime(item.time)}
+                                disabled={isPastTime(selectedDate, item.time)}
                             >
                                 <CustomText
                                     style={[
                                         styles.timeSlotText,
-                                        selectedTimeSlots.some((slot) => slot.id === item.id)
-                                            ? styles.selectedDateText
-                                            : {},
-                                        !item.available ? styles.disabledText : {},
+                                        item.available && styles.selectedDateText,
                                     ]}
                                     label={item.time}
                                 />
@@ -211,26 +258,17 @@ const CreateServiceScreen = () => {
             )}
 
             {/* Submit Button */}
-            <CustomButton
-                onPress={handleServiceCreation}
-                label={WORD_DIR.createService}
-            />
-            {/* <TouchableOpacity
-                onPress={handleServiceCreation}
-                style={styles.submitButton}
-            >
-                <Text style={styles.submitButtonText}>Create Service</Text>
-            </TouchableOpacity> */}
+            <CustomButton onPress={handleServiceCreation} label={WORD_DIR.createService} />
         </ScrollView>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: Spacing.medium,
-        marginBottom: Spacing.large,
-        backgroundColor:COLORS.white
+        backgroundColor: COLORS.white,
     },
     heading: {
         fontSize: FontSize.large,
@@ -255,29 +293,19 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.black,
     },
     timeSlotButton: {
-        display: 'flex',
         flex: 1,
         backgroundColor: COLORS.white,
-        borderColor: COLORS.grey,
-        padding: Spacing.small,
         margin: Spacing.small,
         borderRadius: Spacing.small,
         borderWidth: 1,
-        justifyContent: "center", // Vertical centering
-        alignItems: "center",    // Horizontal centering
-    },
-    
-    timeSlotText: {
-        fontSize: FontSize.small,
-    },
-    unavailableButton: {
-        backgroundColor: COLORS.lightGrey,
+        padding: Spacing.small,
+        alignItems: "center",
     },
     pastTimeButton: {
-        backgroundColor: COLORS.lightGrey,
+        backgroundColor: COLORS.grey,
     },
-    disabledText: {
-        color: "gray",
+    timeSlotText: {
+        fontSize: FontSize.medium,
     },
 });
 
