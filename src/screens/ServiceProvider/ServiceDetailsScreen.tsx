@@ -1,18 +1,18 @@
 import React from 'react';
 import { View, Text, Button, Alert, FlatList, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';;
 import { useDispatch, useSelector } from 'react-redux';
-import { logout, RootState } from '../redux/store';
-import CustomSearchBar from '../components/CustomSearchBar';
-import CustomCards from '../components/CustomCards';
-import CustomText from '../components/CustomText';
-import { FontSize, Screen, Spacing } from '../utils/dimension';
-import { COLORS } from '../utils/globalConstants/color';
-import CustomSchedule from '../components/CustomSchedule';
-import CustomCarouselSlider from '../components/CustomCarousel';
+import { logout, RootState } from '../../redux/store';
+import CustomSearchBar from '../../components/CustomSearchBar';
+import CustomCards from '../../components/CustomCards';
+import CustomText from '../../components/CustomText';
+import { FontSize, Screen, Spacing } from '../../utils/dimension';
+import { COLORS } from '../../utils/globalConstants/color';
+import CustomSchedule from '../../components/CustomSchedule';
+import CustomCarouselSlider from '../../components/CustomCarousel';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { WORD_DIR } from 'utils/local/en';
-import { CustomRatingInfo } from '../components/CustomRatingInfo';
+import { CustomRatingInfo } from '../../components/CustomRatingInfo';
 interface ServiceDetails {
   id: string;
   title: string;

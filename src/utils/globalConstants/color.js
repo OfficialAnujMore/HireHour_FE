@@ -10,4 +10,5 @@ export const COLORS = {
     primary:'#FFFFFF',
     secondary:'#000000',
     ternary:'#808080',
+    green:"#008000"
 }

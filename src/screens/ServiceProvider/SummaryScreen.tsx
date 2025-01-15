@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
-import { Screen, Spacing, FontSize } from '../utils/dimension';
+import { Screen, Spacing, FontSize } from '../../utils/dimension';
 
 const SummaryScreen: React.FC = () => {
   return (

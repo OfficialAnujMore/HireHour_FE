@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   TextInput,
   Text,
@@ -11,23 +11,20 @@ import {
 } from 'react-native';
 import { FontSize, Screen, Spacing } from '../utils/dimension';
 import CustomText from './CustomText';
-import Icon from 'react-native-vector-icons/Ionicons'; // Import the Icon component
+import Icon from 'react-native-vector-icons/Ionicons'; 
 import { COLORS } from '../utils/globalConstants/color';
 
 type CustomInputProps = TextInputProps & {
   label?: string;
-  errorMessage?: string; // Accept external error message
+  errorMessage?: string;
   onValueChange?: (value: string) => void;
   keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'decimal-pad' | 'ascii-capable';
   secureTextEntry?: boolean;
-  disabled?: boolean; // Add disabled prop
+  disabled?: boolean;
 };
 
 const formatPhoneNumber = (value: string) => {
-  // Remove any non-digit characters
   const cleanedValue = value.replace(/\D/g, '');
-
-  // Format the phone number as +1 XXX-XXX-XXXX or XXX-XXX-XXXX
   if (cleanedValue.length < 4) {
     return cleanedValue;
   }
@@ -39,48 +36,42 @@ const formatPhoneNumber = (value: string) => {
 
 const CustomInput: React.FC<CustomInputProps> = ({
   label,
-  errorMessage, // Accept error message from parent
+  errorMessage,
   onValueChange,
   keyboardType = 'default',
   secureTextEntry = false,
-  disabled = false, // Default to false, allowing the field to be editable
+  disabled = false,
   ...textInputProps
 }) => {
   const [value, setValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(!secureTextEntry); // Toggle for password visibility
+  const [isPasswordVisible, setIsPasswordVisible] = useState(!secureTextEntry);
 
-  const handleFocus = () => {
-    if (!disabled) {
-      setIsFocused(true);
-    }
-  };
+  const handleFocus = useCallback(() => {
+    if (!disabled) setIsFocused(true);
+  }, [disabled]);
 
-  const handleBlur = () => {
-    if (!disabled) {
-      setIsFocused(false);
-    }
-  };
+  const handleBlur = useCallback(() => {
+    if (!disabled) setIsFocused(false);
+  }, [disabled]);
 
-  const handleChangeText = (text: string) => {
-    if (!disabled) {
-      // Format phone number before updating the state
-      const formattedText = keyboardType === 'phone-pad' ? formatPhoneNumber(text) : text;
-      setValue(formattedText);
-      if (onValueChange) {
-        onValueChange(formattedText);
+  const handleChangeText = useCallback(
+    (text: string) => {
+      if (!disabled) {
+        const formattedText = keyboardType === 'phone-pad' ? formatPhoneNumber(text) : text;
+        setValue(formattedText);
+        if (onValueChange) onValueChange(formattedText);
       }
-    }
-  };
+    },
+    [disabled, keyboardType, onValueChange]
+  );
 
-  const togglePasswordVisibility = () => {
-    if (!disabled) {
-      setIsPasswordVisible(!isPasswordVisible);
-    }
-  };
+  const togglePasswordVisibility = useCallback(() => {
+    if (!disabled) setIsPasswordVisible((prev) => !prev);
+  }, [disabled]);
 
   const dismissKeyboard = () => {
-    Keyboard.dismiss(); // Dismiss the keyboard when touching outside
+    Keyboard.dismiss();
   };
 
   return (
@@ -97,7 +88,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
                   : isFocused
                   ? COLORS.black
                   : COLORS.grey,
-                backgroundColor: disabled ? COLORS.lightGrey : COLORS.white, // Optional: Gray background when disabled
+                backgroundColor: disabled ? COLORS.lightGrey : COLORS.white,
               },
             ]}
             onFocus={handleFocus}
@@ -105,8 +96,8 @@ const CustomInput: React.FC<CustomInputProps> = ({
             onChangeText={handleChangeText}
             value={value}
             keyboardType={keyboardType}
-            secureTextEntry={!isPasswordVisible && secureTextEntry} // Toggle visibility for password
-            editable={!disabled} // Disable editing when disabled prop is true
+            secureTextEntry={!isPasswordVisible && secureTextEntry}
+            editable={!disabled}
             {...textInputProps}
           />
           {secureTextEntry && !disabled && (

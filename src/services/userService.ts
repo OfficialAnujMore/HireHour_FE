@@ -14,9 +14,9 @@ export const loginUser = async (user: any): Promise<ApiResponse<User>> => {
 
 export const registerUser = async (user: any): Promise<ApiResponse<User>> => {
   try {
+    
     // Return the response from the POST request
     const response = await post<User>('api/v1/user/registerUser', user);
-    console.log(response);
 
     return response;  // Return the response here
   } catch (error) {
@@ -26,7 +26,6 @@ export const registerUser = async (user: any): Promise<ApiResponse<User>> => {
 
 export const getServiceProviders = async (categories?: string[]): Promise<ApiResponse<User[]>> => {
   try {
-    console.log('Fetching service providers');
 
     // If categories exist, serialize the array into a JSON string before passing as query params
     const serializedCategories = categories ? JSON.stringify(categories) : undefined;
@@ -37,10 +36,8 @@ export const getServiceProviders = async (categories?: string[]): Promise<ApiRes
         category: serializedCategories,  // Send serialized categories as a query param
       }
     });
-    console.log('Response:', response);
     return response;
   } catch (error) {
-    console.log('Error fetching service providers:', error);
     throw error;
   }
 };
@@ -49,10 +46,8 @@ export const addService = async (data: any): Promise<ApiResponse<User[]>> => {
   try {
     const response = await post<User[]>('api/v1/user/addService',data
     );
-    console.log('Response:', response);
     return response;
   } catch (error) {
-    console.log('Error fetching service providers:', error);
     throw error;
   }
 }

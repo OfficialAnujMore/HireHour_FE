@@ -1,27 +1,30 @@
-
 import React from 'react';
-import { View, Text, Button, Alert, StyleSheet, TouchableOpacity } from 'react-native';
-import { FontSize, Spacing } from '../utils/dimension';
-import { COLORS } from '../utils/globalConstants/color';
+import { TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CustomText from './CustomText';
 import { useNavigation } from '@react-navigation/native';
+import { FontSize, Spacing } from '../utils/dimension';
+import { COLORS } from '../utils/globalConstants/color';
+
 export const CustomRatingInfo = ({ rating }: { rating: string }) => {
   const navigation = useNavigation();
-  return (
-    <TouchableOpacity style={styles.ratingsContainer} onPress={() => {
-      navigation.navigate("Reviews")
-    }}>
-      <Icon name="star" size={FontSize.medium} color={COLORS.yellow} />
-      <CustomText label={` ${rating}`} style={[styles.ratingStyle]} />
-    </TouchableOpacity>
 
-  )
-}
+  // Handler to navigate to the Reviews screen
+  const handleNavigate = () => {
+    navigation.navigate('Reviews');
+  };
+
+  return (
+    <TouchableOpacity style={styles.ratingsContainer} onPress={handleNavigate}>
+      <Icon name="star" size={FontSize.medium} color={COLORS.yellow} />
+      <CustomText label={` ${rating}`} style={styles.ratingStyle} />
+    </TouchableOpacity>
+  );
+};
 
 const styles = StyleSheet.create({
   ratingsContainer: {
-    backgroundColor: "green",
+    backgroundColor: COLORS.green, // You may want to use a constant for green color
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -32,5 +35,4 @@ const styles = StyleSheet.create({
     fontSize: FontSize.small,
     color: COLORS.white,
   },
-
-})
+});

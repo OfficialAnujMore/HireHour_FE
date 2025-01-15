@@ -5,8 +5,8 @@ import {
   Text,
   Switch
 } from 'react-native';
-import { Screen, Spacing } from '../utils/dimension';
-import { COLORS } from '../utils/globalConstants/color';
+import { Screen, Spacing } from '../../utils/dimension';
+import { COLORS } from '../../utils/globalConstants/color';
 
 const EnrollAsServiceProvider: React.FC = () => {
 const [isServiceProviderEnrolled, setIsServiceProviderEnrolled] = useState(false);

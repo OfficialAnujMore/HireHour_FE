@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -12,20 +12,32 @@ import {
 import { Screen, Spacing } from "../utils/dimension";
 
 const { width } = Dimensions.get("window");
+
 interface CarouselItem {
   imageURL: string;
 }
 
 interface CustomCarouselProps {
-  data: CarouselItem[]; // Define data prop type
+  data: CarouselItem[];
 }
 
 const CustomCarousel: React.FC<CustomCarouselProps> = ({ data }) => {
   const [activeIndex, setActiveIndex] = useState(0);
+
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
     setActiveIndex(slideIndex);
   };
+
+  // Memoize the indicator styles to avoid recalculating them on every render
+  const indicatorStyles = useMemo(
+    () =>
+      data.map((_, index) => [
+        styles.indicator,
+        activeIndex === index && styles.activeIndicator,
+      ]),
+    [activeIndex, data.length]
+  );
 
   return (
     <View>
@@ -45,37 +57,24 @@ const CustomCarousel: React.FC<CustomCarouselProps> = ({ data }) => {
 
       {/* Slider Indicator */}
       <View style={styles.indicatorContainer}>
-        {data.map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.indicator,
-              activeIndex === index && styles.activeIndicator,
-            ]}
-          />
+        {indicatorStyles.map((style, index) => (
+          <View key={index} style={style} />
         ))}
       </View>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'red',
-  },
   card: {
-    width: Screen.width, // Use the full screen width
+    width: Screen.width,
     height: Screen.height / 3,
     overflow: "hidden",
   },
   image: {
-    width: "100%", // Ensure the image takes up the full width of the card
+    width: "100%",
     height: "100%",
     resizeMode: "cover",
-  },
-  title: {
-    color: "#FFF",
-    fontSize: 18,
-    fontWeight: "bold",
   },
   indicatorContainer: {
     flexDirection: "row",
@@ -95,6 +94,5 @@ const styles = StyleSheet.create({
     width: 16,
   },
 });
-
 
 export default CustomCarousel;

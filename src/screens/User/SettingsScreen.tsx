@@ -5,9 +5,9 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { Screen, Spacing, FontSize } from "../utils/dimension"; // Use your dimensions file
+import { Screen, Spacing, FontSize } from "../../utils/dimension"; // Use your dimensions file
 import { useDispatch } from "react-redux";
-import { logout } from "../redux/store";
+import { logout } from "../../redux/store";
 
 interface Option {
   title: string;

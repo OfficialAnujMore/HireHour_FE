@@ -8,21 +8,21 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 
 // Screens
-import SplashScreen from "../screens/SplashScreen";
-import HomeScreen from "../screens/HomeScreen";
-import LoginScreen from "../screens/LoginScreen";
-import RegisterScreen from "../screens/RegisterScreen";
-import ServiceDetailsScreen from "../screens/ServiceDetailsScreen";
-import ServiceReviewScreen from "../screens/ServiceReviewsScreen";
-import CreateServiceScreen from "../screens/CreateServiceScreen";
-import ProfileScreen from "../screens/ProfileScreen";
-import SettingsScreen from "../screens/SettingsScreen";
+import SplashScreen from "../screens/User/SplashScreen";
+import HomeScreen from "../screens/User/HomeScreen";
+import LoginScreen from "../screens/User/LoginScreen";
+import RegisterScreen from "../screens/User/RegisterScreen";
+import ServiceDetailsScreen from "../screens/ServiceProvider/ServiceDetailsScreen";
+import ServiceReviewScreen from "../screens/ServiceProvider/ServiceReviewsScreen";
+import CreateServiceScreen from "../screens/ServiceProvider/CreateServiceScreen";
+import ProfileScreen from "../screens/User/ProfileScreen";
+import SettingsScreen from "../screens/User/SettingsScreen";
 import DetailsScreen from "../screens/DetailsScreen";
-import EditProfileScreen from "../screens/EditProfileScreen";
-import SummaryScreen from "../screens/SummaryScreen";
+import EditProfileScreen from "../screens/User/EditProfileScreen";
+import SummaryScreen from "../screens/ServiceProvider/SummaryScreen";
 import { FontSize, Screen } from "../utils/dimension";
 import { COLORS } from "../utils/globalConstants/color";
-import EnrollAsServiceProvider from "../screens/EnrollAsServiceProvider";
+import EnrollAsServiceProvider from "../screens/ServiceProvider/EnrollAsServiceProvider";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();

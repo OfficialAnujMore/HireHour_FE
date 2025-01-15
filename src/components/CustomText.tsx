@@ -1,49 +1,37 @@
-import React, { useState, useRef, ReactEventHandler } from 'react';
-import {
-    Text,
-    View,
-    StyleSheet,
-    TouchableOpacity,
-    TextStyle,
-    StyleProp,
-} from 'react-native';
-import { FontSize, Screen, Spacing } from '../utils/dimension';
+import React from 'react';
+import { Text, View, StyleSheet, TouchableOpacity, TextStyle, StyleProp } from 'react-native';
+import { FontSize, Spacing } from '../utils/dimension';
 import { COLORS } from '../utils/globalConstants/color';
-
-
 
 type CustomTextProps = {
     label: React.ReactNode;
-    style?:  StyleProp<TextStyle>;
-    action?: () => void; // Make this optional
+    style?: StyleProp<TextStyle>;
+    action?: () => void; // Optional action handler
 };
 
-const CustomText: React.FC<CustomTextProps> = ({ label, style, action }) => {
-    const isClickable = Boolean(action);
+const CustomText: React.FC<CustomTextProps> = ({ label, style, action }) => (
+    <View style={styles.container}>
+        {action ? (
+            <TouchableOpacity onPress={action}>
+                <Text style={[styles.textStyle, styles.clickableText, style]}>{label}</Text>
+            </TouchableOpacity>
+        ) : (
+            <Text style={[styles.textStyle, style]}>{label}</Text>
+        )}
+    </View>
+);
 
-    return (
-        <View style={styles.container}>
-            {isClickable ? (
-                <TouchableOpacity onPress={action}>
-                    <Text style={[styles.textStyle, styles.clickableText, style]}>{label}</Text>
-                </TouchableOpacity>
-            ) : (
-                <Text style={[styles.textStyle, style]}>{label}</Text>
-            )}
-        </View>
-    );
-};
 const styles = StyleSheet.create({
     container: {
-        marginBottom: Spacing.small/2
+        marginBottom: Spacing.small / 2,
     },
     textStyle: {
         fontSize: FontSize.medium,
     },
     clickableText: {
-        textDecorationLine: 'underline', // Adds underline to the text
-        color: COLORS.grey, // Optional: Changes the color for clickable text
-      },
+        textDecorationLine: 'underline',
+        color: COLORS.grey,
+    },
 });
 
 export default CustomText;

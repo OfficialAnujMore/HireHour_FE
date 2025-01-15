@@ -8,15 +8,15 @@ import {
     ScrollView,
 } from "react-native";
 import moment from "moment";
-import { FontSize, Spacing } from "../utils/dimension";
-import CustomText from "../components/CustomText";
-import CustomInput from "../components/CustomInput";
-import { WORD_DIR } from "../utils/local/en";
-import { COLORS } from "../utils/globalConstants/color";
-import CustomButton from "../components/CustomButton";
+import { FontSize, Spacing } from "../../utils/dimension";
+import CustomText from "../../components/CustomText";
+import CustomInput from "../../components/CustomInput";
+import { WORD_DIR } from "../../utils/local/en";
+import { COLORS } from "../../utils/globalConstants/color";
+import CustomButton from "../../components/CustomButton";
 import { RootState } from "redux/store";
 import { useSelector } from "react-redux";
-import { addService } from "../services/userService";
+import { addService } from "../../services/userService";
 
 interface TimeSlot {
     id: string;

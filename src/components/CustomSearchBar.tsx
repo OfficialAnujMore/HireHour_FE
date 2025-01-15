@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, TextInput, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../utils/globalConstants/color';
 import { FontSize, Screen, Spacing } from '../utils/dimension';
@@ -12,15 +12,12 @@ interface CustomSearchBarProps {
 const CustomSearchBar: React.FC<CustomSearchBarProps> = ({ onSearch }) => {
     const [query, setQuery] = useState<string>('');
 
-    const handleSearch = () => {
-        if (query.trim()) {
-            onSearch(query);
+    const handleSearch = (text: string) => {
+        setQuery(text);
+        if (text.trim()) {
+            onSearch(text);
         }
     };
-
-    useEffect(() => {
-        handleSearch()
-    }, [query])
 
     return (
         <View style={styles.container}>
@@ -29,14 +26,9 @@ const CustomSearchBar: React.FC<CustomSearchBarProps> = ({ onSearch }) => {
                     style={styles.input}
                     placeholder="Search..."
                     value={query}
-                    onChangeText={setQuery}
-                // onSubmitEditing={handleSearch}
+                    onChangeText={handleSearch}
                 />
                 <Icon name="search-outline" size={25} color="#000" />
-
-                {/* <TouchableOpacity onPress={handleSearch}>
-                    <Icon name="filter-outline" size={25} color="#000" />
-                </TouchableOpacity> */}
             </View>
         </View>
     );
@@ -46,7 +38,6 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         justifyContent: 'center',
-
     },
     searchBar: {
         flexDirection: 'row',
@@ -54,9 +45,9 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.white,
         borderRadius: Spacing.small,
         width: Screen.width,
-        height:Screen.height/15,
+        height: Screen.height / 15,
         paddingHorizontal: Spacing.medium,
-        paddingVertical: Spacing.small
+        paddingVertical: Spacing.small,
     },
     input: {
         flex: 1,

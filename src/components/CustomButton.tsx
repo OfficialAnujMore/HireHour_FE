@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import {
   Text,
   TouchableOpacity,
@@ -12,12 +12,12 @@ import { FontSize, Spacing } from '../utils/dimension';
 import { COLORS } from '../utils/globalConstants/color';
 
 type CustomButtonProps = {
-  label: string; // Button label
-  onPress: (event: GestureResponderEvent) => void; // Callback for button press
-  style?: ViewStyle; // Custom styles for the button container
-  textStyle?: TextStyle; // Custom styles for the button label
-  disabled?: boolean; // Disable the button
-  animationType?: 'scale' | 'opacity'; // Type of animation on press
+  label: string;
+  onPress: (event: GestureResponderEvent) => void;
+  style?: ViewStyle;
+  textStyle?: TextStyle;
+  disabled?: boolean;
+  animationType?: 'scale' | 'opacity';
 };
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -28,26 +28,19 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   disabled = false,
   animationType = 'scale',
 }) => {
-  const [animationValue] = useState(new Animated.Value(1)); // Animation state
+  const animationValue = useRef(new Animated.Value(1)).current;
 
-  // Handle button press animation
-  const handlePressIn = () => {
+  const handleAnimation = (toValue: number) => {
     Animated.timing(animationValue, {
-      toValue: animationType === 'scale' ? 0.95 : 0.5,
+      toValue,
       duration: 100,
       useNativeDriver: true,
     }).start();
   };
 
-  const handlePressOut = () => {
-    Animated.timing(animationValue, {
-      toValue: 1,
-      duration: 100,
-      useNativeDriver: true,
-    }).start();
-  };
+  const handlePressIn = () => handleAnimation(animationType === 'scale' ? 0.95 : 0.5);
+  const handlePressOut = () => handleAnimation(1);
 
-  // Combine animation styles
   const animatedStyle =
     animationType === 'scale'
       ? { transform: [{ scale: animationValue }] }
@@ -69,8 +62,8 @@ const CustomButton: React.FC<CustomButtonProps> = ({
         <Text
           style={[
             styles.label,
-            disabled ? styles.disabledLabel : styles.activeLabel,
             textStyle,
+            disabled ? styles.disabledLabel : styles.activeLabel,
           ]}
         >
           {label}
@@ -88,7 +81,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.medium,
     paddingHorizontal: Spacing.small,
     borderRadius: Spacing.small,
-    borderWidth:0.5,
+    borderWidth: 0.5,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: COLORS.grey,
