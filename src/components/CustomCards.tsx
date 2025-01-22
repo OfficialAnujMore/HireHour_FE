@@ -5,30 +5,36 @@ import { FontSize, Screen, Spacing } from '../utils/dimension';
 import CustomText from './CustomText';
 import { useNavigation } from '@react-navigation/native';
 import { CustomRatingInfo } from './CustomRatingInfo';
-
+import Icon from 'react-native-vector-icons/Ionicons';
 interface CustomCardsProps {
   item: {
-    profileImageURL?: string;
+    avatarUri?: string;
     title: string;
     description: string;
     category: string;
     chargesPerHour: string;
     rating: number;
   };
+  handlePress:()=>{}
 }
 
-const CustomCards: React.FC<CustomCardsProps> = ({ item }) => {
+const CustomCards: React.FC<CustomCardsProps> = ({ item,handlePress }) => {
   const navigation = useNavigation();
-  const handlePress = () => {
-    navigation.navigate("ServiceDetails", item);
-  };
+
 
   return (
     <TouchableOpacity style={styles.container} onPress={handlePress}>
-      <Image 
-        source={{ uri: item.profileImageURL ?? '' }} 
-        style={styles.image} 
-      />
+      {item.avatarUri ? (
+        <Image
+          source={{ uri: item.avatarUri }}
+          style={styles.image}
+          accessibilityLabel="User Avatar"
+        />
+      ) : (
+        <View style={[styles.image,styles.iconFallback]}>
+          <Icon name="person-outline" size={FontSize.extraLarge * 1.5} color={COLORS.black} />
+        </View>
+      )}
       <View style={styles.content}>
         <View style={styles.header}>
           <CustomText label={item.title} style={styles.textStyle} />
@@ -50,7 +56,7 @@ const styles = StyleSheet.create({
     borderRadius: Spacing.small,
     marginVertical: Spacing.small,
     padding: Spacing.small,
-    shadowColor: '#000',
+    shadowColor:COLORS.black,
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
@@ -60,9 +66,16 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   image: {
-    width: Screen.width * 0.25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    maxWidth: Screen.width * 0.25,
     height: Screen.width * 0.25,
     borderRadius: Spacing.small,
+  },
+  iconFallback: {
+    flex: 1,
+    borderWidth: 0.5,
+    borderColor: COLORS.grey,
   },
   content: {
     flex: 1,

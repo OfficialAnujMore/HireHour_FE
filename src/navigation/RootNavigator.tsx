@@ -23,6 +23,8 @@ import SummaryScreen from "../screens/ServiceProvider/SummaryScreen";
 import { FontSize, Screen } from "../utils/dimension";
 import { COLORS } from "../utils/globalConstants/color";
 import EnrollAsServiceProvider from "../screens/ServiceProvider/EnrollAsServiceProvider";
+import ViewServiceScreen from "../screens/ServiceProvider/ViewServiceScreen";
+import MyServices from "../screens/ServiceProvider/MyService";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -131,6 +133,9 @@ const RootNavigator = () => {
               <Stack.Screen name="Reviews" component={ServiceReviewScreen} />
               <Stack.Screen name="Settings" component={SettingsScreen} />
               <Stack.Screen name="Enroll" component={EnrollAsServiceProvider} />
+              <Stack.Screen name="MyService" component={MyServices} />
+              <Stack.Screen name="ViewService" component={ViewServiceScreen} />
+
 
               <Stack.Screen
                 name="CreateServiceScreen"

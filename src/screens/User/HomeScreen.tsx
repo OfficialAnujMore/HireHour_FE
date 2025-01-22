@@ -14,6 +14,8 @@ import { useFocusEffect } from '@react-navigation/native';
 const HomeScreen = ({ navigation }: any) => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
+  console.log(user);
+  
   const [data, setData] = useState<User[]>([]);
   const [filteredData, setFilteredData] = useState<User[]>([]);
 
@@ -22,6 +24,8 @@ const HomeScreen = ({ navigation }: any) => {
     try {
       const categories = ["Photography", "Guitar", "Art", "Music"];
       const response = await getServiceProviders(categories);
+      console.log('avatarUri=========.>',response.data);
+      
       setData(response.data);
       setFilteredData(response.data); // Set filtered data as the default
     } catch (error) {
@@ -52,11 +56,13 @@ const HomeScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
       <CustomSearchBar onSearch={handleSearch} />
-      <CustomText label={`${getGreeting()}, ${user?.name}`} style={styles.greetingText} />
+      <CustomText label={`${getGreeting()}, ${user?.firstName}`} style={styles.greetingText} />
       <FlatList
         data={filteredData}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <CustomCards item={item} />}
+        renderItem={({ item }) => <CustomCards item={item} handlePress={()=>{
+          navigation.navigate("ServiceDetails", item)
+        }} />}
         showsVerticalScrollIndicator={false}
       />
     </View>

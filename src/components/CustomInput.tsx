@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import {
   TextInput,
   Text,
@@ -11,13 +11,14 @@ import {
 } from 'react-native';
 import { FontSize, Screen, Spacing } from '../utils/dimension';
 import CustomText from './CustomText';
-import Icon from 'react-native-vector-icons/Ionicons'; 
+import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../utils/globalConstants/color';
 
 type CustomInputProps = TextInputProps & {
   label?: string;
   errorMessage?: string;
-  onValueChange?: (value: string) => void;
+  value: string; 
+  onValueChange: (value: string) => void; 
   keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'decimal-pad' | 'ascii-capable';
   secureTextEntry?: boolean;
   disabled?: boolean;
@@ -37,15 +38,15 @@ const formatPhoneNumber = (value: string) => {
 const CustomInput: React.FC<CustomInputProps> = ({
   label,
   errorMessage,
+  value,
   onValueChange,
   keyboardType = 'default',
   secureTextEntry = false,
   disabled = false,
   ...textInputProps
 }) => {
-  const [value, setValue] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(!secureTextEntry);
+  const [isFocused, setIsFocused] = React.useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = React.useState(!secureTextEntry);
 
   const handleFocus = useCallback(() => {
     if (!disabled) setIsFocused(true);
@@ -59,8 +60,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
     (text: string) => {
       if (!disabled) {
         const formattedText = keyboardType === 'phone-pad' ? formatPhoneNumber(text) : text;
-        setValue(formattedText);
-        if (onValueChange) onValueChange(formattedText);
+        onValueChange(formattedText); // Notify the parent component
       }
     },
     [disabled, keyboardType, onValueChange]
@@ -77,7 +77,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
-        <CustomText label={label} />
+        {label && <CustomText label={label} />}
         <View style={styles.inputContainer}>
           <TextInput
             style={[
@@ -94,7 +94,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
             onFocus={handleFocus}
             onBlur={handleBlur}
             onChangeText={handleChangeText}
-            value={value}
+            value={value} // Value is now controlled via props
             keyboardType={keyboardType}
             secureTextEntry={!isPasswordVisible && secureTextEntry}
             editable={!disabled}

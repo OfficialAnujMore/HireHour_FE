@@ -62,12 +62,10 @@ const CustomSnackbar: React.FC = () => {
 const styles = StyleSheet.create({
   snackbarContainer: {
     position: 'absolute',
-    bottom: 16,
+    bottom: 0,
     backgroundColor: COLORS.black,
     padding: Spacing.medium,
-    width: Screen.width - Spacing.large,
-    marginHorizontal: Spacing.large / 2,
-    borderRadius: Spacing.small,
+    width: Screen.width,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

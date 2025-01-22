@@ -1,5 +1,6 @@
 export const PLACEHOLDER_DIR  ={
-    PLACEHOLDER_FULLNAME:"Enter your fullname",
+    PLACEHOLDER_FIRSTNAME:"Enter your firstname",
+    PLACEHOLDER_LASTNAME:"Enter your lastname",
     PLACEHOLDER_EMAIL:"Enter your email",
     PLACEHOLDER_USERNAME:"Enter your username",
     PLACEHOLDER_PASSWORD:"Enter your password",

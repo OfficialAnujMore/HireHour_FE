@@ -14,13 +14,21 @@ export const loginUser = async (user: any): Promise<ApiResponse<User>> => {
 
 export const registerUser = async (user: any): Promise<ApiResponse<User>> => {
   try {
-    
-    // Return the response from the POST request
+    console.log('User payload:', user);
+
+    // Send POST request
     const response = await post<User>('api/v1/user/registerUser', user);
 
-    return response;  // Return the response here
-  } catch (error) {
-    throw error; // It's important to throw the error so handleLogin can catch it
+    console.log('Registration successful:', response);
+    return response; // Return response
+  } catch (error: any) {
+    console.log('Registration error:', error);
+
+    // Create a custom error message if server response contains useful information
+    const errorMessage =
+      error?.message ??
+      'An unexpected error occurred during registration.';
+    throw errorMessage; // Throw a detailed error
   }
 };
 
@@ -44,11 +52,37 @@ export const getServiceProviders = async (categories?: string[]): Promise<ApiRes
 
 export const addService = async (data: any): Promise<ApiResponse<User[]>> => {
   try {
-    const response = await post<User[]>('api/v1/user/addService',data
+    const response = await post<User[]>('api/v1/user/addService', data
     );
     return response;
   } catch (error) {
     throw error;
+  }
+}
+
+export const updateUserRole = async (data: any): Promise<ApiResponse<User[]>> => {
+  try {
+    const response = await post<User[]>('api/v1/user/updateUserRole', data);
+    return response
+  } catch (error: any) {
+    const errorMessage =
+      error?.message ??
+      'An unexpected error occurred during registration.';
+    throw errorMessage;
+  }
+}
+
+export const getUserServices = async (data: any): Promise<ApiResponse<User[]>> => {
+  try {
+    const response = await post<User[]>('api/v1/user/getUserServices', data);
+    return response
+  } catch (error: any) {
+    console.log(error);
+    
+    const errorMessage =
+      error?.message ??
+      'An unexpected error occurred during registration.';
+    throw errorMessage;
   }
 }
 

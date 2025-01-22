@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { login } from '../../redux/store';
 import { showSnackbar } from '../../redux/snackbarSlice';
-import { loginUser, registerUser } from '../../services/userService';
+import { registerUser } from '../../services/userService';
 import logo from '../../assets/logo.jpeg';
 import { FontSize, Screen, Spacing } from '../../utils/dimension';
 import { WORD_DIR } from '../../utils/local/en';
@@ -22,18 +22,21 @@ const DIGIT_PATTERN = /\d/;
 
 // Initial states
 const initialUserState = {
-    name: '',
-    username: '',
-    email: '',
-    phoneNumber: '',
-    password: '',
-    confirmPassword: '',
+    firstName: 'Song',
+    lastName: 'Artist',
+    username: 'songArtits',
+    email: 'songArtist@gmail.com',
+    phoneNumber: '71454964666',
+    password: 'Songartist@123',
+    confirmPassword: 'Songartist@123',
 };
 
 const initialErrorState = {
-    name: '',
+    firstName: '',
+    lastName: '',
     username: '',
     email: '',
+    phoneNumber: '',
     password: '',
     confirmPassword: '',
 };
@@ -87,20 +90,31 @@ const RegisterScreen = () => {
     const handleRegister = async () => {
         console.log('Registering user...');
         const { confirmPassword, ...payload } = user;
+        console.log('Payload without confirmPassword:', payload);
 
         try {
             const response = await registerUser(payload);
+
             if (response?.data) {
+                // Dispatch the login action with the registered user data
                 dispatch(login({ user: response.data }));
+
+                // Navigate to the home screen
                 navigation.navigate('Home');
             }
         } catch (error: any) {
-            dispatch(showSnackbar(error.message || 'Registration failed. Please try again.'));
+            console.log({error});
+
+            // Extract and dispatch the error message to the Snackbar
+            const errorMessage = error??'Registration failed. Please try again.';
+            dispatch(showSnackbar(errorMessage));
         }
     };
 
+
     const renderInput = (
         label: string,
+        value: string,
         placeholder: string,
         field: keyof typeof user,
         keyboardType?: 'default' | 'email-address' | 'phone-pad',
@@ -108,6 +122,7 @@ const RegisterScreen = () => {
     ) => (
         <CustomInput
             label={label}
+            value={value}
             placeholder={placeholder}
             onValueChange={(value) => handleValueChange(field, value)}
             errorMessage={errors[field]}
@@ -127,17 +142,21 @@ const RegisterScreen = () => {
             </View>
 
             <View style={styles.formContainer}>
-                {renderInput(WORD_DIR.name, PLACEHOLDER_DIR.PLACEHOLDER_FULLNAME, 'name')}
-                {renderInput(WORD_DIR.username, PLACEHOLDER_DIR.PLACEHOLDER_USERNAME, 'username')}
-                {renderInput(WORD_DIR.email, PLACEHOLDER_DIR.PLACEHOLDER_EMAIL, 'email', 'email-address')}
+                {renderInput(WORD_DIR.firstName, initialUserState.firstName, PLACEHOLDER_DIR.PLACEHOLDER_FIRSTNAME, 'firstName')}
+                {renderInput(WORD_DIR.lastName, initialUserState.lastName, PLACEHOLDER_DIR.PLACEHOLDER_LASTNAME, 'lastName')}
+
+                {renderInput(WORD_DIR.username, initialUserState.username, PLACEHOLDER_DIR.PLACEHOLDER_USERNAME, 'username')}
+                {renderInput(WORD_DIR.email, initialUserState.email, PLACEHOLDER_DIR.PLACEHOLDER_EMAIL, 'email', 'email-address')}
                 {renderInput(
                     'Phone Number',
+                    initialUserState.phoneNumber,
                     PLACEHOLDER_DIR.PLACEHOLDER_PHONE_NUMBER,
                     'phoneNumber',
                     'phone-pad'
                 )}
                 {renderInput(
                     WORD_DIR.password,
+                    initialUserState.password,
                     PLACEHOLDER_DIR.PLACEHOLDER_PASSWORD,
                     'password',
                     undefined,
@@ -145,6 +164,7 @@ const RegisterScreen = () => {
                 )}
                 {renderInput(
                     WORD_DIR.confirmPassword,
+                    initialUserState.confirmPassword,
                     PLACEHOLDER_DIR.PLACEHOLDER_CONFIRM_PASSWORD,
                     'confirmPassword',
                     undefined,

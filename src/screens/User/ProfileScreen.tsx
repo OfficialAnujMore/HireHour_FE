@@ -20,6 +20,7 @@ const ProfileScreen: React.FC = () => {
       { label: 'Settings', icon: 'settings-outline', callback: () => navigation.navigate('Settings') },
       { label: 'Enroll As Service Provider', icon: 'person-add', callback: () => navigation.navigate('Enroll') },
       { label: 'Privacy Policy', icon: 'lock-closed-outline' },
+      { label: 'My Services', icon: 'lock-closed-outline', callback: () => navigation.navigate('MyService') },
       { label: 'Log out', icon: 'power-outline', callback: () => dispatch(logout()) },
     ],
     [navigation, dispatch]

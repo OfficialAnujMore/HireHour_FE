@@ -5,6 +5,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './src/redux/store'; // Assuming store is defined in src/store.ts
 import RootNavigator from './src/navigation/RootNavigator';
 import { SafeAreaView, StatusBar } from 'react-native';
+import CustomSnackbar from './src/components/CustomSnackbar';
 
 const App = () => (
   <Provider store={store}>
@@ -15,6 +16,7 @@ const App = () => (
         <StatusBar barStyle="dark-content" backgroundColor="white" />
         {/* <SafeAreaView> */}
           <RootNavigator />
+          <CustomSnackbar/>
         {/* </SafeAreaView> */}
       </SafeAreaProvider>
     </PersistGate>

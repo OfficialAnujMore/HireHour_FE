@@ -30,7 +30,10 @@ const LoginScreen: React.FC = () => {
     const dispatch = useDispatch();
     const navigation = useNavigation();
 
-    const [user, setUser] = useState<User>({ email: '', password: '' });
+    const [user, setUser] = useState<User>({
+        email: 'songArtist@gmail.com',
+        password: 'Songartist@123',
+    });
     const [errors, setErrors] = useState<Errors>({ email: '', password: '' });
 
     const handleValueChange = (field: keyof User, value: string): void => {
@@ -89,6 +92,7 @@ const LoginScreen: React.FC = () => {
             <View style={styles.formContainer}>
                 <CustomInput
                     label={WORD_DIR.email}
+                    value={user.email}
                     placeholder={PLACEHOLDER_DIR.PLACEHOLDER_EMAIL}
                     keyboardType="email-address"
                     onValueChange={(value) => handleValueChange('email', value)}
@@ -96,6 +100,7 @@ const LoginScreen: React.FC = () => {
                 />
                 <CustomInput
                     label={WORD_DIR.password}
+                    value={user.password}
                     placeholder={PLACEHOLDER_DIR.PLACEHOLDER_PASSWORD}
                     secureTextEntry
                     onValueChange={(value) => handleValueChange('password', value)}

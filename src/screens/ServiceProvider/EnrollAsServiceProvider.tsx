@@ -7,15 +7,36 @@ import {
 } from 'react-native';
 import { Screen, Spacing } from '../../utils/dimension';
 import { COLORS } from '../../utils/globalConstants/color';
+import CustomButton from '../../components/CustomButton';
+import { WORD_DIR } from '../../utils/local/en';
+import { updateUserRole } from '../../services/userService';
+import { login, RootState } from '../../redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { showSnackbar } from '../../redux/snackbarSlice';
 
 const EnrollAsServiceProvider: React.FC = () => {
-const [isServiceProviderEnrolled, setIsServiceProviderEnrolled] = useState(false);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch();
+  const [isServiceProviderEnrolled, setIsServiceProviderEnrolled] = useState(user?.userRole == 'SERVICE_PROVIDER');
+  const handleEnrollment = async () => {
+    try {
+      const response = await updateUserRole({ id: user?.id, isEnrolled: isServiceProviderEnrolled })
+      console.log(response);
+
+      
+      if (response?.data) {
+          dispatch(login({ user: response.data }));
+        dispatch(showSnackbar('Successfull'));
+      }
+    } catch (error: any) {
+      dispatch(showSnackbar(error));
+    }
+
+  }
 
 
   return (
-    // <ScrollView style={styles.container}>
-
-
+    <View style={styles.container}>
       <View style={styles.toggleContainer}>
         <Text style={styles.toggleLabel}>Enroll a Service Provider</Text>
         <Switch
@@ -26,7 +47,8 @@ const [isServiceProviderEnrolled, setIsServiceProviderEnrolled] = useState(false
           thumbColor={isServiceProviderEnrolled ? COLORS.red : COLORS.white}
         />
       </View>
-    // </ScrollView>
+      <CustomButton onPress={handleEnrollment} label={WORD_DIR.submit} />
+    </View>
   );
 };
 
@@ -37,33 +59,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.large,
     paddingTop: Spacing.extraLarge,
   },
-  imageWrapper: {
-    alignSelf: 'center',
-    position: 'relative',
-  },
-  profileImage: {
-    width: Screen.width / 4,
-    height: Screen.width / 4,
-    borderRadius: Screen.width / 8,
-    borderWidth: 2,
-    borderColor: COLORS.grey,
-  },
-  editIcon: {
-    position: 'absolute',
-    bottom: 0,
-    right: -5,
-    backgroundColor: COLORS.grey,
-    borderRadius: 15,
-    padding: 5,
-  },
-  header: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLORS.black,
-    marginTop: Spacing.large,
-    marginBottom: Spacing.medium,
-    textAlign: 'center',
-  },
+
   toggleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -74,16 +70,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: COLORS.black,
-  },
-  saveButton: {
-    marginTop: Spacing.extraLarge,
-    backgroundColor: COLORS.red,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
 
