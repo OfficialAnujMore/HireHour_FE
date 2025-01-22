@@ -46,7 +46,7 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
         <View style={styles.detailsContainer}>
           <View style={styles.header}>
             <CustomText label={item.title} style={styles.textStyle} />
-            <CustomRatingInfo rating={item.rating} />
+            <CustomRatingInfo rating={item.ratings} />
           </View>
           <CustomText label={item.description} style={styles.textStyle} />
         </View>

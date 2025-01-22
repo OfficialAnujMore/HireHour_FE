@@ -13,7 +13,7 @@ interface CustomCardsProps {
     description: string;
     category: string;
     chargesPerHour: string;
-    rating: number;
+    ratings: number;
   };
   handlePress:()=>{}
 }
@@ -38,7 +38,7 @@ const CustomCards: React.FC<CustomCardsProps> = ({ item,handlePress }) => {
       <View style={styles.content}>
         <View style={styles.header}>
           <CustomText label={item.title} style={styles.textStyle} />
-          <CustomRatingInfo rating={item?.rating?.toString()} />
+          <CustomRatingInfo rating={item?.ratings} />
         </View>
         <CustomText label={item.description} style={styles.textStyle} />
         <CustomText label={item.category} style={styles.textStyle} />
