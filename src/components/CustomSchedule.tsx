@@ -28,19 +28,23 @@ interface DateInfo {
 
 interface CustomScheduleProps {
   dateInfo: DateInfo[];
+  selectedTimeId: string|null;
+  onValueChange: (value: string|null) => void; 
 }
 
-const CustomSchedule: React.FC<CustomScheduleProps> = ({ dateInfo }) => {
+const CustomSchedule: React.FC<CustomScheduleProps> = ({ dateInfo, selectedTimeId,onValueChange }) => {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   const handleDateSelect = (id: string) => {
     setSelectedDate(id);
-    setSelectedTime(null); // Reset time when a new date is selected
+    onValueChange(null); // Reset time when a new date is selected
   };
 
-  const handleTimeSelect = (id: string) => {
-    setSelectedTime(id);
+  const handleTimeSelect = (item: any) => {
+    console.log(item);
+    
+    setSelectedTime(item.id);
   };
 
   // Find the selected date's timeSlots
@@ -88,7 +92,7 @@ const CustomSchedule: React.FC<CustomScheduleProps> = ({ dateInfo }) => {
       <Text style={styles.sectionHeader}>Select date and time</Text>
       <FlatList
         data={selectedDateInfo?.timeSlots || []}
-        keyExtractor={(item) => item.time}
+        keyExtractor={(item) => item.id}
         numColumns={3}
         contentContainerStyle={styles.timeSlotContainer}
         renderItem={({ item }) => (
@@ -96,15 +100,15 @@ const CustomSchedule: React.FC<CustomScheduleProps> = ({ dateInfo }) => {
             disabled={!item.available}
             style={[
               styles.timeSlot,
-              selectedTime === item.time && styles.selectedTimeSlot,
+              selectedTimeId === item.id && styles.selectedTimeSlot,
               !item.available && styles.unavailableTimeSlot,
             ]}
-            onPress={() => handleTimeSelect(item.time)}
+            onPress={() => onValueChange(item.id)}
           >
             <Text
               style={[
                 styles.timeSlotText,
-                selectedTime === item.time && styles.selectedTimeSlotText,
+                selectedTimeId === item.id && styles.selectedTimeSlotText,
                 !item.available && styles.unavailableTimeSlotText,
               ]}
             >

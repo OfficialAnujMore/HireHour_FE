@@ -25,6 +25,7 @@ import { COLORS } from "../utils/globalConstants/color";
 import EnrollAsServiceProvider from "../screens/ServiceProvider/EnrollAsServiceProvider";
 import ViewServiceScreen from "../screens/ServiceProvider/ViewServiceScreen";
 import MyServices from "../screens/ServiceProvider/MyService";
+import UpcomingEvents from "../screens/UpcomingEvents";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -54,8 +55,8 @@ const AuthenticatedTabs = () => {
 
           if (route.name === "Home") {
             iconName = "home-outline";
-          } else if (route.name === "Details") {
-            iconName = "list-outline";
+          } else if (route.name === "Events") {
+            iconName = "calendar-outline";
           } else if (route.name === "Profile") {
             iconName = "person-outline";
           } else if (route.name === "Cart") {
@@ -82,7 +83,7 @@ const AuthenticatedTabs = () => {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Details" component={DetailsScreen} />
+      <Tab.Screen name="Events" component={UpcomingEvents} />
       {
         user?.userRole === 'SERVICE_PROVIDER' ?
 

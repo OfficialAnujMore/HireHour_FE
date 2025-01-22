@@ -86,3 +86,27 @@ export const getUserServices = async (data: any): Promise<ApiResponse<User[]>> =
   }
 }
 
+
+export const bookService = async (data: any): Promise<ApiResponse<User>> => {
+  try {
+    console.log(data);
+    
+    // Return the response from the POST request
+    const response = await post<User>('api/v1/user/bookService', data);
+    return response;  // Return the response here
+  } catch (error) {
+    throw error; // It's important to throw the error so handleLogin can catch it
+  }
+};
+
+export const getUpcomingEvents = async (data: any): Promise<ApiResponse<User>> => {
+  try {
+    console.log("getUpcomingEvents", data);
+    
+    // Return the response from the POST request
+    const response = await post<User>('api/v1/user/upcomingEvents', data);
+    return response;  // Return the response here
+  } catch (error) {
+    throw error; // It's important to throw the error so handleLogin can catch it
+  }
+};

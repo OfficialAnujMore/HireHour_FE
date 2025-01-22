@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Button, Alert, FlatList, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';;
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, RootState } from '../../redux/store';
@@ -13,6 +13,8 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { WORD_DIR } from 'utils/local/en';
 import { CustomRatingInfo } from '../../components/CustomRatingInfo';
+import CustomButton from '../../components/CustomButton';
+import { bookService } from '../../services/userService';
 interface ServiceDetails {
   id: string;
   title: string;
@@ -28,14 +30,22 @@ interface ServiceDetails {
 };
 const ServiceDetailsScreen = (props: ServiceDetails) => {
   const navigation = useNavigation();
+  const [selectedTimeId, setSelectedTimeId] = useState<string | null>(null);
   const item = props.route.params
-  console.log('Service details data \n',item.schedule);
+  console.log('Service details data \n', item.schedule);
 
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
-  const handlePress = () => {
-    Alert.alert('Button Pressed!');
+  const handlePress = async () => {
+    const response = await bookService({ userId: user?.id, timeSlotId: selectedTimeId })
+    console.log('Service booked');
+
   };
+
+  // useEffect(()=>{
+  //   console.log(selectedTimeId);
+
+  // },[selectedTimeId])
 
 
 
@@ -50,12 +60,15 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
           </View>
           <CustomText label={item.description} style={styles.textStyle} />
         </View>
-        <CustomSchedule dateInfo={item.schedule
+        <CustomSchedule dateInfo={item.schedule} selectedTimeId={selectedTimeId} onValueChange={(id) => {
+          setSelectedTimeId(id);
+        }} />
 
+        <CustomButton
+          label={'Book a service'}
+          onPress={handlePress}
 
-
-
-        }/>
+        />
       </ScrollView>
 
     </View>
