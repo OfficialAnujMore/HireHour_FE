@@ -32,7 +32,7 @@ export const registerUser = async (user: any): Promise<ApiResponse<User>> => {
   }
 };
 
-export const getServiceProviders = async (categories?: string[]): Promise<ApiResponse<User[]>> => {
+export const getServiceProviders = async (userId:string|undefined, categories?: string[]): Promise<ApiResponse<User[]>> => {
   try {
 
     // If categories exist, serialize the array into a JSON string before passing as query params
@@ -41,6 +41,7 @@ export const getServiceProviders = async (categories?: string[]): Promise<ApiRes
     // Return the response from the GET request with serialized categories as query params
     const response = await get<User[]>('api/v1/user/getServiceProviders', {
       params: {
+        id:userId,
         category: serializedCategories,  // Send serialized categories as a query param
       }
     });

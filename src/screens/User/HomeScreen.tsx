@@ -23,8 +23,8 @@ const HomeScreen = ({ navigation }: any) => {
   const fetchServiceProviders = useCallback(async () => {
     try {
       const categories = ["Photography", "Guitar", "Art", "Music"];
-      const response = await getServiceProviders(categories);
-      console.log('avatarUri=========.>',response.data);
+      const response = await getServiceProviders(user?.id, categories);
+      console.log('response home screen=========.>',response.data);
       
       setData(response.data);
       setFilteredData(response.data); // Set filtered data as the default

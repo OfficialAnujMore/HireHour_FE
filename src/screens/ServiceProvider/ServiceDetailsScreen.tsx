@@ -32,20 +32,21 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
   const navigation = useNavigation();
   const [selectedTimeId, setSelectedTimeId] = useState<string | null>(null);
   const item = props.route.params
+
+  console.log('Service preview =======>',item.servicePreview);
+  
   console.log('Service details data \n', item.schedule);
 
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
   const handlePress = async () => {
     const response = await bookService({ userId: user?.id, timeSlotId: selectedTimeId })
-    console.log('Service booked');
+
+    Alert.alert("Success", "Service booked");
 
   };
 
-  // useEffect(()=>{
-  //   console.log(selectedTimeId);
 
-  // },[selectedTimeId])
 
 
 

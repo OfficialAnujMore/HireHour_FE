@@ -31,7 +31,7 @@ interface DateInfo {
     day: string;
     date: string;
     month: string;
-    fullDate:string;
+    fullDate: string;
     timeSlots: TimeSlot[];
 }
 
@@ -49,7 +49,7 @@ const generateDates = (): DateInfo[] => {
             day: date.format("ddd"),
             date: date.format("DD"),
             month: date.format("MMM"),
-            fullDate:date.toISOString(),
+            fullDate: date.toISOString(),
             timeSlots: [...timeSlots],
         };
     });
@@ -59,10 +59,10 @@ const CreateServiceScreen = () => {
     const [dates, setDates] = useState<DateInfo[]>([]);
     const [selectedDateId, setSelectedDateId] = useState<string | null>(null);
     const [serviceDetails, setServiceDetails] = useState({
-        title: "Artist service",
-        description: "This is a service",
-        chargesPerHour: "30",
-        category:CATEGORY[Object.keys(CATEGORY)[0]as keyof typeof CATEGORY]
+        title: "",
+        description: "",
+        chargesPerHour: "",
+        category: CATEGORY[Object.keys(CATEGORY)[0] as keyof typeof CATEGORY]
     });
 
     const user = useSelector((state: RootState) => state.auth.user);
@@ -89,7 +89,7 @@ const CreateServiceScreen = () => {
 
         const selectedSlots = selectedDate.timeSlots.filter((slot) => slot.available);
         const finalSchedule = dates.map((item) => {
-            
+
             const filteredTimeSlots = item.timeSlots.filter((slot) => slot.available);
 
             return {
@@ -97,7 +97,7 @@ const CreateServiceScreen = () => {
                 day: item.day,
                 date: item.date,
                 month: item.month,
-                fullDate:item.fullDate,
+                fullDate: item.fullDate,
                 timeSlots: filteredTimeSlots,
             };
         }).filter((item) => item.timeSlots.length > 0); // Filter out dates with no available slots
@@ -115,8 +115,8 @@ const CreateServiceScreen = () => {
                     title: serviceDetails.title,
                     description: serviceDetails.description,
                     chargesPerHour: serviceDetails.chargesPerHour,
-                    userId: user?.id, 
-                    category: serviceDetails.category, 
+                    userId: user?.id,
+                    category: serviceDetails.category,
                     servicePreview: [
                         {
                             imageUri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWMrZ357DGddYlOKJJpLwZ6nPsEJdH3RYFOWGoX00-6UumyVwUYQNAZBEBlU23tngDdqU&usqp=CAU"
@@ -183,6 +183,12 @@ const CreateServiceScreen = () => {
         );
     };
 
+    // const handleValueChange = (field: keyof typeof user, value: string) => {
+    //     // console.log(field,value);
+    //     setServiceDetails((prev) => ({ ...prev, [field]: value }))
+    //     setUser((prevState) => ({ ...prevState, [field]: value }));
+    //     validateField(field, value);
+    // };
     const renderInput = (
         label: string,
         value: string,
@@ -195,9 +201,9 @@ const CreateServiceScreen = () => {
             label={label}
             value={value}
             placeholder={placeholder}
-            onValueChange={(value) => setServiceDetails((prev) => ({ ...prev, field: value }))
-        }
-                // handleValueChange(field, value)}
+            onValueChange={(value) => setServiceDetails((prev) => ({ ...prev, [field]: value }))
+            }
+            // handleValueChange(field, value)}
             // errorMessage={errors[field]}
             keyboardType={keyboardType}
             secureTextEntry={secureTextEntry}
@@ -207,14 +213,27 @@ const CreateServiceScreen = () => {
     return (
         <ScrollView style={styles.container}>
             <CustomText label={WORD_DIR.serviceDetails} style={styles.heading} />
-             {renderInput(WORD_DIR.title, serviceDetails.title, WORD_DIR.title, 'title')}
-             {renderInput(WORD_DIR.description, serviceDetails.description, WORD_DIR.description, 'description')}
-             {renderInput(WORD_DIR.chargesPerHour, serviceDetails.chargesPerHour, WORD_DIR.chargesPerHour, 'chargesPerHour')}
-            <CustomDropdown
+            {renderInput(WORD_DIR.title, serviceDetails.title, WORD_DIR.title, 'title')}
+            {renderInput(WORD_DIR.description, serviceDetails.description, WORD_DIR.description, 'description')}
+            {renderInput(WORD_DIR.chargesPerHour, serviceDetails.chargesPerHour, WORD_DIR.chargesPerHour, 'chargesPerHour')}
+            {/* <CustomDropdown
                 label="Select a category"
                 options={CATEGORY}
                 value={serviceDetails.category}
+                onValueChange={(value) =>
+
+                    console.log(value)
+                    // setServiceDetails((prev) => ({ ...prev, category: value }))
+
+                }
+            /> */}
+
+            <CustomDropdown
+                label="Select an Option"
+                options={CATEGORY}
+                value={serviceDetails.category}
                 onValueChange={(value) => setServiceDetails((prev) => ({ ...prev, category: value }))}
+                placeholder="Select an option"
             />
 
             {/* Date Selection */}

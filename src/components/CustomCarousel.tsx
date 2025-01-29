@@ -14,7 +14,7 @@ import { Screen, Spacing } from "../utils/dimension";
 const { width } = Dimensions.get("window");
 
 interface CarouselItem {
-  imageURL: string;
+  imageUri: string;
 }
 
 interface CustomCarouselProps {
@@ -49,8 +49,8 @@ const CustomCarousel: React.FC<CustomCarouselProps> = ({ data }) => {
         scrollEventThrottle={16}
       >
         {data.map((item) => (
-          <View key={item.imageURL} style={styles.card}>
-            <Image source={{ uri: item.imageURL }} style={styles.image} />
+          <View key={item.imageUri} style={styles.card}>
+            <Image source={{ uri: item.imageUri }} style={styles.image} />
           </View>
         ))}
       </ScrollView>

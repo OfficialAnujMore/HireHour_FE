@@ -31,8 +31,8 @@ const LoginScreen: React.FC = () => {
     const navigation = useNavigation();
 
     const [user, setUser] = useState<User>({
-        email: 'songArtist@gmail.com',
-        password: 'Songartist@123',
+        email: '',
+        password: '',
     });
     const [errors, setErrors] = useState<Errors>({ email: '', password: '' });
 

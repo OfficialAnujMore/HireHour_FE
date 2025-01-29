@@ -22,13 +22,13 @@ const DIGIT_PATTERN = /\d/;
 
 // Initial states
 const initialUserState = {
-    firstName: 'Song',
-    lastName: 'Artist',
-    username: 'songArtits',
-    email: 'songArtist@gmail.com',
-    phoneNumber: '71454964666',
-    password: 'Songartist@123',
-    confirmPassword: 'Songartist@123',
+    firstName: '',
+    lastName: '',
+    username: '',
+    email: '',
+    phoneNumber: '',
+    password: '',
+    confirmPassword: '',
 };
 
 const initialErrorState = {
@@ -49,6 +49,8 @@ const RegisterScreen = () => {
     const [errors, setErrors] = useState(initialErrorState);
 
     const handleValueChange = (field: keyof typeof user, value: string) => {
+        // console.log(field,value);
+        
         setUser((prevState) => ({ ...prevState, [field]: value }));
         validateField(field, value);
     };
@@ -142,21 +144,21 @@ const RegisterScreen = () => {
             </View>
 
             <View style={styles.formContainer}>
-                {renderInput(WORD_DIR.firstName, initialUserState.firstName, PLACEHOLDER_DIR.PLACEHOLDER_FIRSTNAME, 'firstName')}
-                {renderInput(WORD_DIR.lastName, initialUserState.lastName, PLACEHOLDER_DIR.PLACEHOLDER_LASTNAME, 'lastName')}
+                {renderInput(WORD_DIR.firstName, user.firstName, PLACEHOLDER_DIR.PLACEHOLDER_FIRSTNAME, 'firstName')}
+                {renderInput(WORD_DIR.lastName, user.lastName, PLACEHOLDER_DIR.PLACEHOLDER_LASTNAME, 'lastName')}
 
-                {renderInput(WORD_DIR.username, initialUserState.username, PLACEHOLDER_DIR.PLACEHOLDER_USERNAME, 'username')}
-                {renderInput(WORD_DIR.email, initialUserState.email, PLACEHOLDER_DIR.PLACEHOLDER_EMAIL, 'email', 'email-address')}
+                {renderInput(WORD_DIR.username, user.username, PLACEHOLDER_DIR.PLACEHOLDER_USERNAME, 'username')}
+                {renderInput(WORD_DIR.email, user.email, PLACEHOLDER_DIR.PLACEHOLDER_EMAIL, 'email', 'email-address')}
                 {renderInput(
                     'Phone Number',
-                    initialUserState.phoneNumber,
+                    user.phoneNumber,
                     PLACEHOLDER_DIR.PLACEHOLDER_PHONE_NUMBER,
                     'phoneNumber',
                     'phone-pad'
                 )}
                 {renderInput(
                     WORD_DIR.password,
-                    initialUserState.password,
+                    user.password,
                     PLACEHOLDER_DIR.PLACEHOLDER_PASSWORD,
                     'password',
                     undefined,
@@ -164,7 +166,7 @@ const RegisterScreen = () => {
                 )}
                 {renderInput(
                     WORD_DIR.confirmPassword,
-                    initialUserState.confirmPassword,
+                    user.confirmPassword,
                     PLACEHOLDER_DIR.PLACEHOLDER_CONFIRM_PASSWORD,
                     'confirmPassword',
                     undefined,

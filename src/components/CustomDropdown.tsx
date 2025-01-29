@@ -9,17 +9,17 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { FontSize, Screen, Spacing } from '../utils/dimension';
-import CustomText from './CustomText';
 import Icon from 'react-native-vector-icons/Ionicons';
+import CustomText from './CustomText';
 import { COLORS } from '../utils/globalConstants/color';
+import { FontSize, Screen, Spacing } from '../utils/dimension';
 
 type DropdownOptions = Record<string, string>;
 
 type CustomDropdownProps = {
   label?: string;
   errorMessage?: string;
-  options: DropdownOptions; 
+  options: DropdownOptions;
   value: string;
   onValueChange: (value: string) => void;
   placeholder?: string;
@@ -39,7 +39,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
 
   // Transform options from object to array format
   const transformedOptions = Object.entries(options).map(([key, label]) => ({
-    value: key,
+    value: label, // Store label directly in value
     label,
   }));
 
@@ -53,8 +53,8 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
 
   const handleSelect = useCallback(
     (selectedValue: string) => {
-      onValueChange(selectedValue);
-      setDropdownVisible(false);
+      onValueChange(selectedValue); // Notify parent component
+      setDropdownVisible(false); // Close the dropdown
     },
     [onValueChange]
   );
@@ -84,7 +84,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
               { color: value ? COLORS.black : COLORS.grey },
             ]}
           >
-            {value ? value : placeholder}
+            {value || placeholder}
           </Text>
           <Icon
             name={isDropdownVisible ? 'chevron-up-outline' : 'chevron-down-outline'}

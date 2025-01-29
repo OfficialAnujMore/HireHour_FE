@@ -16,16 +16,17 @@ import { COLORS } from '../../utils/globalConstants/color';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { WORD_DIR } from '../../utils/local/en';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { showSnackbar } from '../../redux/snackbarSlice';
+import { RootState } from '../../redux/store';
 
 const EditProfileScreen: React.FC = () => {
   const dispatch = useDispatch();
-
+  const userdetails = useSelector((state: RootState) => state.auth.user);
   const [user, setUser] = useState({
     name: '',
-    username: '@Sabrina',
-    email: 'SabrinaAry208@gmail.com',
+    username: '',
+    email: '',
     phone: '',
     profileImage: null as string | null,
     isServiceProviderEnrolled: false,
@@ -143,13 +144,13 @@ const EditProfileScreen: React.FC = () => {
       />
       <CustomInput
         label="Username"
-        value={user.username}
+        value={userdetails.username}
         placeholder="Enter username"
         disabled={true}
       />
       <CustomInput
         label="Email"
-        value={user.email}
+        value={userdetails.email}
         placeholder="Enter email"
         keyboardType="email-address"
         disabled={true}
