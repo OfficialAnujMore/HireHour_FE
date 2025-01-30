@@ -23,9 +23,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {WORD_DIR} from 'utils/local/en';
 import {CustomRatingInfo} from '../../components/CustomRatingInfo';
 import CustomButton from '../../components/CustomButton';
-import {bookService} from '../../services/serviceProviderService';
-import CustomSlider from '../../components/CustomSlider';
-import {addToCart} from '../../redux/cartSlice';
+import {bookService} from '../../services/userService';
+import { addToCart } from '../../redux/cartSlice';
 interface ServiceDetails {
   id: string;
   title: string;
@@ -41,28 +40,45 @@ interface ServiceDetails {
 }
 const ServiceDetailsScreen = (props: ServiceDetails) => {
   const navigation = useNavigation();
-  const [selectedTimeId, setSelectedTimeId] = useState<string | null>(null);
-  const item = props.route.params;
-
   const dispatch = useDispatch();
+  const [selectedTimeIds, setSelectedTimeIds] = useState<string[]>([]);
+
+  const item = props.route.params;
+  const [schedule, setSchedule] = useState(item.schedule || []);
   const user = useSelector((state: RootState) => state.auth.user);
   const handlePress = async () => {
-    // const response = await bookService({ userId: user?.id, timeSlotId: selectedTimeId })
+    // const response = await bookService({
+    //   userId: user?.id,
+    //   timeSlotId: selectedTimeId,
+    // });
+    // Filter the selected time slots based on selectedTimeIds
+    const filteredSchedule = item.schedule.map(dateSlot => {
+      return {
+        ...dateSlot,
+        timeSlots: dateSlot.timeSlots.filter(timeSlot =>
+          selectedTimeIds.includes(timeSlot.id),
+        ),
+      };
+    });
 
-    // Alert.alert("Success", "Service booked");
+    const updatedItem = {
+      ...item,
+      schedule: filteredSchedule,  // Replace original schedule with filtered schedule
+    };
+  
+    console.log('Updated item with filtered schedule:', updatedItem);
+    dispatch(addToCart(updatedItem))
 
-    // const cartItem = {
-    //   id: item.id,
-    //   title: item.title,
-    //   description: item.description,
-    //   image: item.image,
-    //   price: 100, // You can replace this with the actual price
-    //   quantity: 1, // Default quantity is 1
-    // };
+    // console.log('Filtered schedule:', filteredSchedule);
 
-    dispatch(addToCart(item)); // Dispatch action to add item to the cart
-    Alert.alert('Added to Cart', `${item.title} has been added to your cart.`);
+    // Alert.alert('Success', 'Service booked');
   };
+  useEffect(() => {
+    console.log(item);
+  }, []);
+  useEffect(() => {
+    console.log(selectedTimeIds);
+  }, [selectedTimeIds]);
 
   return (
     <View style={styles.container}>
@@ -75,11 +91,27 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
           </View>
           <CustomText label={item.description} style={styles.textStyle} />
         </View>
-        <CustomSchedule
-          dateInfo={item.schedule}
+        {/* <CustomSchedule
+          dateInfo={schedule}
           selectedTimeId={selectedTimeId}
           onValueChange={id => {
             setSelectedTimeId(id);
+
+            schedule.map(item => {
+              if (item.id === id) {
+                return {...item, available: false}; // Set availability to false for selected time
+              }
+              return item;
+            });
+          }}
+        /> */}
+
+        <CustomSchedule
+          dateInfo={schedule}
+          selectedTimeIds={selectedTimeIds}
+          onValueChange={id => {
+            setSelectedTimeIds(id);
+            // console.log(setSelectedTimeIds);
           }}
         />
 

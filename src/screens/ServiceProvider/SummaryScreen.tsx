@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -7,12 +7,48 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../store';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
 import {Screen, Spacing, FontSize} from '../../utils/dimension';
+import CustomButton from '../../components/CustomButton';
+import {bookService} from '../../services/serviceProviderService';
+import {showSnackbar} from '../../redux/snackbarSlice';
+import {clearCart} from '../../redux/cartSlice';
 
 const SummaryScreen: React.FC = () => {
   const cartItems = useSelector((state: RootState) => state.cart.items);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch();
+  const [visibleSchedules, setVisibleSchedules] = useState<
+    Record<string, boolean>
+  >({});
+
+  const toggleScheduleVisibility = (serviceId: string) => {
+    setVisibleSchedules(prev => ({
+      ...prev,
+      [serviceId]: !prev[serviceId],
+    }));
+  };
+  const handlePress = async () => {
+    const timeSlotIds = cartItems.flatMap(service =>
+      service.schedule.flatMap(schedule =>
+        schedule.timeSlots.map(slot => slot.id),
+      ),
+    );
+
+    console.log(timeSlotIds);
+
+    const response = await bookService({
+      userId: user?.id,
+      timeSlotIds: timeSlotIds,
+    });
+
+    if (response.success) {
+      dispatch(showSnackbar(response.message));
+      dispatch(clearCart());
+    }
+    console.log(response);
+  };
   console.log(cartItems);
 
   return (
@@ -22,36 +58,64 @@ const SummaryScreen: React.FC = () => {
         {cartItems.length === 0 ? (
           <Text style={styles.noItemsText}>No items in your cart</Text>
         ) : (
-          cartItems.map((item, index) => (
+          cartItems.map(item => (
             <View key={item.serviceId} style={styles.orderItem}>
-              <Image
-                source={{
-                  uri: item.avatarUri || 'https://via.placeholder.com/60',
-                }}
-                style={styles.orderImage}
-              />
-              <View style={styles.orderDetails}>
-                <Text style={styles.orderTitle}>{item.title}</Text>
-                <Text style={styles.orderMeta}>
-                  {item.ratings} ★ | ${item.chargesPerHour}/hr
-                </Text>
-                <Text style={styles.orderMeta}>{item.description}</Text>
-                <TouchableOpacity>
-                  <Text style={styles.editText}>Edit</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.orderPriceContainer}>
-                <Text style={styles.price}>$ {item.chargesPerHour}</Text>
-                <View style={styles.counterContainer}>
-                  <TouchableOpacity style={styles.counterButton}>
-                    <Text style={styles.counterText}>-</Text>
-                  </TouchableOpacity>
-                  <Text style={styles.counterText}>{item.quantity || 1}</Text>
-                  <TouchableOpacity style={styles.counterButton}>
-                    <Text style={styles.counterText}>+</Text>
+              <View style={styles.orderDetailsContainer}>
+                <Image
+                  source={{
+                    uri:
+                      item.servicePreview[0]?.imageUri ||
+                      'https://via.placeholder.com/60',
+                  }}
+                  style={styles.orderImage}
+                />
+                <View style={styles.orderDetails}>
+                  <Text style={styles.orderTitle}>{item.title}</Text>
+                  <Text style={styles.orderMeta}>
+                    {item.ratings} ★ | ${item.chargesPerHour}/hr
+                  </Text>
+                  <Text style={styles.orderMeta}>{item.description}</Text>
+
+                  <TouchableOpacity
+                    onPress={() => toggleScheduleVisibility(item.serviceId)}>
+                    <Text style={styles.viewScheduleText}>
+                      {visibleSchedules[item.serviceId]
+                        ? 'Hide Schedule'
+                        : 'View Schedule'}
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
+
+              {item.schedule.length > 0 && (
+                <>
+                  {visibleSchedules[item.serviceId] &&
+                    item.schedule.map(scheduleItem => (
+                      <View key={scheduleItem.id} style={styles.scheduleItem}>
+                        <Text style={styles.scheduleTitle}>
+                          {scheduleItem.day}, {scheduleItem.month}{' '}
+                          {scheduleItem.date}
+                        </Text>
+                        {scheduleItem.timeSlots.length > 0 ? (
+                          scheduleItem.timeSlots.map(slot => (
+                            <View key={slot.id} style={styles.scheduleTimeSlot}>
+                              <Text style={styles.scheduleTime}>
+                                {slot.time}
+                              </Text>
+                              <Text style={styles.availability}>
+                                {slot.available ? 'Available' : 'Unavailable'}
+                              </Text>
+                            </View>
+                          ))
+                        ) : (
+                          <Text style={styles.scheduleTime}>
+                            No time slots available
+                          </Text>
+                        )}
+                      </View>
+                    ))}
+                </>
+              )}
             </View>
           ))
         )}
@@ -70,12 +134,20 @@ const SummaryScreen: React.FC = () => {
             ${' '}
             {cartItems.reduce(
               (total, item) =>
-                total + Number(item.chargesPerHour) * (item.quantity || 1),
+                total +
+                Number(item.chargesPerHour) *
+                  item.schedule.reduce(
+                    (scheduleTotal, schedule) =>
+                      scheduleTotal + (schedule.timeSlots.length || 0), // Add the number of time slots in each schedule
+                    0,
+                  ),
               0,
             )}
           </Text>
         </View>
       </View>
+
+      <CustomButton label={'Add to cart'} onPress={handlePress} />
     </ScrollView>
   );
 };
@@ -92,12 +164,13 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.medium,
   },
   orderContainer: {
-    paddingHorizontal: Spacing.medium,
+    // flexDirection:'row',
+    marginHorizontal: Spacing.medium,
   },
   orderItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: 'column',
+    // justifyContent: 'center',
+    // alignItems: 'center',
     backgroundColor: '#F5F5F5',
     borderRadius: Screen.moderateScale(8),
     padding: Spacing.medium,
@@ -108,8 +181,12 @@ const styles = StyleSheet.create({
     height: Screen.moderateScale(60),
     borderRadius: Screen.moderateScale(8),
   },
+  orderDetailsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   orderDetails: {
-    flex: 1,
+    // flex: 1,
     marginHorizontal: Spacing.medium,
   },
   orderTitle: {
@@ -121,27 +198,41 @@ const styles = StyleSheet.create({
     fontSize: FontSize.small,
     color: '#666',
   },
-  editText: {
+  orderPriceContainer: {
+    alignItems: 'flex-end',
+  },
+  price: {
+    fontSize: FontSize.medium,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  viewScheduleText: {
     fontSize: FontSize.small,
     color: '#03A9F4',
-    fontWeight: 'bold',
-  },
-  counterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
     marginTop: Spacing.small,
   },
-  counterButton: {
-    backgroundColor: '#EEEEEE',
-    width: Screen.moderateScale(30),
-    height: Screen.moderateScale(30),
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: Screen.moderateScale(5),
+  scheduleItem: {
+    borderRadius: Screen.moderateScale(8),
+    padding: Spacing.medium,
+    marginBottom: Spacing.small,
   },
-  counterText: {
+  scheduleTitle: {
     fontSize: FontSize.medium,
+    fontWeight: 'bold',
     color: '#333',
+  },
+  scheduleTimeSlot: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: Spacing.small,
+  },
+  scheduleTime: {
+    fontSize: FontSize.small,
+    color: '#666',
+  },
+  availability: {
+    fontSize: FontSize.small,
+    color: '#03A9F4',
   },
   offersContainer: {
     flexDirection: 'row',
@@ -175,12 +266,6 @@ const styles = StyleSheet.create({
     fontSize: FontSize.medium,
     fontWeight: 'bold',
     color: '#333',
-  },
-  noItemsText: {
-    fontSize: FontSize.medium,
-    color: '#333',
-    textAlign: 'center',
-    marginTop: Spacing.medium,
   },
 });
 
