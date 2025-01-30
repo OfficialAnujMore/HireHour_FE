@@ -11,6 +11,10 @@ export const WORD_DIR = {
     register: "Register",
     haveAnAccount: "Already have an account? ",
     dontHaveAnAccount: "Don't have an account? ",
+    emailOTP:"Enter email OTP",
+    phoneOTP:"Enter phone OTP",
+    verifyOTP:"Verify OTP",
+    upcomingEvents:"Upcoming events",
 
     serviceDetails: "Service Details",
     title: "Title",

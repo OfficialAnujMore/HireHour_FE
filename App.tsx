@@ -13,7 +13,7 @@ const App = () => (
       <SafeAreaProvider>
 
         {/* Optional: Set status bar color */}
-        <StatusBar barStyle="dark-content" backgroundColor="white" />
+        {/* <StatusBar barStyle="dark-content" backgroundColor="black" /> */}
         {/* <SafeAreaView> */}
           <RootNavigator />
           <CustomSnackbar/>

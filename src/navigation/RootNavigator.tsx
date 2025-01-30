@@ -11,7 +11,6 @@ import { RootState } from "../redux/store";
 import SplashScreen from "../screens/User/SplashScreen";
 import HomeScreen from "../screens/User/HomeScreen";
 import LoginScreen from "../screens/User/LoginScreen";
-import RegisterScreen from "../screens/User/RegisterScreen";
 import ServiceDetailsScreen from "../screens/ServiceProvider/ServiceDetailsScreen";
 import ServiceReviewScreen from "../screens/ServiceProvider/ServiceReviewsScreen";
 import CreateServiceScreen from "../screens/ServiceProvider/CreateServiceScreen";
@@ -26,6 +25,9 @@ import EnrollAsServiceProvider from "../screens/ServiceProvider/EnrollAsServiceP
 import ViewServiceScreen from "../screens/ServiceProvider/ViewServiceScreen";
 import MyServices from "../screens/ServiceProvider/MyService";
 import UpcomingEvents from "../screens/UpcomingEvents";
+import RegistrationScreen from "../screens/Auth/RegistrationScreen";
+import VerifyOTPScreen from "../screens/Auth/VerifyOTPScreen";
+// import VerifyOtpScreen from "../screens/Auth/VerifyOtpScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -85,7 +87,7 @@ const AuthenticatedTabs = () => {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Events" component={UpcomingEvents} />
       {
-        user?.userRole === 'SERVICE_PROVIDER' ?
+        user?.isServiceProvider ?
 
           <Tab.Screen
             name="Create"
@@ -154,7 +156,9 @@ const RootNavigator = () => {
           ) : (
             <>
               <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="Register" component={RegisterScreen} />
+              <Stack.Screen name="RegistrationScreen" component={RegistrationScreen} />
+              <Stack.Screen name="VerifyOTP" component={VerifyOTPScreen} />
+
             </>
           )}
         </Stack.Navigator>

@@ -1,9 +1,12 @@
 // store.ts
-import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {configureStore, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { persistReducer, persistStore } from 'redux-persist';
-import { User } from 'interfaces/userInterface';
+import {persistReducer, persistStore} from 'redux-persist';
+import {User} from 'interfaces/userInterface';
 import snackbarReducer from './snackbarSlice';
+import {combineReducers} from 'redux'; // Added combineReducers
+import cartReducer from './cartSlice'; // Import the cartSlice reducer
+
 // Auth State Interface
 interface AuthState {
   isAuthenticated: boolean;
@@ -11,7 +14,7 @@ interface AuthState {
   token: string | null; // Add token field
 }
 
-// Initial State
+// Initial State for Auth
 const initialState: AuthState = {
   isAuthenticated: false,
   user: null,
@@ -23,13 +26,13 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<{ user: User }>) => {
+    login: (state, action: PayloadAction<{user: User}>) => {
       state.isAuthenticated = true;
       state.user = action.payload.user;
       state.token = action.payload.user.token; // Store token in state
     },
-    
-    logout: (state) => {
+
+    logout: state => {
       state.isAuthenticated = false;
       state.user = null;
       state.token = null;
@@ -37,7 +40,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const {login, logout} = authSlice.actions;
 
 // Persist Config
 const persistConfig = {
@@ -45,15 +48,16 @@ const persistConfig = {
   storage: AsyncStorage,
 };
 
-// Persisted Reducer
+// Persisted Reducer for Auth
 const persistedReducer = persistReducer(persistConfig, authSlice.reducer);
 
-// Configure Store
+// Configure Store with Cart and Auth Reducers
 export const store = configureStore({
-  reducer: {
-    auth: persistedReducer,
-    snackbar: snackbarReducer,
-  },
+  reducer: combineReducers({
+    auth: persistedReducer, // Auth reducer
+    snackbar: snackbarReducer, // Snackbar reducer
+    cart: cartReducer, // Cart reducer
+  }),
 });
 
 export const persistor = persistStore(store);

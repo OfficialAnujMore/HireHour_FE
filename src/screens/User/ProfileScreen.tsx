@@ -1,30 +1,25 @@
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
-import { Screen, Spacing, FontSize } from '../../utils/dimension';
+import React, {useMemo} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
+import {Screen, Spacing, FontSize} from '../../utils/dimension';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { COLORS } from '../../utils/globalConstants/color';
-import { useNavigation } from '@react-navigation/native';
-import { logout, RootState } from '../../redux/store';
-import { useDispatch, useSelector } from 'react-redux';
+import {COLORS} from '../../utils/globalConstants/color';
+import {useNavigation} from '@react-navigation/native';
+import {logout, RootState} from '../../redux/store';
+import {useDispatch, useSelector} from 'react-redux';
 import CustomText from '../../components/CustomText';
-import { WORD_DIR } from '../../utils/local/en';
+import {WORD_DIR} from '../../utils/local/en';
 
 const ProfileScreen: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
   const navigation = useNavigation();
-
-  const menuItems = useMemo(
-    () => [
-      { label: 'Transaction History', icon: 'receipt-outline' },
-      { label: 'Settings', icon: 'settings-outline', callback: () => navigation.navigate('Settings') },
-      { label: 'Enroll As Service Provider', icon: 'person-add', callback: () => navigation.navigate('Enroll') },
-      { label: 'Privacy Policy', icon: 'lock-closed-outline' },
-      { label: 'My Services', icon: 'lock-closed-outline', callback: () => navigation.navigate('MyService') },
-      { label: 'Log out', icon: 'power-outline', callback: () => dispatch(logout()) },
-    ],
-    [navigation, dispatch]
-  );
 
   if (!user) {
     return (
@@ -34,29 +29,64 @@ const ProfileScreen: React.FC = () => {
     );
   }
 
-  const { name, email, phoneNumber } = user;
-  const avatarUri = user.avatarUri; // Assuming `avatarUri` exists in the `user` object
+  const {name, email, phoneNumber, avatarUri, isServiceProvider} = user;
+
+  const menuItems = useMemo(() => {
+    const items = [
+      {label: 'Transaction History', icon: 'receipt-outline'},
+      {
+        label: 'Settings',
+        icon: 'settings-outline',
+        callback: () => navigation.navigate('Settings'),
+      },
+      {label: 'Privacy Policy', icon: 'lock-closed-outline'},
+      {
+        label: 'Log out',
+        icon: 'power-outline',
+        callback: () => dispatch(logout()),
+      },
+    ];
+
+    if (!isServiceProvider) {
+      items.splice(2, 0, {
+        label: 'Enroll As Service Provider',
+        icon: 'person-add',
+        callback: () => navigation.navigate('Enroll'),
+      });
+    } else {
+      items.splice(2, 0, {
+        label: 'My Services',
+        icon: 'briefcase-outline',
+        callback: () => navigation.navigate('MyService'),
+      });
+    }
+
+    return items;
+  }, [navigation, dispatch, isServiceProvider]);
 
   return (
     <ScrollView style={styles.container}>
       <TouchableOpacity
         style={styles.editItemContainer}
         onPress={() => navigation.navigate('EditProfile')}
-        accessibilityLabel="Edit Profile"
-      >
+        accessibilityLabel="Edit Profile">
         <Icon name="pencil" size={FontSize.large} color={COLORS.black} />
       </TouchableOpacity>
 
       <View style={styles.profileContainer}>
         {avatarUri ? (
           <Image
-            source={{ uri: avatarUri }}
+            source={{uri: avatarUri}}
             style={styles.avatar}
             accessibilityLabel="User Avatar"
           />
         ) : (
           <View style={[styles.avatar, styles.iconFallback]}>
-            <Icon name="person-outline" size={FontSize.extraLarge * 1.5} color={COLORS.grey} />
+            <Icon
+              name="person-outline"
+              size={FontSize.extraLarge * 1.5}
+              color={COLORS.grey}
+            />
           </View>
         )}
         <CustomText style={[styles.textStyle, styles.name]} label={name} />
@@ -72,7 +102,6 @@ const ProfileScreen: React.FC = () => {
           callback={item.callback}
         />
       ))}
-
     </ScrollView>
   );
 };
@@ -83,12 +112,11 @@ interface MenuItemProps {
   callback?: () => void;
 }
 
-const MenuItem: React.FC<MenuItemProps> = ({ label, icon, callback }) => (
+const MenuItem: React.FC<MenuItemProps> = ({label, icon, callback}) => (
   <TouchableOpacity
     style={styles.menuItem}
     onPress={callback}
-    accessibilityLabel={label}
-  >
+    accessibilityLabel={label}>
     <View style={styles.menuIcon}>
       <Icon name={icon} size={FontSize.large} color={COLORS.black} />
     </View>
@@ -99,7 +127,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ label, icon, callback }) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal:Spacing.medium,
+    paddingHorizontal: Spacing.medium,
     backgroundColor: COLORS.white,
   },
   profileContainer: {
@@ -110,7 +138,7 @@ const styles = StyleSheet.create({
     width: Screen.moderateScale(100),
     height: Screen.moderateScale(100),
     borderRadius: Screen.moderateScale(50),
-    backgroundColor: COLORS.lightGrey, // Background color for fallback icon
+    backgroundColor: COLORS.lightGrey,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -131,7 +159,7 @@ const styles = StyleSheet.create({
     marginVertical: Spacing.small,
     borderRadius: Screen.moderateScale(8),
     shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,

@@ -1,20 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Alert, FlatList, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';;
-import { useDispatch, useSelector } from 'react-redux';
-import { logout, RootState } from '../../redux/store';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  Button,
+  Alert,
+  FlatList,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import {logout, RootState} from '../../redux/store';
 import CustomSearchBar from '../../components/CustomSearchBar';
 import CustomCards from '../../components/CustomCards';
 import CustomText from '../../components/CustomText';
-import { FontSize, Screen, Spacing } from '../../utils/dimension';
-import { COLORS } from '../../utils/globalConstants/color';
+import {FontSize, Screen, Spacing} from '../../utils/dimension';
+import {COLORS} from '../../utils/globalConstants/color';
 import CustomSchedule from '../../components/CustomSchedule';
 import CustomCarouselSlider from '../../components/CustomCarousel';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { WORD_DIR } from 'utils/local/en';
-import { CustomRatingInfo } from '../../components/CustomRatingInfo';
+import {WORD_DIR} from 'utils/local/en';
+import {CustomRatingInfo} from '../../components/CustomRatingInfo';
 import CustomButton from '../../components/CustomButton';
-import { bookService } from '../../services/userService';
+import {bookService} from '../../services/serviceProviderService';
+import CustomSlider from '../../components/CustomSlider';
+import {addToCart} from '../../redux/cartSlice';
 interface ServiceDetails {
   id: string;
   title: string;
@@ -26,29 +37,32 @@ interface ServiceDetails {
   time: string;
   distance: string;
   image: string;
-  previewImages: []
-};
+  previewImages: [];
+}
 const ServiceDetailsScreen = (props: ServiceDetails) => {
   const navigation = useNavigation();
   const [selectedTimeId, setSelectedTimeId] = useState<string | null>(null);
-  const item = props.route.params
-
-  console.log('Service preview =======>',item.servicePreview);
-  
-  console.log('Service details data \n', item.schedule);
+  const item = props.route.params;
 
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
   const handlePress = async () => {
-    const response = await bookService({ userId: user?.id, timeSlotId: selectedTimeId })
+    // const response = await bookService({ userId: user?.id, timeSlotId: selectedTimeId })
 
-    Alert.alert("Success", "Service booked");
+    // Alert.alert("Success", "Service booked");
 
+    // const cartItem = {
+    //   id: item.id,
+    //   title: item.title,
+    //   description: item.description,
+    //   image: item.image,
+    //   price: 100, // You can replace this with the actual price
+    //   quantity: 1, // Default quantity is 1
+    // };
+
+    dispatch(addToCart(item)); // Dispatch action to add item to the cart
+    Alert.alert('Added to Cart', `${item.title} has been added to your cart.`);
   };
-
-
-
-
 
   return (
     <View style={styles.container}>
@@ -61,20 +75,19 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
           </View>
           <CustomText label={item.description} style={styles.textStyle} />
         </View>
-        <CustomSchedule dateInfo={item.schedule} selectedTimeId={selectedTimeId} onValueChange={(id) => {
-          setSelectedTimeId(id);
-        }} />
-
-        <CustomButton
-          label={'Book a service'}
-          onPress={handlePress}
-
+        <CustomSchedule
+          dateInfo={item.schedule}
+          selectedTimeId={selectedTimeId}
+          onValueChange={id => {
+            setSelectedTimeId(id);
+          }}
         />
-      </ScrollView>
 
+        <CustomButton label={'Add to cart'} onPress={handlePress} />
+      </ScrollView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -85,8 +98,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.grey,
   },
   detailsContainer: {
-    marginVertical: Spacing.small
-
+    marginVertical: Spacing.small,
   },
   textStyle: {
     fontSize: FontSize.medium,
@@ -106,13 +118,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ratingsContainer: {
-    backgroundColor: "green",
+    backgroundColor: 'green',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: Spacing.small,
     padding: Spacing.small / 2,
-  }
-})
+  },
+});
 
 export default ServiceDetailsScreen;

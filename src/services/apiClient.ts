@@ -13,7 +13,7 @@ export interface ApiResponse<T> {
 const unprotectedRoutes = ['/public', '/auth/login', '/auth/register','api/v1/user/loginUser'];
 
 const apiClient = axios.create({
-  baseURL: 'http://10.67.62.12:3000/', // Replace with your API base URL
+  baseURL: 'http://10.67.48.210:3000/', // Replace with your API base URL
   timeout: 10000, // Timeout after 10 seconds
   headers: {
     'Content-Type': 'application/json',

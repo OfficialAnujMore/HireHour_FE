@@ -13,8 +13,9 @@ import { FontSize, Screen, Spacing } from '../../utils/dimension';
 import { WORD_DIR } from '../../utils/local/en';
 import { COLORS } from '../../utils/globalConstants/color';
 import { PLACEHOLDER_DIR } from '../../utils/local/placeholder';
-import { loginUser } from '../../services/userService';
+import { loginUser } from '../../services/authService';
 import { EMAIL_REGEX } from '../../utils/regex';
+import { USER_DETAILS } from '../../utils/constants';
 
 interface User {
     email: string;
@@ -31,8 +32,8 @@ const LoginScreen: React.FC = () => {
     const navigation = useNavigation();
 
     const [user, setUser] = useState<User>({
-        email: '',
-        password: '',
+        email: USER_DETAILS.email,
+        password: USER_DETAILS.password,
     });
     const [errors, setErrors] = useState<Errors>({ email: '', password: '' });
 
@@ -117,7 +118,7 @@ const LoginScreen: React.FC = () => {
                         <CustomText label={WORD_DIR.dontHaveAnAccount} />
                         <CustomText
                             label={WORD_DIR.register}
-                            action={() => navigation.navigate('Register')}
+                            action={() => navigation.navigate('RegistrationScreen')}
                         />
                     </View>
                 </View>
