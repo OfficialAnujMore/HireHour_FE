@@ -61,9 +61,9 @@ const CreateServiceScreen = () => {
   const [dates, setDates] = useState<DateInfo[]>([]);
   const [selectedDateId, setSelectedDateId] = useState<string | null>(null);
   const [serviceDetails, setServiceDetails] = useState({
-    title: 'Art',
-    description: 'This is description',
-    chargesPerHour: '20',
+    title: '',
+    description: '',
+    chargesPerHour: '',
     category: CATEGORY[Object.keys(CATEGORY)[0] as keyof typeof CATEGORY],
   });
 

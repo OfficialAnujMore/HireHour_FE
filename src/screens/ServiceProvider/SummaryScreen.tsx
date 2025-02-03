@@ -147,7 +147,7 @@ const SummaryScreen: React.FC = () => {
         </View>
       </View>
 
-      <CustomButton label={'Add to cart'} onPress={handlePress} />
+      <CustomButton label={'Book service'} onPress={handlePress} />
     </ScrollView>
   );
 };
