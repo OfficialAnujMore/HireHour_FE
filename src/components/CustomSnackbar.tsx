@@ -1,18 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Animated, Text, View, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { COLOR } from '../utils/globalConstants/color';
+import { COLORS } from '../utils/globalConstants/color';
 import { RootState } from '../redux/store';
 import { hideSnackbar } from '../redux/snackbarSlice';
 import { FontSize, Screen, Spacing } from '../utils/dimension';
 
 const CustomSnackbar: React.FC = () => {
   const dispatch = useDispatch();
-  const { message, visible } = useSelector((state: RootState) => state.snackbar);
-  const [animation] = React.useState(new Animated.Value(0));
+  const { message = '', visible } = useSelector((state: RootState) => state.snackbar);
+  const animation = useState(new Animated.Value(0))[0];
 
   useEffect(() => {
-    
+    let timeoutId: NodeJS.Timeout;
+
     if (visible) {
       Animated.timing(animation, {
         toValue: 1,
@@ -20,9 +21,9 @@ const CustomSnackbar: React.FC = () => {
         useNativeDriver: true,
       }).start();
 
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
         dispatch(hideSnackbar());
-      }, 3000); // Auto-hide after 3 seconds
+      }, 3000);
     } else {
       Animated.timing(animation, {
         toValue: 0,
@@ -30,7 +31,11 @@ const CustomSnackbar: React.FC = () => {
         useNativeDriver: true,
       }).start();
     }
-  }, [visible, dispatch]);
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId); // Clean up timeout on unmount
+    };
+  }, [visible, dispatch, animation]);
 
   return (
     <Animated.View
@@ -57,17 +62,17 @@ const CustomSnackbar: React.FC = () => {
 const styles = StyleSheet.create({
   snackbarContainer: {
     position: 'absolute',
-    bottom: 2,
-    backgroundColor: COLOR.black,
+    bottom: 0,
+    backgroundColor: COLORS.black,
     padding: Spacing.medium,
-    width:Screen.width,
+    width: Screen.width,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1000,
   },
   snackbarText: {
-    color: COLOR.white,
+    color: COLORS.white,
     fontSize: FontSize.medium,
   },
 });

@@ -11,8 +11,8 @@ import {
   Button as RNButton,
 } from "react-native";
 import { AirbnbRating } from "react-native-ratings"; // Import AirbnbRating from react-native-ratings
-import { Screen, Spacing, FontSize } from "../utils/dimension";
-import CustomButton from "../components/CustomButton";
+import { Screen, Spacing, FontSize } from "../../utils/dimension";
+import CustomButton from "../../components/CustomButton";
 
 // Reviews Data (for rendering)
 const reviews = [

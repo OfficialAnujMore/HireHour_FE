@@ -20,120 +20,39 @@ interface TimeSlot {
 interface DateInfo {
   id: string;
   day: string;
+  month: string;
   date: string;
+  fullDate: string;
   timeSlots: TimeSlot[];
 }
 
-const CustomSchedule: React.FC = () => {
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+interface CustomScheduleProps {
+  dateInfo: DateInfo[];
+  selectedTimeIds: string[]; // Changed to an array
+  onValueChange: (value: string[]) => void; // Updated to accept an array
+}
 
-  const dates: DateInfo[] = [
-    {
-      id: "1",
-      day: "Wed",
-      date: "01",
-      timeSlots: [
-        { id: "1", time: "9:30 AM", available: true },
-        { id: "2", time: "10:00 AM", available: true },
-        { id: "3", time: "10:30 AM", available: false },
-        { id: "4", time: "11:00 AM", available: true },
-        { id: "5", time: "11:30 AM", available: true },
-        { id: "6", time: "12:00 PM", available: true },
-      ],
-    },
-    {
-      id: "2",
-      day: "Thu",
-      date: "02",
-      timeSlots: [
-        { id: "4", time: "11:00 AM", available: true },
-        { id: "5", time: "11:30 AM", available: true },
-        { id: "6", time: "12:00 PM", available: true },
-      ],
-    },
-    {
-      id: "3",
-      day: "Fri",
-      date: "03",
-      timeSlots: [
-        { id: "7", time: "1:00 PM", available: true },
-        { id: "8", time: "1:30 PM", available: false },
-        { id: "9", time: "2:00 PM", available: true },
-      ],
-    }, {
-      id: "4",
-      day: "Sat",
-      date: "04",
-      timeSlots: [
-        { id: "7", time: "1:00 PM", available: true },
-        { id: "8", time: "1:30 PM", available: false },
-        { id: "9", time: "2:00 PM", available: true },
-      ],
-    }, {
-      id: "5",
-      day: "Sun",
-      date: "05",
-      timeSlots: [
-        { id: "1", time: "9:30 AM", available: true },
-        { id: "2", time: "10:00 AM", available: true },
-        { id: "3", time: "10:30 AM", available: false },
-        { id: "4", time: "11:00 AM", available: true },
-        { id: "5", time: "11:30 AM", available: true },
-        { id: "6", time: "12:00 PM", available: false },
-        { id: "7", time: "1:00 PM", available: true },
-        { id: "8", time: "1:30 PM", available: false },
-        { id: "9", time: "2:00 PM", available: true },
-        
-      ],
-    },
-    {
-      id: "6",
-      day: "Mon",
-      date: "06",
-      timeSlots: [
-        { id: "1", time: "9:30 AM", available: true },
-        { id: "2", time: "10:00 AM", available: true },
-        { id: "3", time: "10:30 AM", available: false },
-        { id: "4", time: "11:00 AM", available: true },
-        { id: "5", time: "11:30 AM", available: true },
-        { id: "6", time: "12:00 PM", available: false },
-        { id: "7", time: "1:00 PM", available: true },
-        { id: "8", time: "1:30 PM", available: false },
-        { id: "9", time: "2:00 PM", available: true },
-        
-      ],
-    },
-    {
-      id: "7",
-      day: "Mon",
-      date: "07",
-      timeSlots: [
-        { id: "1", time: "9:30 AM", available: true },
-        { id: "2", time: "10:00 AM", available: true },
-        { id: "3", time: "10:30 AM", available: false },
-        { id: "4", time: "11:00 AM", available: true },
-        { id: "5", time: "11:30 AM", available: true },
-        { id: "6", time: "12:00 PM", available: false },
-        { id: "7", time: "1:00 PM", available: true },
-        { id: "8", time: "1:30 PM", available: false },
-        { id: "9", time: "2:00 PM", available: true },
-        
-      ],
-    },
-  ];
+const CustomSchedule: React.FC<CustomScheduleProps> = ({
+  dateInfo,
+  selectedTimeIds,
+  onValueChange,
+}) => {
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const handleDateSelect = (id: string) => {
     setSelectedDate(id);
-    setSelectedTime(null); // Reset time when a new date is selected
+    // onValueChange([]); // Clear selected times when a new date is selected
   };
 
-  const handleTimeSelect = (id: string) => {
-    setSelectedTime(id);
+  const handleTimeSelect = (item: TimeSlot) => {
+    const newSelectedTimes = selectedTimeIds.includes(item.id)
+      ? selectedTimeIds.filter((id) => id !== item.id) // Deselect if already selected
+      : [...selectedTimeIds, item.id]; // Add to selected times if not already selected
+
+    onValueChange(newSelectedTimes); // Update parent component with selected times
   };
 
-  // Find the selected date's timeSlots
-  const selectedDateInfo = dates.find((date) => date.id === selectedDate);
+  const selectedDateInfo = dateInfo.find((date) => date.id === selectedDate);
 
   return (
     <View style={styles.container}>
@@ -143,7 +62,7 @@ const CustomSchedule: React.FC = () => {
       {/* Date Selector */}
       <View style={styles.dateContainer}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {dates.map((date) => (
+          {dateInfo.map((date) => (
             <TouchableOpacity
               key={date.id}
               style={[
@@ -185,15 +104,15 @@ const CustomSchedule: React.FC = () => {
             disabled={!item.available}
             style={[
               styles.timeSlot,
-              selectedTime === item.id && styles.selectedTimeSlot,
+              selectedTimeIds.includes(item.id) && styles.selectedTimeSlot,
               !item.available && styles.unavailableTimeSlot,
             ]}
-            onPress={() => handleTimeSelect(item.id)}
+            onPress={() => handleTimeSelect(item)}
           >
             <Text
               style={[
                 styles.timeSlotText,
-                selectedTime === item.id && styles.selectedTimeSlotText,
+                selectedTimeIds.includes(item.id) && styles.selectedTimeSlotText,
                 !item.available && styles.unavailableTimeSlotText,
               ]}
             >
