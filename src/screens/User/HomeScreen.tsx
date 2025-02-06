@@ -8,8 +8,8 @@ import CustomText from '../../components/CustomText';
 import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import {getGreeting} from '../../utils/globalFunctions';
 import {getServiceProviders} from '../../services/serviceProviderService';
-import {User} from '../../interfaces/userInterface';
 import {useFocusEffect} from '@react-navigation/native';
+import { User } from 'interfaces';
 
 const HomeScreen = ({navigation}: any) => {
   const dispatch = useDispatch();

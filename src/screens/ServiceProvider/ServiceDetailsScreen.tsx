@@ -1,43 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  Button,
-  Alert,
-  FlatList,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {logout, RootState} from '../../redux/store';
-import CustomSearchBar from '../../components/CustomSearchBar';
-import CustomCards from '../../components/CustomCards';
+import {RootState} from '../../redux/store';
 import CustomText from '../../components/CustomText';
 import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import {COLORS} from '../../utils/globalConstants/color';
 import CustomSchedule from '../../components/CustomSchedule';
 import CustomCarouselSlider from '../../components/CustomCarousel';
 import {useNavigation} from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {WORD_DIR} from 'utils/local/en';
 import {CustomRatingInfo} from '../../components/CustomRatingInfo';
 import CustomButton from '../../components/CustomButton';
-import {bookService} from '../../services/userService';
-import { addToCart } from '../../redux/cartSlice';
-interface ServiceDetails {
-  id: string;
-  title: string;
-  description: string;
-  location: string;
-  status: string;
-  offer: string | null;
-  rating: number;
-  time: string;
-  distance: string;
-  image: string;
-  previewImages: [];
-}
+import {addToCart} from '../../redux/cartSlice';
+import {ServiceDetails} from 'interfaces';
+
 const ServiceDetailsScreen = (props: ServiceDetails) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -63,11 +38,11 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
 
     const updatedItem = {
       ...item,
-      schedule: filteredSchedule,  // Replace original schedule with filtered schedule
+      schedule: filteredSchedule, // Replace original schedule with filtered schedule
     };
-  
+
     console.log('Updated item with filtered schedule:', updatedItem);
-    dispatch(addToCart(updatedItem))
+    dispatch(addToCart(updatedItem));
 
     // console.log('Filtered schedule:', filteredSchedule);
 

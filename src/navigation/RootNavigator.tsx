@@ -10,7 +10,7 @@ import { RootState } from "../redux/store";
 // Screens
 import SplashScreen from "../screens/User/SplashScreen";
 import HomeScreen from "../screens/User/HomeScreen";
-import LoginScreen from "../screens/User/LoginScreen";
+import LoginScreen from "../screens/Auth/LoginScreen";
 import ServiceDetailsScreen from "../screens/ServiceProvider/ServiceDetailsScreen";
 import ServiceReviewScreen from "../screens/ServiceProvider/ServiceReviewsScreen";
 import CreateServiceScreen from "../screens/ServiceProvider/CreateServiceScreen";
@@ -32,9 +32,7 @@ import VerifyOTPScreen from "../screens/Auth/VerifyOTPScreen";
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-interface CustomTabBarButtonProps {
-  onPress?: (event: GestureResponderEvent) => void;
-}
+
 
 const CustomTabBarButton: React.FC<CustomTabBarButtonProps> = ({ onPress }) => (
   <TouchableOpacity

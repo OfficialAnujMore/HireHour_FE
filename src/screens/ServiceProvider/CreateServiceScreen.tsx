@@ -20,21 +20,8 @@ import {addService} from '../../services/serviceProviderService';
 import CustomDropdown from '../../components/CustomDropdown';
 import {CATEGORY} from '../../utils/constants';
 import {showSnackbar} from '../../redux/snackbarSlice';
+import { DateInfo, TimeSlot } from 'interfaces';
 
-interface TimeSlot {
-  id: string;
-  time: string;
-  available: boolean;
-}
-
-interface DateInfo {
-  id: string;
-  day: string;
-  date: string;
-  month: string;
-  fullDate: string;
-  timeSlots: TimeSlot[];
-}
 
 const generateDates = (): DateInfo[] => {
   const timeSlots: TimeSlot[] = Array.from({length: 24}, (_, i) => ({
@@ -238,17 +225,7 @@ const CreateServiceScreen = () => {
         WORD_DIR.chargesPerHour,
         'chargesPerHour',
       )}
-      {/* <CustomDropdown
-                label="Select a category"
-                options={CATEGORY}
-                value={serviceDetails.category}
-                onValueChange={(value) =>
 
-                    console.log(value)
-                    // setServiceDetails((prev) => ({ ...prev, category: value }))
-
-                }
-            /> */}
 
       <CustomDropdown
         label="Select an Option"

@@ -11,10 +11,11 @@ import {Screen, Spacing, FontSize} from '../../utils/dimension';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {COLORS} from '../../utils/globalConstants/color';
 import {useNavigation} from '@react-navigation/native';
-import {logout, RootState} from '../../redux/store';
+import {RootState} from '../../redux/store';
 import {useDispatch, useSelector} from 'react-redux';
 import CustomText from '../../components/CustomText';
 import {WORD_DIR} from '../../utils/local/en';
+import {MenuItemProps} from 'interfaces';
 
 const ProfileScreen: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -105,12 +106,6 @@ const ProfileScreen: React.FC = () => {
     </ScrollView>
   );
 };
-
-interface MenuItemProps {
-  label: string;
-  icon: string;
-  callback?: () => void;
-}
 
 const MenuItem: React.FC<MenuItemProps> = ({label, icon, callback}) => (
   <TouchableOpacity

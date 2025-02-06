@@ -11,26 +11,7 @@ import {
 
 const { width } = Dimensions.get("window");
 
-interface TimeSlot {
-  id: string;
-  time: string;
-  available: boolean;
-}
 
-interface DateInfo {
-  id: string;
-  day: string;
-  month: string;
-  date: string;
-  fullDate: string;
-  timeSlots: TimeSlot[];
-}
-
-interface CustomScheduleProps {
-  dateInfo: DateInfo[];
-  selectedTimeIds: string[]; // Changed to an array
-  onValueChange: (value: string[]) => void; // Updated to accept an array
-}
 
 const CustomSchedule: React.FC<CustomScheduleProps> = ({
   dateInfo,
