@@ -3,7 +3,6 @@ import { View, Image, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { login } from '../../redux/store';
 import { showSnackbar } from '../../redux/snackbarSlice';
 import logo from '../../assets/logo.jpeg';
 import CustomInput from '../../components/CustomInput';
@@ -16,28 +15,22 @@ import { PLACEHOLDER_DIR } from '../../utils/local/placeholder';
 import { loginUser } from '../../services/authService';
 import { EMAIL_REGEX } from '../../utils/regex';
 import { USER_DETAILS } from '../../utils/constants';
+import { AuthUser, Errors } from 'interfaces';
+import { login } from '../../redux/authSlice';
 
-interface User {
-    email: string;
-    password: string;
-}
 
-interface Errors {
-    email: string;
-    password: string;
-}
 
 const LoginScreen: React.FC = () => {
     const dispatch = useDispatch();
     const navigation = useNavigation();
 
-    const [user, setUser] = useState<User>({
+    const [user, setUser] = useState<AuthUser>({
         email: USER_DETAILS.email,
         password: USER_DETAILS.password,
     });
     const [errors, setErrors] = useState<Errors>({ email: '', password: '' });
 
-    const handleValueChange = (field: keyof User, value: string): void => {
+    const handleValueChange = (field: keyof AuthUser, value: string): void => {
         setUser((prevState) => ({
             ...prevState,
             [field]: value,
@@ -45,7 +38,7 @@ const LoginScreen: React.FC = () => {
         validateField(field, value);
     };
 
-    const validateField = useCallback((field: keyof User, value: string): void => {
+    const validateField = useCallback((field: keyof AuthUser, value: string): void => {
         let error = '';
 
         if (field === 'email') {

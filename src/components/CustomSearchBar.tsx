@@ -26,7 +26,7 @@ const CustomSearchBar: React.FC<CustomSearchBarProps> = ({ onSearch }) => {
                     style={styles.input}
                     placeholder="Search..."
                     value={query}
-                    onChangeText={handleSearch}
+                    onValueChange={handleSearch}
                 />
                 <Icon name="search-outline" size={25} color="#000" />
             </View>

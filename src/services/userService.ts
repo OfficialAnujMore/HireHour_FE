@@ -1,4 +1,5 @@
-import {User} from 'interfaces/userInterface';
+
+import { User } from 'interfaces';
 import {ApiResponse, get, post} from './apiClient';
 import {UPCOMING_EVENTS, UPDATE_ROLE, V1_USER_BASE_ROUTE} from './routes';
 

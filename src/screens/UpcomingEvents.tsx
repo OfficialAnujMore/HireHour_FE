@@ -13,11 +13,7 @@ const UpcomingEvents = ({}) => {
   const [data, setData] = useState();
 
   const apiCall = async () => {
-    console.log('APoi called');
-
     const response = await getUpcomingEvents({userId: user?.id});
-    console.log('getUpcomingEvents', response);
-
     setData(response?.data);
   };
   useFocusEffect(

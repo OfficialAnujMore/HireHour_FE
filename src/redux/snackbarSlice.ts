@@ -1,10 +1,7 @@
 // src/store/snackbar/snackbarSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { SnackbarState } from '../interfaces/reduxInterface';
 
-interface SnackbarState {
-  message: string;
-  visible: boolean;
-}
 
 const initialState: SnackbarState = {
   message: '',
@@ -15,8 +12,8 @@ const snackbarSlice = createSlice({
   name: 'snackbar',
   initialState,
   reducers: {
-    showSnackbar: (state, action: PayloadAction<string|undefined>) => {
-      state.message = action?.payload;
+    showSnackbar: (state, action: PayloadAction<string>) => {
+      state.message = action.payload;
       state.visible = true;
     },
     hideSnackbar: (state) => {

@@ -10,16 +10,11 @@ import {
   NativeSyntheticEvent,
 } from "react-native";
 import { Screen, Spacing } from "../utils/dimension";
+import { CustomCarouselProps } from "interfaces";
 
 const { width } = Dimensions.get("window");
 
-interface CarouselItem {
-  imageUri: string;
-}
 
-interface CustomCarouselProps {
-  data: CarouselItem[];
-}
 
 const CustomCarousel: React.FC<CustomCarouselProps> = ({ data }) => {
   const [activeIndex, setActiveIndex] = useState(0);

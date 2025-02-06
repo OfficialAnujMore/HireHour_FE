@@ -6,39 +6,11 @@ import CustomText from './CustomText';
 import { useNavigation } from '@react-navigation/native';
 import { CustomRatingInfo } from './CustomRatingInfo';
 import Icon from 'react-native-vector-icons/Ionicons';
-interface CustomCardsProps {
-  item: {
-    avatarUri?: string;
-    title: string;
-    description: string;
-    category: string;
-    chargesPerHour: string;
-    ratings: number;
-  };
-  handlePress:()=>{}
-}
+import { CustomCardsProps } from 'interfaces';
+
 
 const CustomEventCard: React.FC<CustomCardsProps> = ({ item,handlePress }) => {
   const navigation = useNavigation();
-  console.log(item);
-  
-//   {
-//     "id": "4f6255d1-b1ef-4643-8f66-a8356e0d97a7",
-//     "time": "04:00 PM",
-//     "available": false,
-//     "bookedUserId": "6ae2d3e4-0d3e-4ce6-ab80-17fadb1ae638",
-//     "scheduleId": "15c2589d-1548-4747-8640-c4c97acf6c41",
-//     "day": "Wed",
-//     "month": "Jan",
-//     "fullDate": "2025-01-30T05:21:17.184Z",
-//     "date": "29",
-//     "title": "Artist service",
-//     "description": "This is a service",
-//     "isDeleted": null,
-//     "isDisabled": null,
-//     "createdAt": "2025-01-22T05:21:20.325Z",
-//     "updatedAt": "2025-01-22T05:21:20.325Z"
-// }
 
   return (
     <TouchableOpacity style={styles.container} onPress={handlePress}>

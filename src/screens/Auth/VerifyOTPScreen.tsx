@@ -1,16 +1,16 @@
 import React, {useRef, useState} from 'react';
 import {View, TextInput, StyleSheet, Keyboard, Image, ScrollView} from 'react-native';
 import CustomText from '../../components/CustomText';
-import {RegisterUser} from '../../interfaces/userInterface';
 import {WORD_DIR} from '../../utils/local/en';
 import CustomButton from '../../components/CustomButton';
 import {verifyOTP} from '../../services/authService';
 import {registerUser} from '../../services/authService';
-import {login} from '../../redux/store';
 import {useDispatch} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {Screen, Spacing} from '../../utils/dimension';
+import { RegisterUser } from 'interfaces';
+import { login } from '../../redux/authSlice';
 const OTP_LENGTH: number = 6;
 
 const VerifyOTPScreen: React.FC<RegisterUser> = props => {
@@ -88,7 +88,7 @@ const VerifyOTPScreen: React.FC<RegisterUser> = props => {
     console.log(emailOTPResponse);
 
     if (!emailOTPResponse.success) {
-      dispatch(showSnackbar(emailOTPResponse?.message));
+      dispatch(showSnackbar(emailOTPResponse.message));
       return;
     }
 
@@ -99,7 +99,7 @@ const VerifyOTPScreen: React.FC<RegisterUser> = props => {
     console.log(phoneOTPResponse);
 
     if (!phoneOTPResponse.success) {
-      dispatch(showSnackbar(phoneOTPResponse?.message));
+      dispatch(showSnackbar(phoneOTPResponse.message));
       return;
     }
 

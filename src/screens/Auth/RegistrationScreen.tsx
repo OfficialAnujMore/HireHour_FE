@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {View, Image, ScrollView, StyleSheet} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {login} from '../../redux/store';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import logo from '../../assets/logo.jpeg';
 import {EMAIL_REGEX} from '../../utils/regex';
@@ -14,8 +13,8 @@ import CustomButton from '../../components/CustomButton';
 import CustomText from '../../components/CustomText';
 import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import {COLORS} from '../../utils/globalConstants/color';
-import { RootStackParamList } from 'interfaces/userInterface';
 import { USER_DETAILS } from '../../utils/constants';
+import { RootStackParamList } from 'interfaces';
 
 // Validation patterns
 const PASSWORD_PATTERN = /^.{6,}$/;

@@ -5,7 +5,6 @@ import {
   StyleSheet,
   FlatList,
   Image,
-  TouchableOpacity,
   Modal,
   TextInput,
   Button as RNButton,

@@ -1,6 +1,4 @@
-// SplashScreen.tsx
-import { useSelector } from 'react-redux';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect  } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { COLORS } from '../../utils/globalConstants/color';
 import { FontSize, Screen } from '../../utils/dimension';

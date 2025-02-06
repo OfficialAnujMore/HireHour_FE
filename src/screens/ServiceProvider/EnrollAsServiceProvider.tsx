@@ -13,11 +13,12 @@ import {COLORS} from '../../utils/globalConstants/color';
 import CustomButton from '../../components/CustomButton';
 import {WORD_DIR} from '../../utils/local/en';
 import {updateUserRole} from '../../services/userService';
-import {login, RootState} from '../../redux/store';
+import { RootState} from '../../redux/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import CustomText from '../../components/CustomText';
 import {useNavigation} from '@react-navigation/native';
+import { login } from '../../redux/authSlice';
 
 const EnrollAsServiceProvider: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);

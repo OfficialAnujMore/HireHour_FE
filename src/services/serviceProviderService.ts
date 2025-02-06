@@ -1,4 +1,4 @@
-import {User} from 'interfaces/userInterface';
+import { ServiceDetails } from 'interfaces';
 import {ApiResponse, get, post} from './apiClient';
 import {
   ADD_SERVICE,
@@ -12,7 +12,7 @@ import {
 export const getServiceProviders = async (
   userId: string | undefined,
   categories?: string[],
-): Promise<ApiResponse<User[]>> => {
+): Promise<ApiResponse<ServiceDetails[]>> => {
   try {
     // If categories exist, serialize the array into a JSON string before passing as query params
     const serializedCategories = categories
@@ -20,7 +20,7 @@ export const getServiceProviders = async (
       : undefined;
 
     // Return the response from the GET request with serialized categories as query params
-    const response = await get<User[]>(
+    const response = await get<ServiceDetails[]>(
       `${V1_SERVICE_BASE_ROUTE}${GET_SERVICE_PROVIDERS}`,
       {
         params: {
@@ -35,9 +35,9 @@ export const getServiceProviders = async (
   }
 };
 
-export const addService = async (data: any): Promise<ApiResponse<User[]>> => {
+export const addService = async (data: any): Promise<ApiResponse<ServiceDetails[]>> => {
   try {
-    const response = await post<User[]>(
+    const response = await post<ServiceDetails[]>(
       `${V1_SERVICE_BASE_ROUTE}${ADD_SERVICE}`,
       data,
     );
@@ -51,9 +51,9 @@ export const addService = async (data: any): Promise<ApiResponse<User[]>> => {
 
 export const getUserServices = async (
   data: any,
-): Promise<ApiResponse<User[]>> => {
+): Promise<ApiResponse<ServiceDetails[]>> => {
   try {
-    const response = await post<User[]>(
+    const response = await post<ServiceDetails[]>(
       `${V1_SERVICE_BASE_ROUTE}${GET_USER_SERVICES}`,
       data,
     );
@@ -67,12 +67,12 @@ export const getUserServices = async (
   }
 };
 
-export const bookService = async (data: any): Promise<ApiResponse<User>> => {
+export const bookService = async (data: any): Promise<ApiResponse<ServiceDetails>> => {
   try {
     console.log(data);
 
     // Return the response from the POST request
-    const response = await post<User>(
+    const response = await post<ServiceDetails>(
       `${V1_SERVICE_BASE_ROUTE}${BOOK_SERVICE}`,
       data,
     );
@@ -84,12 +84,12 @@ export const bookService = async (data: any): Promise<ApiResponse<User>> => {
 
 export const getUpcomingEvents = async (
   data: any,
-): Promise<ApiResponse<User>> => {
+): Promise<ApiResponse<ServiceDetails>> => {
   try {
     console.log('getUpcomingEvents', data);
 
     // Return the response from the POST request
-    const response = await post<User>(
+    const response = await post<ServiceDetails>(
       `${V1_SERVICE_BASE_ROUTE}${UPCOMING_EVENTS}`,
       data,
     );

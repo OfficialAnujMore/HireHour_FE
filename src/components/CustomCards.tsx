@@ -6,17 +6,8 @@ import CustomText from './CustomText';
 import { useNavigation } from '@react-navigation/native';
 import { CustomRatingInfo } from './CustomRatingInfo';
 import Icon from 'react-native-vector-icons/Ionicons';
-interface CustomCardsProps {
-  item: {
-    avatarUri?: string;
-    title: string;
-    description: string;
-    category: string;
-    chargesPerHour: string;
-    ratings: number;
-  };
-  handlePress:()=>{}
-}
+import { CustomCardsProps } from 'interfaces';
+
 
 const CustomCards: React.FC<CustomCardsProps> = ({ item,handlePress }) => {
   const navigation = useNavigation();
