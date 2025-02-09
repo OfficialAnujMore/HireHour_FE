@@ -71,12 +71,6 @@ const HomeScreen = ({navigation}: any) => {
             data={filteredData}
             keyExtractor={item => item.id}
             renderItem={({item}) => (
-              // <CustomCards
-              //   item={item}
-              //   handlePress={() => {
-              //     navigation.navigate('ServiceDetails', item);
-              //   }}
-              // />
               <CustomServiceCards
                 item={item}
                 handlePress={() => {

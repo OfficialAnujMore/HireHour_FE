@@ -21,7 +21,6 @@ import ServiceReviewScreen from '../screens/ServiceProvider/ServiceReviewsScreen
 import ProfileScreen from '../screens/User/ProfileScreen';
 import SettingsScreen from '../screens/User/SettingsScreen';
 import EditProfileScreen from '../screens/User/EditProfileScreen';
-import SummaryScreen from '../screens/ServiceProvider/SummaryScreen';
 import {FontSize, Screen} from '../utils/dimension';
 import {COLORS} from '../utils/globalConstants/color';
 import EnrollAsServiceProvider from '../screens/ServiceProvider/EnrollAsServiceProvider';
@@ -56,10 +55,10 @@ const AuthenticatedTabs = () => {
             iconName = 'home-outline';
           } else if (route.name === 'Events') {
             iconName = 'calendar-outline';
-          } else if (route.name === 'Profile') {
-            iconName = 'person-outline';
           } else if (route.name === 'Cart') {
             iconName = 'cart-outline';
+          } else if (route.name === 'Profile') {
+            iconName = 'person-outline';
           }
 
           return <Icon name={iconName} size={size} color={color} />;
