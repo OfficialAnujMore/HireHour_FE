@@ -1,3 +1,4 @@
+import { CustomScheduleProps, TimeSlot } from "interfaces";
 import React, { useState } from "react";
 import {
   View,

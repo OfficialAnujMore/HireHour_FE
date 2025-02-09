@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from "react";
 import {
   View,
-  Text,
   Image,
   StyleSheet,
   Dimensions,
@@ -13,8 +12,6 @@ import { Screen, Spacing } from "../utils/dimension";
 import { CustomCarouselProps } from "interfaces";
 
 const { width } = Dimensions.get("window");
-
-
 
 const CustomCarousel: React.FC<CustomCarouselProps> = ({ data }) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -43,9 +40,12 @@ const CustomCarousel: React.FC<CustomCarouselProps> = ({ data }) => {
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
-        {data.map((item) => (
-          <View key={item.imageUri} style={styles.card}>
-            <Image source={{ uri: item.imageUri }} style={styles.image} />
+        {data.map((item, index) => (
+          <View key={index} style={styles.card}>
+            <Image
+              source={item.uri ? { uri: item.uri } : { uri: item.imageUri }}
+              style={styles.image}
+            />
           </View>
         ))}
       </ScrollView>

@@ -13,6 +13,7 @@ import CustomButton from '../../components/CustomButton';
 import {addToCart} from '../../redux/cartSlice';
 import {ServiceDetails} from 'interfaces';
 
+
 const ServiceDetailsScreen = (props: ServiceDetails) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -22,11 +23,6 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
   const [schedule, setSchedule] = useState(item.schedule || []);
   const user = useSelector((state: RootState) => state.auth.user);
   const handlePress = async () => {
-    // const response = await bookService({
-    //   userId: user?.id,
-    //   timeSlotId: selectedTimeId,
-    // });
-    // Filter the selected time slots based on selectedTimeIds
     const filteredSchedule = item.schedule.map(dateSlot => {
       return {
         ...dateSlot,
@@ -41,12 +37,8 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
       schedule: filteredSchedule, // Replace original schedule with filtered schedule
     };
 
-    console.log('Updated item with filtered schedule:', updatedItem);
     dispatch(addToCart(updatedItem));
 
-    // console.log('Filtered schedule:', filteredSchedule);
-
-    // Alert.alert('Success', 'Service booked');
   };
   useEffect(() => {
     console.log(item);

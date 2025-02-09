@@ -85,23 +85,21 @@ const VerifyOTPScreen: React.FC<RegisterUser> = props => {
       key: data.email,
       otp: emailOTP.join(''),
     });
-    console.log(emailOTPResponse);
 
     if (!emailOTPResponse.success) {
       dispatch(showSnackbar(emailOTPResponse.message));
       return;
     }
 
-    const phoneOTPResponse = await verifyOTP({
-      key: data.phoneNumber,
-      otp: phoneOTP.join(''),
-    });
-    console.log(phoneOTPResponse);
+    // const phoneOTPResponse = await verifyOTP({
+    //   key: data.phoneNumber,
+    //   otp: phoneOTP.join(''),
+    // });
 
-    if (!phoneOTPResponse.success) {
-      dispatch(showSnackbar(phoneOTPResponse.message));
-      return;
-    }
+    // if (!phoneOTPResponse.success) {
+    //   dispatch(showSnackbar(phoneOTPResponse.message));
+    //   return;
+    // }
 
     const registerUserResponse = await registerUser(data);
     if (registerUserResponse) {
@@ -154,13 +152,13 @@ const VerifyOTPScreen: React.FC<RegisterUser> = props => {
         )}`}
       />
       {renderOtpInputs(emailOTP, 'email')}
-      <CustomText
+      {/* <CustomText
         label={`OTP has been sent to your phone number ending with ${maskSensitiveData(
           data.phoneNumber,
           'phone',
         )}`}
       />
-      {renderOtpInputs(phoneOTP, 'phone')}
+      {renderOtpInputs(phoneOTP, 'phone')} */}
 
       <CustomButton label={WORD_DIR.verifyOTP} onPress={handleSubmit} />
     </ScrollView>

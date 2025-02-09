@@ -101,7 +101,6 @@ const RegistrationScreen = () => {
         navigation.navigate('VerifyOTP',payload);
       }
     } catch (error: any) {
-      console.log({error});
 
       // Extract and dispatch the error message to the Snackbar
       const errorMessage = error ?? 'Registration failed. Please try again.';

@@ -16,12 +16,14 @@ export const WORD_DIR = {
     verifyOTP:"Verify OTP",
     upcomingEvents:"Upcoming events",
 
+
     serviceDetails: "Service Details",
     title: "Title",
     description: "Description",
     chargesPerHour: "Charges per hour",
     selectDate: "Select Date",
     selectTimeSlots: 'Select Time Slots',
+    next:"Next",
     createService: "Create Service",
 
     userNotFound:"User not found",

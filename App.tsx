@@ -14,10 +14,8 @@ const App = () => (
 
         {/* Optional: Set status bar color */}
         {/* <StatusBar barStyle="dark-content" backgroundColor="black" /> */}
-        {/* <SafeAreaView> */}
           <RootNavigator />
           <CustomSnackbar/>
-        {/* </SafeAreaView> */}
       </SafeAreaProvider>
     </PersistGate>
   </Provider>
