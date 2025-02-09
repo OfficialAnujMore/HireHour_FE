@@ -20,7 +20,7 @@ export const getServiceProviders = async (
       : undefined;
 
     // Return the response from the GET request with serialized categories as query params
-    console.log(`${V1_SERVICE_BASE_ROUTE}${GET_SERVICE_PROVIDERS}`);
+    
     const response = await get<ServiceDetails[]>(
       `${V1_SERVICE_BASE_ROUTE}${GET_SERVICE_PROVIDERS}`,
       {
@@ -43,7 +43,7 @@ export const addService = async (data: any): Promise<ApiResponse<ServiceDetails[
       `${V1_SERVICE_BASE_ROUTE}${ADD_SERVICE}`,
       data,
     );
-    console.log('addService response', response);
+    
     
     return response;
   } catch (error) {
@@ -61,7 +61,7 @@ export const getUserServices = async (
     );
     return response;
   } catch (error: any) {
-    console.log(error);
+    
 
     const errorMessage =
       error?.message ?? 'An unexpected error occurred.';
@@ -71,7 +71,7 @@ export const getUserServices = async (
 
 export const bookService = async (data: any): Promise<ApiResponse<ServiceDetails>> => {
   try {
-    console.log('bookService called in FE', data);
+    
 
     // Return the response from the POST request
     const response = await post<ServiceDetails>(
@@ -88,17 +88,17 @@ export const getUpcomingEvents = async (
   data: any,
 ): Promise<ApiResponse<ServiceDetails>> => {
   try {
-    console.log('getUpcomingEvents', data);
+    
 
     // Return the response from the POST request
     const response = await post<ServiceDetails>(
       `${V1_SERVICE_BASE_ROUTE}${UPCOMING_EVENTS}`,
       data,
     );
-    console.log('getUpcomingEvents response', response);
+    
     return response; // Return the response here
   } catch (error) {
-    console.log({error});
+    
     
     throw error; // It's important to throw the error so handleLogin can catch it
   }

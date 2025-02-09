@@ -43,7 +43,7 @@ export const verifyUsernameAndEmail = async (data: {
   username: string;
 }): Promise<ApiResponse<User>> => {
   try {
-    console.log('verifyUsernameAndEmail', data);
+    
 
     // Send POST request
     const response = await post<User>(

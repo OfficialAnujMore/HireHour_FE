@@ -52,7 +52,7 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
   };
 
   // useEffect(()=>{
-  //   console.log(selectedServices);
+  //   
   // }, [selectedServices])
 
   const handlePress = async () => {
@@ -61,7 +61,7 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
       ...item,
       schedule: selectedServices,
     };
-    // console.log(updatedItems);
+    // 
     
     dispatch(addToCart(updatedItems));
   };

@@ -24,7 +24,7 @@ const UpcomingEvents = ({}) => {
   );
 
   useEffect(() => {
-    console.log(data);
+    
   }, [data]);
   return (
     <View style={styles.container}>

@@ -23,7 +23,7 @@ const cartSlice = createSlice({
         // Add new item to cart
         state.items.push(action.payload);
       }
-      console.log(state.items);
+      
     },
 
     // Remove a specific schedule from the cart based on serviceId and scheduleId
@@ -46,7 +46,7 @@ const cartSlice = createSlice({
       state.items = state.items.filter(
         item => item.serviceId !== action.payload,
       );
-      console.log(state.items);
+      
       
     },
 

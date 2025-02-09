@@ -110,7 +110,7 @@ const EditProfileScreen: React.FC = () => {
       dispatch(showSnackbar('Name is required.'));
       return;
     }
-    console.log('Profile Saved:', user);
+    
     dispatch(showSnackbar('Profile saved successfully!'));
   };
 

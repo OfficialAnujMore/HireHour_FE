@@ -20,11 +20,11 @@ const MyServices = () => {
         const service = await getUserServices({
           id: user?.id,
         }); // Function to fetch service details
-        console.log('Serviuce details fetched', service.data);
+        
 
         setServiceDetails(service.data);
       } catch (error) {
-        console.log(error);
+        
 
         Alert.alert('Error', 'Failed to fetch service details.');
       }

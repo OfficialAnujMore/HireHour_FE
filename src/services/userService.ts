@@ -7,7 +7,7 @@ export const updateUserRole = async (
   data: any,
 ): Promise<ApiResponse<User[]>> => {
   try {
-    console.log(data);
+    
 
     const response = await post<User[]>(
       `${V1_USER_BASE_ROUTE}${UPDATE_ROLE}`,

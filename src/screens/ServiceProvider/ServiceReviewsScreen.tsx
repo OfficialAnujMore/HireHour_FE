@@ -97,7 +97,7 @@ const ServiceReviewScreen: React.FC = () => {
     }
 
     // Handle the review submission (for now, just log it)
-    console.log("Review submitted:", { reviewText, rating });
+    
     setIsModalVisible(false);
     setErrorMessage(""); // Clear error message after submission
   };

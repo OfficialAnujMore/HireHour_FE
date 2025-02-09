@@ -38,7 +38,7 @@ const EnrollAsServiceProvider: React.FC = () => {
         id: user?.id,
         isEnrolled: isServiceProviderEnrolled,
       });
-      console.log(response);
+      
 
       if (response?.data) {
         dispatch(login({user: response.data}));

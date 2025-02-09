@@ -71,7 +71,7 @@ export const ScheduleDetails: React.FC<{
           style={styles.moreText}
           label={'View more'}
           action={() => {
-            console.log('View more clicked');
+            
           }}
         />
       )}

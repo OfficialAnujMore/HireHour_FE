@@ -50,7 +50,7 @@ const RegistrationScreen = () => {
   const [errors, setErrors] = useState(initialErrorState);
 
   const handleValueChange = (field: keyof typeof user, value: string) => {
-    // console.log(field,value);
+    // 
 
     setUser(prevState => ({...prevState, [field]: value}));
     validateField(field, value);
@@ -91,9 +91,9 @@ const RegistrationScreen = () => {
     user.confirmPassword;
 
   const verifyEmail = async () => {
-    console.log('verifyEmail user...');
+    
     const { confirmPassword, ...payload} = user;
-    console.log('Payload without confirmPassword:', payload);
+    
 
     try {
       const response = await verifyUsernameAndEmail(payload);

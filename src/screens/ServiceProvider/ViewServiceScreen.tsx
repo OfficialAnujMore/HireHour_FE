@@ -10,7 +10,7 @@ import CustomText from '../../components/CustomText';
 
 const ViewServiceScreen = (props: any) => {
   const item = props.route.params;
-  console.log('ViewService screen item====.', item);
+  
 
   return (
     <ScrollView style={styles.container}>

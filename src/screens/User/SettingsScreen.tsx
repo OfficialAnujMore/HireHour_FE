@@ -29,7 +29,7 @@ const SettingsScreen = () => {
   ];
 
   const handleOptionPress = (option: string) => {
-    console.log(`${option} option selected`);
+    
     // Implement actual callback logic for each option
   };
 

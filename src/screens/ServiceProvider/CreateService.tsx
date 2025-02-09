@@ -137,32 +137,32 @@ const CreateService = () => {
       {mediaType: 'photo', selectionLimit: 5}, // Allow multiple selection
       (response: ImagePickerResponse) => {
         if (response.didCancel) {
-          console.log('User cancelled image picker');
+          
           return;
         }
 
         if (response.errorMessage) {
-          console.log('ImagePicker Error:', response.errorMessage);
+          
           Alert.alert('Error', response.errorMessage);
           return;
         }
 
         if (response.assets && response.assets.length > 0) {
-          console.log(response.assets);
+          
 
           setServiceDetails(prev => ({
             ...prev,
             images: response.assets,
           }));
         } else {
-          console.log('No image selected');
+          
         }
       },
     );
   };
 
   useEffect(() => {
-    console.log(serviceDetails);
+    
   }, [serviceDetails]);
 
   return (
@@ -218,9 +218,9 @@ const CreateService = () => {
 
       <CustomButton
         onPress={() => {
-          // if (validateFields()) {
+          if (validateFields()) {
             navigation.navigate('Create Schedule', serviceDetails);
-          // }
+          }
         }}
         label={WORD_DIR.next}
       />

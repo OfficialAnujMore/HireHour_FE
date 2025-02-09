@@ -84,7 +84,7 @@ const CreateSchedule = (props: any) => {
         dispatch(showSnackbar('Service created '));
       }
     } catch (error) {
-      console.log(error);
+      
       
       dispatch(showSnackbar('Failed to create a service '));
     }

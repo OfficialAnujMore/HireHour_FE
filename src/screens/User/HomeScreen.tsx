@@ -15,7 +15,7 @@ import CustomServiceCards from '../../components/CustomServiceCard';
 const HomeScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
-  console.log({user});
+  
 
   const [data, setData] = useState<User[]>([]);
   const [filteredData, setFilteredData] = useState<User[]>([]);
@@ -24,10 +24,10 @@ const HomeScreen = ({navigation}: any) => {
   const fetchServiceProviders = useCallback(async () => {
     try {
       const categories = ['Photography', 'Guitar', 'Art', 'Music'];
-      console.log(categories);
+      
 
       const response = await getServiceProviders(user?.id, categories);
-      console.log(response.data);
+      
 
       setData(response.data);
       setFilteredData(response.data); // Set filtered data as the default

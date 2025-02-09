@@ -17,7 +17,7 @@ const VerifyOTPScreen: React.FC<RegisterUser> = props => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const data = props.route.params;
-  console.log(data);
+  
 
   const [emailOTP, setEmailOTP] = useState<string[]>(
     Array(OTP_LENGTH).fill(''),

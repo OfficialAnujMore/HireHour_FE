@@ -24,18 +24,18 @@ export const CartScreen = () => {
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const user = useSelector((state: RootState) => state.auth.user);
   const handleRemoveService = (serviceId: string) => {
-    console.log('handleRemoveService called', serviceId);
+    
 
     dispatch(removeServiceFromCart(serviceId)); // This will automatically update the state and re-render the component
   };
 
   const handleRemoveScheduledDate = (serviceId: string, scheduleId: string) => {
-    console.log(scheduleId, serviceId);
+    
     dispatch(removeScheduleFromCart({serviceId, scheduleId}));
   };
 
   const handlePress = async () => {
-    console.log(cartItems);
+    
 
     const schedule = cartItems.flatMap(service => {
       return service.schedule;
@@ -50,7 +50,7 @@ export const CartScreen = () => {
       dispatch(showSnackbar(response.message));
       dispatch(clearCart());
     }
-    console.log(response);
+    
   };
   return (
     <View style={styles.container}>
