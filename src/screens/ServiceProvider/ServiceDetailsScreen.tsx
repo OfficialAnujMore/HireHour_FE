@@ -1,100 +1,99 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import CustomText from '../../components/CustomText';
 import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import {COLORS} from '../../utils/globalConstants/color';
-import CustomSchedule from '../../components/CustomSchedule';
 import CustomCarouselSlider from '../../components/CustomCarousel';
 import {useNavigation} from '@react-navigation/native';
 import {CustomRatingInfo} from '../../components/CustomRatingInfo';
 import CustomButton from '../../components/CustomButton';
 import {addToCart} from '../../redux/cartSlice';
 import {ServiceDetails} from 'interfaces';
-
+import {ScheduleDetails} from '../../components/CustomServiceCard';
 
 const ServiceDetailsScreen = (props: ServiceDetails) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const [selectedTimeIds, setSelectedTimeIds] = useState<string[]>([]);
 
   const item = props.route.params;
-  const [schedule, setSchedule] = useState(item.schedule || []);
   const user = useSelector((state: RootState) => state.auth.user);
-  const handlePress = async () => {
-    const filteredSchedule = item.schedule.map(dateSlot => {
-      return {
-        ...dateSlot,
-        timeSlots: dateSlot.timeSlots.filter(timeSlot =>
-          selectedTimeIds.includes(timeSlot.id),
-        ),
-      };
+
+  // Add a state to track selected services
+  const [selectedServices, setSelectedServices] = useState<ServiceDetails[]>(
+    [],
+  );
+
+  const handleSelectService = (service: ServiceDetails) => {
+    setSelectedServices(prevState => {
+      // Check if the service is already selected
+      const isServiceSelected = prevState.some(s => s.id === service.id);
+
+      // If the service is already selected, remove it and set isAvailable back to true
+      if (isServiceSelected) {
+        return prevState
+          .filter(s => s.id !== service.id)
+          .map(s => ({
+            ...s,
+            isAvailable: true, // Set isAvailable back to true when removed
+          }));
+      } else {
+        // If not selected, set isAvailable to false and add the service
+        return [
+          ...prevState,
+          {
+            ...service,
+            isAvailable: false, // Set isAvailable to false when selected
+          },
+        ];
+      }
     });
-
-    const updatedItem = {
-      ...item,
-      schedule: filteredSchedule, // Replace original schedule with filtered schedule
-    };
-
-    dispatch(addToCart(updatedItem));
-
   };
-  useEffect(() => {
-    console.log(item);
-  }, []);
-  useEffect(() => {
-    console.log(selectedTimeIds);
-  }, [selectedTimeIds]);
+
+  // useEffect(()=>{
+  //   console.log(selectedServices);
+  // }, [selectedServices])
+
+  const handlePress = async () => {
+    // // Prepare the schedule based on selected services
+    const updatedItems = {
+      ...item,
+      schedule: selectedServices,
+    };
+    // console.log(updatedItems);
+    
+    dispatch(addToCart(updatedItems));
+  };
 
   return (
     <View style={styles.container}>
-      <ScrollView>
-        <CustomCarouselSlider data={item.servicePreview} />
+      <ScrollView contentContainerStyle={styles.scrollContentContainer}>
         <View style={styles.detailsContainer}>
+          <CustomCarouselSlider data={item.servicePreview} />
           <View style={styles.header}>
             <CustomText label={item.title} style={styles.textStyle} />
             <CustomRatingInfo rating={item.ratings} />
           </View>
           <CustomText label={item.description} style={styles.textStyle} />
+
+          <ScheduleDetails
+            schedule={item.schedule}
+            onServiceSelect={handleSelectService}
+            selectedServices={selectedServices}
+          />
         </View>
-        {/* <CustomSchedule
-          dateInfo={schedule}
-          selectedTimeId={selectedTimeId}
-          onValueChange={id => {
-            setSelectedTimeId(id);
-
-            schedule.map(item => {
-              if (item.id === id) {
-                return {...item, available: false}; // Set availability to false for selected time
-              }
-              return item;
-            });
-          }}
-        /> */}
-
-        <CustomSchedule
-          dateInfo={schedule}
-          selectedTimeIds={selectedTimeIds}
-          onValueChange={id => {
-            setSelectedTimeIds(id);
-            // console.log(setSelectedTimeIds);
-          }}
-        />
-
-        <CustomButton label={'Add to cart'} onPress={handlePress} />
       </ScrollView>
+      <CustomButton label={'Add to cart'} onPress={handlePress} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    justifyContent: 'flex-end',
     margin: Spacing.small,
-  },
-  carouselContainer: {
-    height: Screen.height / 4,
-    backgroundColor: COLORS.grey,
   },
   detailsContainer: {
     marginVertical: Spacing.small,
@@ -103,26 +102,9 @@ const styles = StyleSheet.create({
     fontSize: FontSize.medium,
     fontWeight: '400',
   },
-  ratingStyle: {
-    fontSize: FontSize.small,
-    color: COLORS.white,
-  },
-  content: {
-    flex: 1,
-    marginLeft: Spacing.medium,
-  },
-  header: {
-    flexDirection: 'row',
+  scrollContentContainer: {
+    flexGrow: 1,
     justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  ratingsContainer: {
-    backgroundColor: 'green',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: Spacing.small,
-    padding: Spacing.small / 2,
   },
 });
 

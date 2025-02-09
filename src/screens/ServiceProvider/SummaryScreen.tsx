@@ -17,6 +17,9 @@ import {clearCart} from '../../redux/cartSlice';
 
 const SummaryScreen: React.FC = () => {
   const cartItems = useSelector((state: RootState) => state.cart.items);
+
+  console.log(cartItems);
+  
   const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
   const [visibleSchedules, setVisibleSchedules] = useState<

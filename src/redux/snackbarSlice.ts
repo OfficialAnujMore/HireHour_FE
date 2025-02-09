@@ -1,7 +1,6 @@
 // src/store/snackbar/snackbarSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SnackbarState } from '../interfaces/reduxInterface';
-
+import { SnackbarState } from 'interfaces';
 
 const initialState: SnackbarState = {
   message: '',

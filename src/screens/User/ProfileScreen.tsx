@@ -16,6 +16,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import CustomText from '../../components/CustomText';
 import {WORD_DIR} from '../../utils/local/en';
 import {MenuItemProps} from 'interfaces';
+import { logout } from '../../redux/authSlice';
 
 const ProfileScreen: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -52,7 +53,7 @@ const ProfileScreen: React.FC = () => {
       items.splice(2, 0, {
         label: 'Enroll As Service Provider',
         icon: 'person-add',
-        callback: () => navigation.navigate('Enroll'),
+        callback: () => navigation.navigate('Enrollment'),
       });
     } else {
       items.splice(2, 0, {

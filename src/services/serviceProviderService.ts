@@ -20,6 +20,7 @@ export const getServiceProviders = async (
       : undefined;
 
     // Return the response from the GET request with serialized categories as query params
+    console.log(`${V1_SERVICE_BASE_ROUTE}${GET_SERVICE_PROVIDERS}`);
     const response = await get<ServiceDetails[]>(
       `${V1_SERVICE_BASE_ROUTE}${GET_SERVICE_PROVIDERS}`,
       {
@@ -29,6 +30,7 @@ export const getServiceProviders = async (
         },
       },
     );
+    
     return response;
   } catch (error) {
     throw error;
@@ -62,14 +64,14 @@ export const getUserServices = async (
     console.log(error);
 
     const errorMessage =
-      error?.message ?? 'An unexpected error occurred during registration.';
+      error?.message ?? 'An unexpected error occurred.';
     throw errorMessage;
   }
 };
 
 export const bookService = async (data: any): Promise<ApiResponse<ServiceDetails>> => {
   try {
-    console.log(data);
+    console.log('bookService called in FE', data);
 
     // Return the response from the POST request
     const response = await post<ServiceDetails>(

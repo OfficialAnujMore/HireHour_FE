@@ -12,7 +12,7 @@ type CustomTextProps = {
 const CustomText: React.FC<CustomTextProps> = ({ label, style, action }) => (
     <View style={styles.container}>
         {action ? (
-            <TouchableOpacity onPress={action}>
+            <TouchableOpacity onPress={action} style={styles.touchable}>
                 <Text style={[styles.textStyle, styles.clickableText, style]}>{label}</Text>
             </TouchableOpacity>
         ) : (
@@ -24,9 +24,18 @@ const CustomText: React.FC<CustomTextProps> = ({ label, style, action }) => (
 const styles = StyleSheet.create({
     container: {
         marginBottom: Spacing.small / 2,
+        // Ensure no extra space is added around the text
+        alignItems: 'flex-start',  // Align the text at the start of the container
+    },
+    touchable: {
+        // Ensure TouchableOpacity doesn't add extra padding
+        alignItems: 'center',  // Keeps the clickable text centered
     },
     textStyle: {
         fontSize: FontSize.medium,
+        // Avoid width or height constraints, let text take its own size
+        padding: 0,
+        margin: 0,
     },
     clickableText: {
         textDecorationLine: 'underline',

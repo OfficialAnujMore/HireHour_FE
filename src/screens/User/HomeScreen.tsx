@@ -9,12 +9,13 @@ import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import {getGreeting} from '../../utils/globalFunctions';
 import {getServiceProviders} from '../../services/serviceProviderService';
 import {useFocusEffect} from '@react-navigation/native';
-import { User } from 'interfaces';
+import {User} from 'interfaces';
+import CustomServiceCards from '../../components/CustomServiceCard';
 
 const HomeScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
-  console.log(user);
+  console.log({user});
 
   const [data, setData] = useState<User[]>([]);
   const [filteredData, setFilteredData] = useState<User[]>([]);
@@ -23,7 +24,10 @@ const HomeScreen = ({navigation}: any) => {
   const fetchServiceProviders = useCallback(async () => {
     try {
       const categories = ['Photography', 'Guitar', 'Art', 'Music'];
+      console.log(categories);
+
       const response = await getServiceProviders(user?.id, categories);
+      console.log(response.data);
 
       setData(response.data);
       setFilteredData(response.data); // Set filtered data as the default
@@ -67,7 +71,13 @@ const HomeScreen = ({navigation}: any) => {
             data={filteredData}
             keyExtractor={item => item.id}
             renderItem={({item}) => (
-              <CustomCards
+              // <CustomCards
+              //   item={item}
+              //   handlePress={() => {
+              //     navigation.navigate('ServiceDetails', item);
+              //   }}
+              // />
+              <CustomServiceCards
                 item={item}
                 handlePress={() => {
                   navigation.navigate('ServiceDetails', item);

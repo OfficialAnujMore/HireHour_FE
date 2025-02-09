@@ -1,29 +1,31 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { COLORS } from '../utils/globalConstants/color';
-import { FontSize, Screen, Spacing } from '../utils/dimension';
+import {View, TouchableOpacity, StyleSheet, Image} from 'react-native';
+import {COLORS} from '../utils/globalConstants/color';
+import {FontSize, Screen, Spacing} from '../utils/dimension';
 import CustomText from './CustomText';
-import { useNavigation } from '@react-navigation/native';
-import { CustomRatingInfo } from './CustomRatingInfo';
+import {useNavigation} from '@react-navigation/native';
+import {CustomRatingInfo} from './CustomRatingInfo';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { CustomCardsProps } from 'interfaces';
+import {CustomCardsProps} from 'interfaces';
 
-
-const CustomCards: React.FC<CustomCardsProps> = ({ item,handlePress }) => {
+const CustomCards: React.FC<CustomCardsProps> = ({item, handlePress}) => {
   const navigation = useNavigation();
-
 
   return (
     <TouchableOpacity style={styles.container} onPress={handlePress}>
       {item.avatarUri ? (
         <Image
-          source={{ uri: item.avatarUri }}
+          source={{uri: item.avatarUri}}
           style={styles.image}
           accessibilityLabel="User Avatar"
         />
       ) : (
-        <View style={[styles.image,styles.iconFallback]}>
-          <Icon name="person-outline" size={FontSize.extraLarge * 1.5} color={COLORS.black} />
+        <View style={[styles.image, styles.iconFallback]}>
+          <Icon
+            name="person-outline"
+            size={FontSize.extraLarge * 1.5}
+            color={COLORS.black}
+          />
         </View>
       )}
       <View style={styles.content}>
@@ -47,7 +49,7 @@ const styles = StyleSheet.create({
     borderRadius: Spacing.small,
     marginVertical: Spacing.small,
     padding: Spacing.small,
-    shadowColor:COLORS.black,
+    shadowColor: COLORS.black,
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,

@@ -15,9 +15,9 @@ import {RootState} from 'redux/store';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {addService} from '../../services/serviceProviderService';
 import CustomButton from '../../components/CustomButton';
-import { COLORS } from '../../utils/globalConstants/color';
+import {COLORS} from '../../utils/globalConstants/color';
 import CustomText from '../../components/CustomText';
-
+import {useNavigation} from '@react-navigation/native';
 interface SelectedDates {
   [key: string]: {selected: boolean};
 }
@@ -34,6 +34,7 @@ const CreateSchedule = (props: any) => {
 
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
+  const navigation = useNavigation();
   // Get today's date in 'yyyy-mm-dd' format
   const today = new Date().toISOString().split('T')[0];
 
@@ -48,7 +49,7 @@ const CreateSchedule = (props: any) => {
         return updated;
       } else {
         // Add selected date
-        return {...prev, [date]: {selected: true}};
+        return {...prev, [date]: {selected: true, isAvailable:true}};
       }
     });
   };
@@ -78,11 +79,13 @@ const CreateSchedule = (props: any) => {
           selectedDates: selectedDates,
         },
       };
-      const response = await addService(data); // Assuming the addService function is available
+      const response = await addService(data);
       if (response) {
         dispatch(showSnackbar('Service created '));
       }
     } catch (error) {
+      console.log(error);
+      
       dispatch(showSnackbar('Failed to create a service '));
     }
   };
@@ -100,9 +103,9 @@ const CreateSchedule = (props: any) => {
           markingType={'multi-dot'}
           theme={{
             selectedDayBackgroundColor: COLORS.primary,
-            selectedDayTextColor:COLORS.white,
-            todayTextColor: COLORS.white,
-            arrowColor:COLORS.primary,
+            selectedDayTextColor: COLORS.white,
+            todayTextColor: COLORS.red,
+            arrowColor: COLORS.primary,
           }}
           minDate={today}
         />
@@ -111,7 +114,7 @@ const CreateSchedule = (props: any) => {
       <ScrollView
         style={styles.selectedContainer}
         contentContainerStyle={styles.selectedContentContainer}>
-        <CustomText label={'Selected Dates'}/>
+        <CustomText label={'Selected Dates'} />
         <FlatList
           data={sortedDates} // Use sorted array of dates
           keyExtractor={item => item}
@@ -127,6 +130,7 @@ const CreateSchedule = (props: any) => {
           )}
         />
       </ScrollView>
+
       <CustomButton
         label="Create service"
         onPress={() => {
@@ -140,6 +144,7 @@ const CreateSchedule = (props: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'space-between',
     padding: Spacing.medium,
     backgroundColor: '#f7f7f7',
   },

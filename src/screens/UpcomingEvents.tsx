@@ -8,6 +8,7 @@ import CustomEventCard from '../components/CustomEventCard';
 import {useFocusEffect} from '@react-navigation/native';
 import {WORD_DIR} from '../utils/local/en';
 import {FontSize, Screen} from '../utils/dimension';
+import CustomServiceCards from '../components/CustomServiceCard';
 const UpcomingEvents = ({}) => {
   const user = useSelector((state: RootState) => state.auth.user);
   const [data, setData] = useState();
@@ -27,6 +28,7 @@ const UpcomingEvents = ({}) => {
   }, [data]);
   return (
     <View style={styles.container}>
+      
       {data && data?.length > 0 ? (
         <View>
           <CustomText label={WORD_DIR.upcomingEvents} />
@@ -34,10 +36,16 @@ const UpcomingEvents = ({}) => {
             data={data}
             keyExtractor={item => item.id}
             renderItem={({item}) => (
-              <CustomEventCard
+              // <CustomCards
+              //   item={item}
+              //   handlePress={() => {
+              //     navigation.navigate('ServiceDetails', item);
+              //   }}
+              // />
+              <CustomServiceCards
                 item={item}
                 handlePress={() => {
-                  // navigation.navigate("ServiceDetails", item)
+                  // navigation.navigate('ServiceDetails', item);
                 }}
               />
             )}

@@ -1,11 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {
-  View,
-  StyleSheet,
-  Image,
-  Alert,
-  FlatList,
-} from 'react-native';
+import {View, StyleSheet, Image, Alert, FlatList} from 'react-native';
 import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import CustomText from '../../components/CustomText';
 import {RootState} from 'redux/store';
@@ -13,6 +7,7 @@ import {useSelector} from 'react-redux';
 import {getUserServices} from '../../services/serviceProviderService';
 import CustomCards from '../../components/CustomCards';
 import {useNavigation} from '@react-navigation/native';
+import CustomServiceCards from '../../components/CustomServiceCard';
 
 const MyServices = () => {
   // const { serviceId } = route.params;
@@ -48,10 +43,16 @@ const MyServices = () => {
             data={serviceDetails}
             keyExtractor={item => item.id}
             renderItem={({item}) => (
-              <CustomCards
+              // <CustomCards
+              //   item={item}
+              //   handlePress={() => {
+              //     navigation.navigate('ServiceDetails', item);
+              //   }}
+              // />
+              <CustomServiceCards
                 item={item}
                 handlePress={() => {
-                  navigation.navigate('ViewService', item);
+                  // navigation.navigate('ServiceDetails', item);
                 }}
               />
             )}
