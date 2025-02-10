@@ -3,7 +3,6 @@ import {View, FlatList, StyleSheet, Image} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import CustomSearchBar from '../../components/CustomSearchBar';
-import CustomCards from '../../components/CustomCards';
 import CustomText from '../../components/CustomText';
 import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import {getGreeting} from '../../utils/globalFunctions';
@@ -15,7 +14,6 @@ import CustomServiceCards from '../../components/CustomServiceCard';
 const HomeScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
-  
 
   const [data, setData] = useState<User[]>([]);
   const [filteredData, setFilteredData] = useState<User[]>([]);
@@ -24,17 +22,14 @@ const HomeScreen = ({navigation}: any) => {
   const fetchServiceProviders = useCallback(async () => {
     try {
       const categories = ['Photography', 'Guitar', 'Art', 'Music'];
-      
-
       const response = await getServiceProviders(user?.id, categories);
-      
 
       setData(response.data);
       setFilteredData(response.data); // Set filtered data as the default
     } catch (error) {
       console.error('Error fetching service providers:', error);
     }
-  }, []);
+  }, [user?.id]);
 
   // Use `useFocusEffect` to call the API whenever the screen is focused
   useFocusEffect(
@@ -65,22 +60,21 @@ const HomeScreen = ({navigation}: any) => {
         style={styles.greetingText}
       />
 
-      {filteredData && filteredData?.length > 0 ? (
-        <View>
-          <FlatList
-            data={filteredData}
-            keyExtractor={item => item.id}
-            renderItem={({item}) => (
-              <CustomServiceCards
-                item={item}
-                handlePress={() => {
-                  navigation.navigate('ServiceDetails', item);
-                }}
-              />
-            )}
-            showsVerticalScrollIndicator={false}
-          />
-        </View>
+      {filteredData?.length > 0 ? (
+        <FlatList
+          data={filteredData}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => (
+            <CustomServiceCards
+              item={item}
+              maxDisplay={4}
+              handlePress={() => {
+                navigation.navigate('ServiceDetails', item);
+              }}
+            />
+          )}
+          showsVerticalScrollIndicator={false}
+        />
       ) : (
         <View style={styles.dataNotFound}>
           <Image

@@ -24,26 +24,33 @@ interface CustomServiceCardsProps {
 // Component for rendering schedule details
 export const ScheduleDetails: React.FC<{
   schedule: ScheduleItem[];
+  maxDisplay: number;
   serviceId?: string;
   visibleSchedules?: Record<string, boolean>;
   onServiceSelect: (service: ServiceDetails) => void;
   selectedServices: ServiceDetails[];
+  handleRemoveScheduledDate?: (
+    serviceId: string | undefined,
+    scheduleId: string,
+  ) => void;
 }> = ({
   schedule,
+  maxDisplay,
   serviceId,
-  visibleSchedules,
   onServiceSelect,
   selectedServices,
   handleRemoveScheduledDate,
 }) => {
-  const displayedSchedules = schedule.slice(0, 5);
+  const [showAll, setShowAll] = useState(false);
+
+  const displayedSchedules = showAll ? schedule : schedule.slice(0, maxDisplay);
   const dispatch = useDispatch();
   const isSelected = (service: ServiceDetails) =>
     selectedServices?.some(s => s.id === service.id);
 
   return (
     <View style={styles.scheduleContainer}>
-      {schedule.map(scheduleItem => (
+      {displayedSchedules.map(scheduleItem => (
         <TouchableOpacity
           key={scheduleItem.id}
           onPress={() => onServiceSelect(scheduleItem)}
@@ -51,11 +58,17 @@ export const ScheduleDetails: React.FC<{
             styles.scheduleItemContainer,
             isSelected(scheduleItem) && styles.selectedSchedule,
           ]}>
-          <CustomText style={styles.scheduleTitle} label={scheduleItem.date} />
+          <CustomText
+            style={[
+              styles.scheduleTitle,
+              isSelected(scheduleItem) && styles.selectedTextColor,
+            ]}
+            label={scheduleItem.date}
+          />
           {handleRemoveScheduledDate && (
             <TouchableOpacity
               onPress={() => {
-                if (schedule.length == 1) {
+                if (schedule.length === 1) {
                   dispatch(removeServiceFromCart(serviceId));
                 }
                 handleRemoveScheduledDate(serviceId, scheduleItem.id);
@@ -66,13 +79,11 @@ export const ScheduleDetails: React.FC<{
         </TouchableOpacity>
       ))}
 
-      {displayedSchedules.length > 4 && (
+      {schedule.length > maxDisplay && (
         <CustomText
           style={styles.moreText}
-          label={'View more'}
-          action={() => {
-            
-          }}
+          label={showAll ? 'View less' : 'View more'}
+          action={() => setShowAll(prev => !prev)}
         />
       )}
     </View>
@@ -81,6 +92,7 @@ export const ScheduleDetails: React.FC<{
 
 const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
   item,
+  maxDisplay,
   handleRemoveService,
   handleRemoveScheduledDate,
   handlePress,
@@ -89,6 +101,8 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
   const [visibleSchedules, setVisibleSchedules] = useState<
     Record<string, boolean>
   >({});
+
+  // Toggle schedule visibility based on serviceId
   const toggleScheduleVisibility = (serviceId: string) => {
     setVisibleSchedules(prev => ({
       ...prev,
@@ -119,7 +133,6 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
               style={styles.orderMeta}
               label={` ${item.ratings} ★ | ${item.chargesPerHour}/hr`}
             />
-
             <CustomText style={styles.orderMeta} label={item.description} />
           </View>
         </View>
@@ -142,12 +155,29 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
           />
         )}
       </View>
-      <ScheduleDetails
-        schedule={item.schedule}
-        serviceId={item.serviceId}
-        visibleSchedules={visibleSchedules}
-        handleRemoveScheduledDate={handleRemoveScheduledDate}
-      />
+
+      {/* Conditionally render ScheduleDetails based on visibility state */}
+      {(visibleSchedules[item.serviceId] || handleRemoveService)  && (
+        <ScheduleDetails
+          schedule={item.schedule}
+          maxDisplay={maxDisplay}
+          serviceId={item.serviceId}
+          handleRemoveScheduledDate={handleRemoveScheduledDate}
+          onServiceSelect={() => {}}
+          selectedServices={[]}
+        />
+      )}
+
+      {/* {handleRemoveService && (
+        <ScheduleDetails
+          schedule={item.schedule}
+          maxDisplay={maxDisplay}
+          serviceId={item.serviceId}
+          handleRemoveScheduledDate={handleRemoveScheduledDate}
+          onServiceSelect={() => {}}
+          selectedServices={[]}
+        />
+      )} */}
     </TouchableOpacity>
   );
 };
@@ -168,14 +198,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  image: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    maxWidth: Screen.width * 0.25,
-    height: Screen.width * 0.25,
-    borderRadius: Spacing.small,
-  },
-
   orderImage: {
     width: Screen.moderateScale(60),
     height: Screen.moderateScale(60),
@@ -201,9 +223,11 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
   },
   scheduleItemContainer: {
-    backgroundColor: COLORS.primary, // Background color from your COLORS object
+    backgroundColor: COLORS.white, // Background color from your COLORS object
     borderRadius: Screen.moderateScale(8), // Rounded corners
-    padding: Spacing.small, // Ensure padding inside container
+    padding: Spacing.small,
+    borderWidth: 0.5,
+    borderColor: COLORS.primary,
   },
   scheduleContainer: {
     flexDirection: 'row',
@@ -214,34 +238,18 @@ const styles = StyleSheet.create({
   scheduleTitle: {
     fontSize: FontSize.medium,
     fontWeight: 'bold',
-    color: COLORS.black,
-  },
-  scheduleTimeSlot: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: Spacing.small,
-  },
-  scheduleTime: {
-    fontSize: FontSize.small,
-    color: '#666',
-  },
-  availability: {
-    fontSize: FontSize.small,
-    color: '#03A9F4',
-  },
-  moreButton: {
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    backgroundColor: 'transparent',
-    marginTop: 10,
+    color: COLORS.primary,
   },
   moreText: {
-    color: '#03A9F4',
+    color: COLORS.primary,
     fontSize: 14,
   },
-
   selectedSchedule: {
-    backgroundColor: COLORS.red,
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.white,
+  },
+  selectedTextColor: {
+    color: COLORS.white,
   },
 });
 

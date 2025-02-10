@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, {useCallback} from 'react';
 import {
   TextInput,
   Text,
@@ -9,17 +9,23 @@ import {
   Keyboard,
   TouchableOpacity,
 } from 'react-native';
-import { FontSize, Screen, Spacing } from '../utils/dimension';
+import {FontSize, Screen, Spacing} from '../utils/dimension';
 import CustomText from './CustomText';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { COLORS } from '../utils/globalConstants/color';
+import {COLORS} from '../utils/globalConstants/color';
 
 type CustomInputProps = TextInputProps & {
   label?: string;
   errorMessage?: string;
-  value: string; 
-  onValueChange: (value: string) => void; 
-  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'decimal-pad' | 'ascii-capable';
+  value: string;
+  onValueChange: (value: string) => void;
+  keyboardType?:
+    | 'default'
+    | 'email-address'
+    | 'numeric'
+    | 'phone-pad'
+    | 'decimal-pad'
+    | 'ascii-capable';
   secureTextEntry?: boolean;
   disabled?: boolean;
 };
@@ -32,7 +38,10 @@ const formatPhoneNumber = (value: string) => {
   if (cleanedValue.length < 7) {
     return `(${cleanedValue.slice(0, 3)})-${cleanedValue.slice(3)}`;
   }
-  return `(${cleanedValue.slice(0, 3)})-${cleanedValue.slice(3, 6)}-${cleanedValue.slice(6, 10)}`;
+  return `(${cleanedValue.slice(0, 3)})-${cleanedValue.slice(
+    3,
+    6,
+  )}-${cleanedValue.slice(6, 10)}`;
 };
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -46,7 +55,9 @@ const CustomInput: React.FC<CustomInputProps> = ({
   ...textInputProps
 }) => {
   const [isFocused, setIsFocused] = React.useState(false);
-  const [isPasswordVisible, setIsPasswordVisible] = React.useState(!secureTextEntry);
+  const [isPasswordVisible, setIsPasswordVisible] = React.useState(
+    !secureTextEntry,
+  );
 
   const handleFocus = useCallback(() => {
     if (!disabled) setIsFocused(true);
@@ -59,15 +70,16 @@ const CustomInput: React.FC<CustomInputProps> = ({
   const handleChangeText = useCallback(
     (text: string) => {
       if (!disabled) {
-        const formattedText = keyboardType === 'phone-pad' ? formatPhoneNumber(text) : text;
+        const formattedText =
+          keyboardType === 'phone-pad' ? formatPhoneNumber(text) : text;
         onValueChange(formattedText); // Notify the parent component
       }
     },
-    [disabled, keyboardType, onValueChange]
+    [disabled, keyboardType, onValueChange],
   );
 
   const togglePasswordVisibility = useCallback(() => {
-    if (!disabled) setIsPasswordVisible((prev) => !prev);
+    if (!disabled) setIsPasswordVisible(prev => !prev);
   }, [disabled]);
 
   const dismissKeyboard = () => {
@@ -101,7 +113,9 @@ const CustomInput: React.FC<CustomInputProps> = ({
             {...textInputProps}
           />
           {secureTextEntry && !disabled && (
-            <TouchableOpacity onPress={togglePasswordVisibility} style={styles.iconContainer}>
+            <TouchableOpacity
+              onPress={togglePasswordVisibility}
+              style={styles.iconContainer}>
               <Icon
                 name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
                 size={20}
@@ -126,7 +140,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   input: {
-    flex: 1,
+    flex: 1, // Ensure it expands fully within its container
     height: Screen.height / 15,
     borderWidth: 1,
     borderRadius: Spacing.small,
