@@ -1,10 +1,5 @@
 import React, {useState} from 'react';
-import {
-  TouchableOpacity,
-  StyleSheet,
-  GestureResponderEvent,
-  Text,
-} from 'react-native';
+import {TouchableOpacity, StyleSheet, Text} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -32,7 +27,6 @@ import VerifyOTPScreen from '../screens/Auth/VerifyOTPScreen';
 import CreateSchedule from '../screens/ServiceProvider/CreateSchedule';
 import CreateService from '../screens/ServiceProvider/CreateService';
 import {CartScreen} from '../screens/ServiceProvider/CartScreen';
-// import VerifyOtpScreen from "../screens/Auth/VerifyOtpScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -63,7 +57,7 @@ const AuthenticatedTabs = () => {
 
           return <Icon name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: COLORS.secondary,
+        tabBarActiveTintColor: COLORS.white,
         tabBarInactiveTintColor: COLORS.black,
         headerShown: false,
         tabBarStyle: styles.tabBarStyle,
