@@ -1,8 +1,10 @@
 import React from 'react';
-import {View, Text,StyleSheet} from 'react-native';
-import {Spacing} from '../utils/dimension';
+import {View, Text, StyleSheet} from 'react-native';
+import {globalStyle} from '../utils/globalStyle';
+import CustomText from '../components/CustomText';
+import {WORD_DIR} from '../utils/local/en';
+import {FontSize, Spacing} from '../utils/dimension';
 import {COLORS} from '../utils/globalConstants/color';
-import { globalStyle } from '../utils/globalStyle';
 
 interface PaymentModalProps {
   amount: string;
@@ -17,36 +19,44 @@ const CustomPaymentSummary: React.FC<PaymentModalProps> = ({
 }) => {
   return (
     <View style={globalStyle.sectionContainer}>
-      <Text style={styles.summaryTitle}>Payment Summary</Text>
+      <CustomText style={styles.summaryTitle} label={WORD_DIR.paymentSummary} />
+
       <View style={styles.row}>
-        <Text style={styles.label}>Amount</Text>
-        <Text style={styles.amount}>${amount}</Text>
+        <CustomText style={styles.label} label={WORD_DIR.amount} />
+        <CustomText style={styles.amount} label={`$ ${amount}`} />
       </View>
       <View style={styles.row}>
-        <Text style={styles.label}>Tax @20</Text>
-        <Text style={styles.amount}>${tax}</Text>
+        <CustomText style={styles.label} label={WORD_DIR.tax} />
+        <CustomText style={styles.amount} label={`$ ${tax}`} />
       </View>
       <View style={styles.divider} />
       <View style={styles.row}>
-        <Text style={styles.totalLabel}>Total Payment</Text>
-        <Text style={styles.totalAmount}>${totalAmount}</Text>
+        <CustomText style={styles.total} label={WORD_DIR.total} />
+        <CustomText style={styles.total} label={`$ ${totalAmount}`} />
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  summaryTitle: {fontSize: 16, fontWeight: 'bold', marginBottom: 10},
+  summaryTitle: {
+    fontSize: FontSize.medium,
+    fontWeight: 'bold',
+    marginBottom: Spacing.small,
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 5,
   },
-  label: {fontSize: 14, color: '#777'},
-  amount: {fontSize: 14, color: '#333'},
-  divider: {height: 1, backgroundColor: '#ddd', marginVertical: 10},
-  totalLabel: {fontSize: 16, fontWeight: 'bold'},
-  totalAmount: {fontSize: 16, fontWeight: 'bold', color: '#000'},
+  label: {
+    fontSize: FontSize.small + 2,
+    color: COLORS.black,
+    fontWeight: 'bold',
+  },
+
+  amount: {fontSize: FontSize.small + 2, color: COLORS.black},
+  divider: {height: 1, backgroundColor: COLORS.black, marginVertical: 10},
+  total: {fontSize: FontSize.small + 2, fontWeight: 'bold', color: '#000'},
 });
 
 export default CustomPaymentSummary;

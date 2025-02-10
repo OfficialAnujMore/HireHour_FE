@@ -2,6 +2,12 @@ import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import CustomPaymentSummary from '../components/CustomPaymentSummary';
+import CustomButton from './CustomButton';
+import {WORD_DIR} from '../utils/local/en';
+import {FontSize, Spacing} from '../utils/dimension';
+import {COLORS} from '../utils/globalConstants/color';
+import CustomText from '../components/CustomText';
 
 interface PaymentModalProps {
   isVisible: boolean;
@@ -30,26 +36,10 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
       animationIn="slideInUp"
       animationOut="slideOutDown">
       <View style={styles.container}>
-        {/* Payment Summary Section */}
-        <View style={styles.paymentSummary}>
-          <Text style={styles.summaryTitle}>Payment Summary</Text>
-          <View style={styles.row}>
-            <Text style={styles.label}>Shipment Cost</Text>
-            <Text style={styles.amount}>$55.54</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>Insurance</Text>
-            <Text style={styles.amount}>$1.00</Text>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.row}>
-            <Text style={styles.totalLabel}>Total Payment</Text>
-            <Text style={styles.totalAmount}>$56.54</Text>
-          </View>
-        </View>
+        <CustomPaymentSummary amount={'10'} tax={'0.2'} totalAmount={'12.0'} />
 
         {/* Payment Methods Section */}
-        <Text style={styles.title}>Choose Payment Method</Text>
+        <CustomText style={styles.title} label={WORD_DIR.choosePayment} />
         {paymentOptions.map(option => (
           <TouchableOpacity
             key={option.id}
@@ -61,23 +51,22 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             <Icon
               name={option.icon}
               size={24}
-              color="#555"
+              color={COLORS.primary}
               style={styles.icon}
             />
-            <Text style={styles.optionText}>{option.label}</Text>
+            <CustomText style={styles.optionText} label={option.label} />
           </TouchableOpacity>
         ))}
+        <CustomText
+          style={styles.securityNote}
+          label={WORD_DIR.secureTransaction}
+        />
 
-        <Text style={styles.securityNote}>
-          All transactions are secure and encrypted.
-        </Text>
-
-        <TouchableOpacity
-          style={styles.continueButton}
+        <CustomButton
           onPress={() => selectedPayment && onPaymentSelect(selectedPayment)}
-          disabled={!selectedPayment}>
-          <Text style={styles.continueButtonText}>Continue</Text>
-        </TouchableOpacity>
+          disabled={!selectedPayment}
+          label={WORD_DIR.continue}
+        />
       </View>
     </Modal>
   );
@@ -86,51 +75,37 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 const styles = StyleSheet.create({
   modal: {justifyContent: 'flex-end', margin: 0},
   container: {
-    backgroundColor: 'white',
-    padding: 20,
+    backgroundColor: COLORS.white,
+    padding: Spacing.medium,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
   },
-
-  paymentSummary: {marginBottom: 20},
-  summaryTitle: {fontSize: 16, fontWeight: 'bold', marginBottom: 10},
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 5,
   },
-  label: {fontSize: 14, color: '#777'},
-  amount: {fontSize: 14, color: '#333'},
-  divider: {height: 1, backgroundColor: '#ddd', marginVertical: 10},
-  totalLabel: {fontSize: 16, fontWeight: 'bold'},
-  totalAmount: {fontSize: 16, fontWeight: 'bold', color: '#000'},
-
-  title: {fontSize: 18, fontWeight: 'bold', marginBottom: 15},
+  title: {
+    fontSize: FontSize.medium,
+    fontWeight: 'bold',
+    marginBottom: Spacing.medium,
+  },
   optionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 15,
+    padding: Spacing.medium,
     borderRadius: 10,
-    backgroundColor: '#f5f5f5',
-    marginBottom: 10,
+    backgroundColor: COLORS.white,
+    marginBottom: Spacing.medium,
+    borderBottomWidth: 1,
   },
-  selectedOption: {backgroundColor: '#e0f7fa'},
-  icon: {marginRight: 10},
-  optionText: {fontSize: 16},
+  selectedOption: {borderColor: COLORS.primary, borderWidth: 1},
+  icon: {marginRight: Spacing.small},
+  optionText: {fontSize: FontSize.small},
   securityNote: {
-    fontSize: 12,
-    color: 'gray',
-    marginTop: 15,
-    textAlign: 'center',
+    fontSize: FontSize.small,
+    color: COLORS.black,
   },
-  continueButton: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 10,
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  continueButtonText: {color: 'white', fontSize: 16, fontWeight: 'bold'},
 });
 
 export default PaymentModal;
