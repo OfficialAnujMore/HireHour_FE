@@ -1,11 +1,13 @@
 import {useSelector, useDispatch} from 'react-redux';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
+  Image,
 } from 'react-native';
 import {RootState} from 'redux/store';
 import CustomServiceCards from '../../components/CustomServiceCard';
@@ -18,25 +20,20 @@ import {
 } from '../../redux/cartSlice';
 import {bookService} from '../../services/serviceProviderService';
 import {showSnackbar} from '../../redux/snackbarSlice';
-
+import PaymentModal from '../../components/PaymentModal';
+import CustomPaymentSummary from '../../components/CustomPaymentSummary';
+import {COLORS} from '../../utils/globalConstants/color';
+import CustomText from '../../components/CustomText';
+import emptyCart from '../../assets/empty-cart.png';
+import {useNavigation} from '@react-navigation/native';
 export const CartScreen = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const user = useSelector((state: RootState) => state.auth.user);
-  const handleRemoveService = (serviceId: string) => {
-    
+  const [modalVisible, setModalVisible] = useState(false);
 
-    dispatch(removeServiceFromCart(serviceId)); // This will automatically update the state and re-render the component
-  };
-
-  const handleRemoveScheduledDate = (serviceId: string, scheduleId: string) => {
-    
-    dispatch(removeScheduleFromCart({serviceId, scheduleId}));
-  };
-
-  const handlePress = async () => {
-    
-
+  const handlePaymentSelect = async (method: string) => {
     const schedule = cartItems.flatMap(service => {
       return service.schedule;
     });
@@ -50,114 +47,79 @@ export const CartScreen = () => {
       dispatch(showSnackbar(response.message));
       dispatch(clearCart());
     }
-    
+
+    Alert.alert('Payment Selected', `You chose: ${method}`);
+    setModalVisible(false);
+  };
+  const handleRemoveService = (serviceId: string) => {
+    dispatch(removeServiceFromCart(serviceId)); // This will automatically update the state and re-render the component
+  };
+
+  const handleRemoveScheduledDate = (serviceId: string, scheduleId: string) => {
+    dispatch(removeScheduleFromCart({serviceId, scheduleId}));
+  };
+
+  const handlePress = async () => {
+    setModalVisible(true);
   };
   return (
-    <View style={styles.container}>
       <ScrollView>
-        <Text style={styles.sectionTitle}>Your orders</Text>
-        {/* <View style={styles.orderContainer}>
-      {cartItems.length === 0 ? (
-        <Text style={styles.noItemsText}>No items in your cart</Text>
-      ) : (
-        cartItems.map(item => (
-          <View key={item.serviceId} style={styles.orderItem}>
-            <View style={styles.orderDetailsContainer}>
-              <Image
-                source={{
-                  uri:
-                    item.servicePreview[0]?.imageUri ||
-                    'https://via.placeholder.com/60',
-                }}
-                style={styles.orderImage}
+        <CustomText style={styles.sectionTitle} label={'Order Summary'} />
+
+        {cartItems?.length === 0 ? (
+          <View style={styles.container}>
+
+  
+          <View style={styles.emptyCartContainer}>
+            <View style={{alignItems: 'center'}}>
+              <Image source={emptyCart} />
+
+              <CustomText
+                style={styles.emptyText}
+                label={'Your cart is empty!'}
               />
-              <View style={styles.orderDetails}>
-                <Text style={styles.orderTitle}>{item.title}</Text>
-                <Text style={styles.orderMeta}>
-                  {item.ratings} ★ | ${item.chargesPerHour}/hr
-                </Text>
-                <Text style={styles.orderMeta}>{item.description}</Text>
-
-                <TouchableOpacity
-                  onPress={() => toggleScheduleVisibility(item.serviceId)}>
-                  <Text style={styles.viewScheduleText}>
-                    {visibleSchedules[item.serviceId]
-                      ? 'Hide Schedule'
-                      : 'View Schedule'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+              <CustomText
+                style={styles.emptyText}
+                label={'Choose a service and proceed to checkout'}
+              />
             </View>
-
-            {item.schedule.length > 0 && (
-              <>
-                {visibleSchedules[item.serviceId] &&
-                  item.schedule.map(scheduleItem => (
-                    <View key={scheduleItem.id} style={styles.scheduleItem}>
-                      <Text style={styles.scheduleTitle}>
-                        {scheduleItem.day}, {scheduleItem.month}{' '}
-                        {scheduleItem.date}
-                      </Text>
-                      {scheduleItem.timeSlots.length > 0 ? (
-                        scheduleItem.timeSlots.map(slot => (
-                          <View key={slot.id} style={styles.scheduleTimeSlot}>
-                            <Text style={styles.scheduleTime}>
-                              {slot.time}
-                            </Text>
-                            <Text style={styles.availability}>
-                              {slot.available ? 'Available' : 'Unavailable'}
-                            </Text>
-                          </View>
-                        ))
-                      ) : (
-                        <Text style={styles.scheduleTime}>
-                          No time slots available
-                        </Text>
-                      )}
-                    </View>
-                  ))}
-              </>
-            )}
+          
           </View>
-        ))
-      )}
-    </View> */}
-
-        <View style={styles.container}>
-          {cartItems?.length === 0 ? (
-            <Text style={styles.emptyText}>Your cart is empty!</Text>
-          ) : (
-            cartItems.map(item => {
+          <CustomButton
+              label={'Go to home'}
+              onPress={() => {
+                navigation.navigate('Home');
+              }}
+            />
+          </View>
+        ) : (
+          <View style={styles.container}>
+            {cartItems.map(item => {
               return (
                 <CustomServiceCards
                   key={item.id}
                   item={item}
-                  // deleteable={true}
                   handleRemoveService={handleRemoveService}
                   handleRemoveScheduledDate={handleRemoveScheduledDate}
                 />
               );
-            })
-          )}
-        </View>
-
-        <TouchableOpacity style={styles.offersContainer}>
-          <Text style={styles.couponsText}>Coupons and offers</Text>
-          <Text style={styles.offerCount}>5 offers</Text>
-        </TouchableOpacity>
-
-        <View style={styles.paymentSummaryContainer}>
-          <Text style={styles.sectionTitle}>Payment summary</Text>
-          <View style={styles.paymentRow}>
-            <Text style={styles.paymentLabel}>Item total</Text>
+            })}
+            <CustomPaymentSummary
+              amount={'10'}
+              tax={'0.2'}
+              totalAmount={'12.0'}
+            />
+            <CustomButton label={'Proceed to checkout'} onPress={handlePress} />
           </View>
-        </View>
+        )}
 
-        {/* <CustomButton label={'Book service'} onPress={handlePress} /> */}
+        <PaymentModal
+          isVisible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          onPaymentSelect={handlePaymentSelect}
+        />
+
       </ScrollView>
-
-      <CustomButton label={'Book service'} onPress={handlePress} />
-    </View>
   );
 };
 
@@ -168,10 +130,16 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: '#666',
   },
+  emptyCartContainer: {
+    flex: 1,
+    // height:Screen.height,
+    justifyContent: 'center',
+    // alignItems: 'center',
+  },
 
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#f6f6f6',
     paddingHorizontal: Spacing.small,
   },
   sectionTitle: {

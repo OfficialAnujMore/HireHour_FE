@@ -17,7 +17,7 @@ const unprotectedRoutes = [
 ];
 
 const apiClient = axios.create({
-  baseURL: 'http://10.67.60.29:3000/', // Replace with your API base URL
+  baseURL: 'http://192.168.1.122:3000/', // Replace with your API base URL
   timeout: 10000, // Timeout after 10 seconds
   headers: {
     'Content-Type': 'application/json',

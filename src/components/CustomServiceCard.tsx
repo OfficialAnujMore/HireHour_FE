@@ -168,16 +168,6 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
         />
       )}
 
-      {/* {handleRemoveService && (
-        <ScheduleDetails
-          schedule={item.schedule}
-          maxDisplay={maxDisplay}
-          serviceId={item.serviceId}
-          handleRemoveScheduledDate={handleRemoveScheduledDate}
-          onServiceSelect={() => {}}
-          selectedServices={[]}
-        />
-      )} */}
     </TouchableOpacity>
   );
 };
