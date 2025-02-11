@@ -1,14 +1,6 @@
 import {useSelector, useDispatch} from 'react-redux';
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  Alert,
-  Image,
-} from 'react-native';
+import {View, StyleSheet, ScrollView, Alert} from 'react-native';
 import {RootState} from 'redux/store';
 import CustomServiceCards from '../../components/CustomServiceCard';
 import {FontSize, Screen, Spacing} from '../../utils/dimension';
@@ -22,10 +14,12 @@ import {bookService} from '../../services/serviceProviderService';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import PaymentModal from '../../components/PaymentModal';
 import CustomPaymentSummary from '../../components/CustomPaymentSummary';
-import {COLORS} from '../../utils/globalConstants/color';
 import CustomText from '../../components/CustomText';
 import emptyCart from '../../assets/empty-cart.png';
 import {useNavigation} from '@react-navigation/native';
+import {FallBack} from '../../components/FallBack';
+import {WORD_DIR} from '../../utils/local/en';
+import {globalStyle} from '../../utils/globalStyle';
 export const CartScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -44,7 +38,12 @@ export const CartScreen = () => {
     });
 
     if (response.success) {
-      dispatch(showSnackbar(response.message));
+      dispatch(
+        showSnackbar({
+          message: response.message,
+          success: response.success,
+        }),
+      );
       dispatch(clearCart());
     }
 
@@ -63,37 +62,19 @@ export const CartScreen = () => {
     setModalVisible(true);
   };
   return (
-      <ScrollView>
-        <CustomText style={styles.sectionTitle} label={'Order Summary'} />
-
-        {cartItems?.length === 0 ? (
+    <View style={globalStyle.globalContainer}>
+      {cartItems?.length === 0 ? (
+        <FallBack
+          heading={WORD_DIR.emptyCartHeading}
+          subHeading={WORD_DIR.emptyCartSubHeading}
+          imageSrc={emptyCart}
+          buttonLabel={WORD_DIR.goHome}
+          navigationRoute="Home"
+        />
+      ) : (
+        <ScrollView>
           <View style={styles.container}>
-
-  
-          <View style={styles.emptyCartContainer}>
-            <View style={{alignItems: 'center'}}>
-              <Image source={emptyCart} />
-
-              <CustomText
-                style={styles.emptyText}
-                label={'Your cart is empty!'}
-              />
-              <CustomText
-                style={styles.emptyText}
-                label={'Choose a service and proceed to checkout'}
-              />
-            </View>
-          
-          </View>
-          <CustomButton
-              label={'Go to home'}
-              onPress={() => {
-                navigation.navigate('Home');
-              }}
-            />
-          </View>
-        ) : (
-          <View style={styles.container}>
+            <CustomText style={styles.sectionTitle} label={'Order Summary'} />
             {cartItems.map(item => {
               return (
                 <CustomServiceCards
@@ -111,32 +92,19 @@ export const CartScreen = () => {
             />
             <CustomButton label={'Proceed to checkout'} onPress={handlePress} />
           </View>
-        )}
+        </ScrollView>
+      )}
 
-        <PaymentModal
-          isVisible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          onPaymentSelect={handlePaymentSelect}
-        />
-
-      </ScrollView>
+      <PaymentModal
+        isVisible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onPaymentSelect={handlePaymentSelect}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  emptyText: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginTop: 20,
-    color: '#666',
-  },
-  emptyCartContainer: {
-    flex: 1,
-    // height:Screen.height,
-    justifyContent: 'center',
-    // alignItems: 'center',
-  },
-
   container: {
     flex: 1,
     backgroundColor: '#f6f6f6',

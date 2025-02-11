@@ -10,6 +10,9 @@ import {getServiceProviders} from '../../services/serviceProviderService';
 import {useFocusEffect} from '@react-navigation/native';
 import {User} from 'interfaces';
 import CustomServiceCards from '../../components/CustomServiceCard';
+import {FallBack} from '../../components/FallBack';
+import dataNotFound from '../../assets/error-in-calendar.png';
+import {WORD_DIR} from '../../utils/local/en';
 
 const HomeScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
@@ -76,13 +79,7 @@ const HomeScreen = ({navigation}: any) => {
           showsVerticalScrollIndicator={false}
         />
       ) : (
-        <View style={styles.dataNotFound}>
-          <Image
-            source={require('../../assets/error-in-calendar.png')}
-            style={{width: Screen.width, height: Screen.height / 2}}
-          />
-          <CustomText style={styles.noDataText} label={'No service found'} />
-        </View>
+        <FallBack imageSrc={dataNotFound} heading={WORD_DIR.noService} />
       )}
     </View>
   );
@@ -92,7 +89,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     margin: Spacing.small,
-    backgroundColor:'#f6f6f6'
+    backgroundColor: '#f6f6f6',
+    paddingBottom: Screen.height / 30,
   },
   greetingText: {
     fontSize: FontSize.large,

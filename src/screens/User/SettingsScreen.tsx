@@ -1,70 +1,180 @@
-import React from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
-import { Spacing, FontSize } from "../../utils/dimension"; // Use your dimensions file
-import { useDispatch } from "react-redux";
-import { logout } from "../../redux/authSlice";
+import React, {useState} from 'react';
+import {View, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+import {Screen, Spacing, FontSize} from '../../utils/dimension';
+import CustomButton from '../../components/CustomButton';
+import CustomText from '../../components/CustomText';
+import {COLORS} from '../../utils/globalConstants/color';
+import {useDispatch, useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
+import {showSnackbar} from '../../redux/snackbarSlice';
+import {WORD_DIR} from '../../utils/local/en';
+import CustomSwitch from '../../components/CustomSwitch';
 
-interface Option {
-  title: string;
-  callback: () => void;
-}
+const userCategories = [
+  {name: 'Art', selected: false},
+  {name: 'Music', selected: false},
+  {name: 'Sports', selected: false},
+  {name: 'Baking', selected: false},
+  {name: 'Helper', selected: false},
+];
 
-const SettingsScreen = () => {
+const SettingsScreen: React.FC = () => {
+  const [mobileNotification, setMobileNotification] = useState<boolean>(false);
+  const [emailNotification, setEmailNotification] = useState<boolean>(false);
+  const [categories, setCategories] = useState(userCategories);
   const dispatch = useDispatch();
-  const options: Option[] = [
-    { title: "Edit Profile", callback: () => handleOptionPress("Edit Profile") },
-    { title: "Security", callback: () => handleOptionPress("Security") },
-    { title: "Notifications", callback: () => handleOptionPress("Notifications") },
-    { title: "Privacy", callback: () => handleOptionPress("Privacy") },
-    { title: "Help & Support", callback: () => handleOptionPress("Help & Support") },
-    { title: "Terms and Policies", callback: () => handleOptionPress("Terms and Policies") },
-    { title: "Free Up Space", callback: () => handleOptionPress("Free Up Space") },
-    { title: "Data Saver", callback: () => handleOptionPress("Data Saver") },
-    { title: "Log Out", callback: () => dispatch(logout()) },
-  ];
+  const navigation = useNavigation();
 
-  const handleOptionPress = (option: string) => {
-    
-    // Implement actual callback logic for each option
+  const handleCategoryToggle = (categoryName: string) => {
+    setCategories(prevCategories =>
+      prevCategories.map(category =>
+        category.name === categoryName
+          ? {...category, selected: !category.selected}
+          : category,
+      ),
+    );
+  };
+
+  const handleSave = () => {
+    dispatch(
+      showSnackbar({
+        message: WORD_DIR.settingsUpdated,
+        success: true,
+      }),
+    );
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Settings</Text>
-      {options.map((option, index) => (
-        <TouchableOpacity key={index} style={styles.option} onPress={option.callback}>
-          <Text style={styles.optionText}>{option.title}</Text>
-        </TouchableOpacity>
-      ))}
+      <ScrollView>
+        <View style={styles.elevatedContainer}>
+          <CustomText
+            label={WORD_DIR.notificationPreference}
+            style={styles.heading}
+          />
+          <View style={styles.settingContainer}>
+            <CustomText
+              label={WORD_DIR.enableMobilePushNotifications}
+              style={styles.text}
+            />
+            <CustomSwitch
+              value={mobileNotification}
+              onValueChange={setMobileNotification}
+            />
+          </View>
+          <View style={styles.settingContainer}>
+            <CustomText
+              label={WORD_DIR.enableEmailPushNotifications}
+              style={styles.text}
+            />
+            <CustomSwitch
+              value={emailNotification}
+              onValueChange={setEmailNotification}
+            />
+          </View>
+        </View>
+
+        <View style={styles.elevatedContainer}>
+          <CustomText label={WORD_DIR.selectInterests} style={styles.heading} />
+          <CustomText
+            label={WORD_DIR.selectTwoOrMore}
+            style={styles.subheading}
+          />
+          <View style={styles.categoryContainer}>
+            {categories.map(category => (
+              <TouchableOpacity
+                key={category.name}
+                onPress={() => handleCategoryToggle(category.name)}
+                style={[
+                  styles.categoryItem,
+                  category.selected && styles.selectedCategory,
+                ]}>
+                <CustomText
+                  label={category.name}
+                  style={[
+                    styles.categoryText,
+                    category.selected && styles.selectedCategoryText,
+                  ]}
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+
+      <CustomButton
+        label={WORD_DIR.saveSettings}
+        onPress={handleSave}
+        textStyle={{fontSize: FontSize.large}}
+        disabled={categories.filter(cat => cat.selected).length < 2}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  elevatedContainer: {
+    backgroundColor: COLORS.white,
+    borderRadius: Spacing.small,
+    marginVertical: Spacing.small,
+    padding: Spacing.small,
+    shadowColor: COLORS.black,
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+    justifyContent: 'space-between',
+  },
   container: {
     flex: 1,
     padding: Spacing.medium,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: COLORS.white,
   },
   heading: {
     fontSize: FontSize.large,
-    fontWeight: "bold",
+    fontWeight: 'bold',
+    marginBottom: Spacing.large,
+    textAlign: 'center',
+  },
+  settingContainer: {
+    justifyContent:'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: Spacing.medium,
   },
-
-  option: {
-    paddingVertical: Spacing.small,
-    borderBottomWidth: 1,
-    borderColor: "#ccc",
-  },
-  optionText: {
+  text: {
     fontSize: FontSize.medium,
-    color: "#333",
+    flex: 1,
+  },
+  subheading: {
+    fontSize: FontSize.medium,
+    textAlign: 'center',
+    color: COLORS.grey,
+    marginBottom: Spacing.medium,
+  },
+  categoryContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  categoryItem: {
+    paddingVertical: Spacing.small,
+    paddingHorizontal: Spacing.medium,
+    margin: Spacing.small,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    backgroundColor: COLORS.white,
+  },
+  selectedCategory: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  categoryText: {
+    fontSize: FontSize.medium,
+    color: COLORS.black,
+  },
+  selectedCategoryText: {
+    color: COLORS.white,
   },
 });
 

@@ -1,5 +1,12 @@
 import React, {useRef, useState} from 'react';
-import {View, TextInput, StyleSheet, Keyboard, Image, ScrollView} from 'react-native';
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  Keyboard,
+  Image,
+  ScrollView,
+} from 'react-native';
 import CustomText from '../../components/CustomText';
 import {WORD_DIR} from '../../utils/local/en';
 import CustomButton from '../../components/CustomButton';
@@ -9,15 +16,14 @@ import {useDispatch} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {Screen, Spacing} from '../../utils/dimension';
-import { RegisterUser } from 'interfaces';
-import { login } from '../../redux/authSlice';
+import {RegisterUser} from 'interfaces';
+import {login} from '../../redux/authSlice';
 const OTP_LENGTH: number = 6;
 
 const VerifyOTPScreen: React.FC<RegisterUser> = props => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const data = props.route.params;
-  
 
   const [emailOTP, setEmailOTP] = useState<string[]>(
     Array(OTP_LENGTH).fill(''),
@@ -87,7 +93,11 @@ const VerifyOTPScreen: React.FC<RegisterUser> = props => {
     });
 
     if (!emailOTPResponse.success) {
-      dispatch(showSnackbar(emailOTPResponse.message));
+      dispatch(
+        showSnackbar({
+          message: emailOTPResponse.message,
+        }),
+      );
       return;
     }
 
@@ -103,7 +113,12 @@ const VerifyOTPScreen: React.FC<RegisterUser> = props => {
 
     const registerUserResponse = await registerUser(data);
     if (registerUserResponse) {
-      dispatch(showSnackbar('Registered successfully'));
+      dispatch(
+        showSnackbar({
+          message: 'Registered successfully',
+          success: true,
+        }),
+      );
       dispatch(login({user: registerUserResponse.data}));
       // Navigate to the home screen
       navigation.navigate('Home');

@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, StyleSheet, FlatList, Image} from 'react-native';
+import {View, StyleSheet, FlatList, Image, Text} from 'react-native';
 import CustomText from '../components/CustomText';
 import {getUpcomingEvents} from '../services/serviceProviderService';
 import {useSelector} from 'react-redux';
@@ -9,6 +9,8 @@ import {useFocusEffect} from '@react-navigation/native';
 import {WORD_DIR} from '../utils/local/en';
 import {FontSize, Screen} from '../utils/dimension';
 import CustomServiceCards from '../components/CustomServiceCard';
+import {FallBack} from '../components/FallBack';
+import dataNotFound from '../assets/error-in-calendar.png';
 const UpcomingEvents = ({}) => {
   const user = useSelector((state: RootState) => state.auth.user);
   const [data, setData] = useState();
@@ -23,13 +25,9 @@ const UpcomingEvents = ({}) => {
     }, []),
   );
 
-  useEffect(() => {
-    
-  }, [data]);
   return (
     <View style={styles.container}>
-      
-      {data && data?.length > 0 ? (
+      {data && data?.length === 0 ? (
         <View>
           <CustomText label={WORD_DIR.upcomingEvents} />
           <FlatList
@@ -47,28 +45,23 @@ const UpcomingEvents = ({}) => {
           />
         </View>
       ) : (
-        <View style={styles.dataNotFound}>
-          <Image
-            source={require('../assets/error-in-calendar.png')}
-            style={{width: Screen.width, height: Screen.height / 2}}
+        <>
+          <FallBack
+            imageSrc={dataNotFound}
+            heading={WORD_DIR.noUpcomingEvents}
+            subHeading={WORD_DIR.scheduleEvent}
+            buttonLabel={WORD_DIR.goHome}
+            navigationRoute="Home"
           />
-          <CustomText style={styles.noDataText} label={'No upcoming events'} />
-        </View>
+        </>
       )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {padding: 0},
-  dataNotFound: {
-    height:Screen.height,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  noDataText: {
-    fontSize: FontSize.large,
-    fontWeight: '600',
+  container: {
+    flex: 1,
   },
 });
 export default UpcomingEvents;

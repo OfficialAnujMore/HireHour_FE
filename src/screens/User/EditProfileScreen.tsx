@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   StyleSheet,
   Image,
   TouchableOpacity,
   ScrollView,
-  Platform
+  Platform,
 } from 'react-native';
-import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
 import CustomSnackbar from '../../components/CustomSnackbar';
-import { Screen, Spacing } from '../../utils/dimension';
-import { COLORS } from '../../utils/globalConstants/color';
-import { launchImageLibrary } from 'react-native-image-picker';
+import {Screen, Spacing} from '../../utils/dimension';
+import {COLORS} from '../../utils/globalConstants/color';
+import {launchImageLibrary} from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { WORD_DIR } from '../../utils/local/en';
-import { useDispatch, useSelector } from 'react-redux';
-import { showSnackbar } from '../../redux/snackbarSlice';
-import { RootState } from '../../redux/store';
+import {WORD_DIR} from '../../utils/local/en';
+import {useDispatch, useSelector} from 'react-redux';
+import {showSnackbar} from '../../redux/snackbarSlice';
+import {RootState} from '../../redux/store';
 
 const EditProfileScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -62,16 +62,26 @@ const EditProfileScreen: React.FC = () => {
           maxHeight: 300,
           quality: 0.5,
         },
-        (response) => {
+        response => {
           if (response.didCancel) {
-            dispatch(showSnackbar('Image selection canceled.'));
+            dispatch(
+              showSnackbar({
+                message: 'Image selection canceled.',
+                success: true,
+              }),
+            );
           } else if (response.errorMessage) {
-            dispatch(showSnackbar(`Error: ${response.errorMessage}`));
+            dispatch(
+              showSnackbar({
+                message: `Error: ${response.errorMessage}`,
+                success: false,
+              }),
+            );
           } else {
             const uri = response.assets?.[0]?.uri;
-            if (uri) setUser((prevState) => ({ ...prevState, profileImage: uri }));
+            if (uri) setUser(prevState => ({...prevState, profileImage: uri}));
           }
-        }
+        },
       );
     } else {
       // Request permission if not granted
@@ -86,36 +96,59 @@ const EditProfileScreen: React.FC = () => {
             maxHeight: 300,
             quality: 0.5,
           },
-          (response) => {
+          response => {
             if (response.didCancel) {
-              dispatch(showSnackbar('Image selection canceled.'));
+              dispatch(
+                showSnackbar({
+                  message: 'Image selection canceled.',
+                  success: true,
+                }),
+              );
             } else if (response.errorMessage) {
-              dispatch(showSnackbar(`Error: ${response.errorMessage}`));
+              dispatch(
+                showSnackbar({
+                  message: `Error: ${response.errorMessage}`,
+                  success: true,
+                }),
+              );
             } else {
               const uri = response.assets?.[0]?.uri;
-              if (uri) setUser((prevState) => ({ ...prevState, profileImage: uri }));
+              if (uri)
+                setUser(prevState => ({...prevState, profileImage: uri}));
             }
-          }
+          },
         );
       } else {
-        // Permission denied, show an appropriate message
-        dispatch(showSnackbar('Permission to access photos is required.'));
+        dispatch(
+          showSnackbar({
+            message: 'Permission to access photos is required.',
+            success: true,
+          }),
+        );
       }
     }
   };
 
-
   const handleSave = () => {
     if (!user.name.trim()) {
-      dispatch(showSnackbar('Name is required.'));
+      dispatch(
+        showSnackbar({
+          message: 'Name is required.',
+          success: true,
+        }),
+      );
       return;
     }
-    
-    dispatch(showSnackbar('Profile saved successfully!'));
+    dispatch(
+      showSnackbar({
+        message: 'Profile saved successfully!',
+        success: true,
+      }),
+    );
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setUser((prevState) => ({ ...prevState, [field]: value }));
+    setUser(prevState => ({...prevState, [field]: value}));
   };
 
   return (
@@ -125,7 +158,7 @@ const EditProfileScreen: React.FC = () => {
         <Image
           source={
             user.profileImage
-              ? { uri: user.profileImage }
+              ? {uri: user.profileImage}
               : require('../../assets/logo.jpeg')
           }
           style={styles.profileImage}
@@ -138,7 +171,7 @@ const EditProfileScreen: React.FC = () => {
       <CustomInput
         label={WORD_DIR.name}
         value={user.name}
-        onValueChange={(text) => handleInputChange('name', text)}
+        onValueChange={text => handleInputChange('name', text)}
         placeholder="Enter name"
         errorMessage={errors.name}
       />
@@ -158,7 +191,7 @@ const EditProfileScreen: React.FC = () => {
       <CustomInput
         label="Phone Number"
         value={user.phone}
-        onValueChange={(text) => handleInputChange('phone', text)}
+        onValueChange={text => handleInputChange('phone', text)}
         placeholder="Enter phone number"
         keyboardType="phone-pad"
         errorMessage={errors.phone}
@@ -195,7 +228,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 5,
   },
-
 });
 
 export default EditProfileScreen;

@@ -13,12 +13,12 @@ import {COLORS} from '../../utils/globalConstants/color';
 import CustomButton from '../../components/CustomButton';
 import {WORD_DIR} from '../../utils/local/en';
 import {updateUserRole} from '../../services/userService';
-import { RootState} from '../../redux/store';
+import {RootState} from '../../redux/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import CustomText from '../../components/CustomText';
 import {useNavigation} from '@react-navigation/native';
-import { login } from '../../redux/authSlice';
+import {login} from '../../redux/authSlice';
 
 const EnrollAsServiceProvider: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -38,15 +38,25 @@ const EnrollAsServiceProvider: React.FC = () => {
         id: user?.id,
         isEnrolled: isServiceProviderEnrolled,
       });
-      
 
       if (response?.data) {
         dispatch(login({user: response.data}));
-        dispatch(showSnackbar('Successfully enrolled as a service provider'));
+
+        dispatch(
+          showSnackbar({
+            message: 'Successfully enrolled as a service provider',
+            success: true,
+          }),
+        );
         navigation.goBack();
       }
     } catch (error: any) {
-      dispatch(showSnackbar(error));
+      dispatch(
+        showSnackbar({
+          message: error,
+          success: true,
+        }),
+      );
     }
   };
 

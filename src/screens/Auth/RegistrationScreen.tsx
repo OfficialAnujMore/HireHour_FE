@@ -13,8 +13,8 @@ import CustomButton from '../../components/CustomButton';
 import CustomText from '../../components/CustomText';
 import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import {COLORS} from '../../utils/globalConstants/color';
-import { USER_DETAILS } from '../../utils/constants';
-import { RootStackParamList } from 'interfaces';
+import {USER_DETAILS} from '../../utils/constants';
+import {RootStackParamList} from 'interfaces';
 
 // Validation patterns
 const PASSWORD_PATTERN = /^.{6,}$/;
@@ -29,7 +29,7 @@ const initialUserState = {
   email: USER_DETAILS.email,
   phoneNumber: USER_DETAILS.phoneNumber,
   password: USER_DETAILS.password,
-  confirmPassword:USER_DETAILS.password,
+  confirmPassword: USER_DETAILS.password,
 };
 
 const initialErrorState = {
@@ -50,7 +50,7 @@ const RegistrationScreen = () => {
   const [errors, setErrors] = useState(initialErrorState);
 
   const handleValueChange = (field: keyof typeof user, value: string) => {
-    // 
+    //
 
     setUser(prevState => ({...prevState, [field]: value}));
     validateField(field, value);
@@ -91,20 +91,21 @@ const RegistrationScreen = () => {
     user.confirmPassword;
 
   const verifyEmail = async () => {
-    
-    const { confirmPassword, ...payload} = user;
-    
+    const {confirmPassword, ...payload} = user;
 
     try {
       const response = await verifyUsernameAndEmail(payload);
       if (response?.data) {
-        navigation.navigate('VerifyOTP',payload);
+        navigation.navigate('VerifyOTP', payload);
       }
     } catch (error: any) {
-
       // Extract and dispatch the error message to the Snackbar
       const errorMessage = error ?? 'Registration failed. Please try again.';
-      dispatch(showSnackbar(errorMessage));
+      dispatch(
+        showSnackbar({
+          message: errorMessage,
+        }),
+      );
     }
   };
 

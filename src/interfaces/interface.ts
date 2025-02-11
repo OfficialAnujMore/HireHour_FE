@@ -104,6 +104,7 @@ export interface CartState {
 
 export interface SnackbarState {
   message: string;
+  success?:boolean;
   visible: boolean;
 }
 // Auth State Interface

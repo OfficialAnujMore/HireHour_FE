@@ -16,4 +16,8 @@ export const globalStyle = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
   },
+  globalContainer: {
+    flex: 1,
+    margin:Spacing.small,
+  },
 });

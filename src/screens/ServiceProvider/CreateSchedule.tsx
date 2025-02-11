@@ -49,7 +49,7 @@ const CreateSchedule = (props: any) => {
         return updated;
       } else {
         // Add selected date
-        return {...prev, [date]: {selected: true, isAvailable:true}};
+        return {...prev, [date]: {selected: true, isAvailable: true}};
       }
     });
   };
@@ -60,7 +60,13 @@ const CreateSchedule = (props: any) => {
       !serviceDetails.description ||
       !serviceDetails.chargesPerHour
     ) {
-      dispatch(showSnackbar('Please fill in all service details.'));
+      dispatch(
+        showSnackbar({
+          message: 'Please fill in all service details.',
+          success: false,
+        }),
+      );
+
       return;
     }
 
@@ -81,12 +87,20 @@ const CreateSchedule = (props: any) => {
       };
       const response = await addService(data);
       if (response) {
-        dispatch(showSnackbar('Service created '));
+        dispatch(
+          showSnackbar({
+            message: 'Service created ',
+            success: true,
+          }),
+        );
       }
     } catch (error) {
-      
-      
-      dispatch(showSnackbar('Failed to create a service '));
+      dispatch(
+        showSnackbar({
+          message: 'Failed to create a service ',
+          success: false,
+        }),
+      );
     }
   };
 

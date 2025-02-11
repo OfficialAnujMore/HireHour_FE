@@ -35,5 +35,22 @@ export const WORD_DIR = {
   total: 'Total Payment',
   continue:"Continue",
   choosePayment:"Choose Payment Method",
-  secureTransaction:"All transactions are secure and encrypted."
+  secureTransaction:"All transactions are secure and encrypted.",
+
+  emptyCartHeading:'Your cart is empty!',
+  emptyCartSubHeading:'Choose a service and proceed to checkout',
+  goHome:"Go To Home",
+  noService:"Oops! Not service found",
+  noUpcomingEvents:"Opps! No Upcoming events",
+  scheduleEvent:"Schedule and event to view upcoming events",
+
+  notificationPreference: 'Notification preference',
+  enableMobilePushNotifications: 'Enable Mobile Push Notifications',
+  enableEmailPushNotifications: 'Enable Email Push Notifications',
+  mobileNotification: 'Mobile Notification',
+  emailNotification: 'Email Notification',
+  selectInterests: 'Let\'s select your interests.',
+  selectTwoOrMore: 'Please select two or more to proceed.',
+  saveSettings: 'Save Settings',
+  settingsUpdated: 'Settings updated!',
 };

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {TouchableOpacity, StyleSheet, Text} from 'react-native';
+import {TouchableOpacity, StyleSheet, Text, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -16,7 +16,7 @@ import ServiceReviewScreen from '../screens/ServiceProvider/ServiceReviewsScreen
 import ProfileScreen from '../screens/User/ProfileScreen';
 import SettingsScreen from '../screens/User/SettingsScreen';
 import EditProfileScreen from '../screens/User/EditProfileScreen';
-import {FontSize, Screen} from '../utils/dimension';
+import {FontSize, Screen, Spacing} from '../utils/dimension';
 import {COLORS} from '../utils/globalConstants/color';
 import EnrollAsServiceProvider from '../screens/ServiceProvider/EnrollAsServiceProvider';
 import ViewServiceScreen from '../screens/ServiceProvider/ViewServiceScreen';
@@ -27,6 +27,7 @@ import VerifyOTPScreen from '../screens/Auth/VerifyOTPScreen';
 import CreateSchedule from '../screens/ServiceProvider/CreateSchedule';
 import CreateService from '../screens/ServiceProvider/CreateService';
 import {CartScreen} from '../screens/ServiceProvider/CartScreen';
+import {TransactionHistory} from '../screens/ServiceProvider/TransactionHistory';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -60,7 +61,7 @@ const AuthenticatedTabs = () => {
         tabBarActiveTintColor: COLORS.white,
         tabBarInactiveTintColor: COLORS.black,
         headerShown: false,
-        tabBarStyle: styles.tabBarStyle,
+        tabBarStyle: [styles.tabBarStyle, {position: 'absolute'}],
         tabBarLabel: ({focused}: {focused: boolean}) => (
           <Text
             style={{
@@ -71,6 +72,7 @@ const AuthenticatedTabs = () => {
             {route.name}
           </Text>
         ),
+        safeAreaInsets: {bottom: Screen.height / 40},
       })}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Events" component={UpcomingEvents} />
@@ -130,6 +132,10 @@ const RootNavigator = () => {
               <Stack.Screen name="Create Schedule" component={CreateSchedule} />
               <Stack.Screen name="Edit Profile" component={EditProfileScreen} />
               <Stack.Screen name="Cart" component={CartScreen} />
+              <Stack.Screen
+                name="Transaction History"
+                component={TransactionHistory}
+              />
             </>
           ) : (
             <>
@@ -150,10 +156,11 @@ const RootNavigator = () => {
 const styles = StyleSheet.create({
   tabBarStyle: {
     backgroundColor: COLORS.primary,
-    height: Screen.height / 10,
+    height: Screen.height / 15,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
     justifyContent: 'space-between',
+    // paddingBottom: Screen.height / , // Ensure there's space above the tab bar
   },
   customButton: {
     backgroundColor: COLORS.secondary,
@@ -162,6 +169,7 @@ const styles = StyleSheet.create({
     borderRadius: Screen.moderateScale(50),
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 10, // Add margin to prevent content from being hidden
   },
 });
 
