@@ -94,7 +94,7 @@ const ProfileScreen: React.FC = () => {
             <Icon
               name="person-outline"
               size={FontSize.extraLarge * 1.5}
-              color={COLORS.grey}
+              color={COLORS.gray}
             />
           </View>
         )}
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   },
   iconFallback: {
     borderWidth: 1,
-    borderColor: COLORS.grey,
+    borderColor: COLORS.gray,
   },
   name: {
     fontSize: FontSize.large,
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: FontSize.large,
-    color: COLORS.red,
+    color: COLORS.error,
     textAlign: 'center',
     marginTop: Spacing.large,
   },

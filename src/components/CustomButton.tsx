@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
   },
   disabledButton: {
-    backgroundColor: COLORS.grey,
+    backgroundColor: COLORS.gray,
   },
   label: {
     fontSize: FontSize.medium,

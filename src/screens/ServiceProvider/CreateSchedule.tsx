@@ -118,7 +118,7 @@ const CreateSchedule = (props: any) => {
           theme={{
             selectedDayBackgroundColor: COLORS.primary,
             selectedDayTextColor: COLORS.white,
-            todayTextColor: COLORS.red,
+            todayTextColor: COLORS.error,
             arrowColor: COLORS.primary,
           }}
           minDate={today}
@@ -138,7 +138,7 @@ const CreateSchedule = (props: any) => {
               <TouchableOpacity
                 style={styles.removeIcon}
                 onPress={() => handleDayPress({dateString: item})}>
-                <Icon name="delete" size={FontSize.medium} color={COLORS.red} />
+                <Icon name="delete" size={FontSize.medium} color={COLORS.error} />
               </TouchableOpacity>
             </View>
           )}

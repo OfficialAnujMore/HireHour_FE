@@ -181,7 +181,7 @@ const CreateService = () => {
               : 'Click here for select image for service'
           }
           action={handleImagePicker}
-          style={errors.images && {color: COLORS.red}}
+          style={errors.images && {color: COLORS.error}}
         />
       </View>
       {renderInput(

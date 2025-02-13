@@ -53,7 +53,7 @@ const RatingInput = ({ rating, onRatingChange }: any) => {
       size={30} // Adjust size for better visibility
       showRating={false} // Hide the text rating and just show stars
       selectedColor="#FFD700" // Gold color for selected stars
-      unSelectedColor="#d3d3d3" // Light grey for unselected stars
+      unSelectedColor="#d3d3d3" // Light gray for unselected stars
     />
   );
 };
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
   },
   errorText: {
-    color: "red",
+    color: "error",
     fontSize: FontSize.small,
     marginBottom: Spacing.small,
   },

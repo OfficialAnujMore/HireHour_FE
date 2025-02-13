@@ -116,6 +116,10 @@ const RootNavigator = () => {
                 options={{headerShown: false}}
               />
               <Stack.Screen
+                name="Home"
+                component={HomeScreen}
+              />
+              <Stack.Screen
                 name="Service Details"
                 component={ServiceDetailsScreen}
               />

@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
   subheading: {
     fontSize: FontSize.medium,
     textAlign: 'center',
-    color: COLORS.grey,
+    color: COLORS.gray,
     marginBottom: Spacing.medium,
   },
   categoryContainer: {

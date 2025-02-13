@@ -4,10 +4,10 @@ export const COLORS = {
     secondary:'#f7f7f7',
     black: '#000000',
     white: '#ffffff',
-    grey: '#808080',
-    red: '#FF0000',
+    gray: '#808080',
     lightGrey:'#D3D3D3',
-    yellow:'#FFD700',
-    green:"#008000"
+    error: '#dc3545',
+    success:"#28a745",
+    warning:'#ffc107'
 
 }

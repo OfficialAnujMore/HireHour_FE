@@ -16,7 +16,7 @@ export const CustomRatingInfo = ({ rating }: { rating: string }) => {
 
   return (
     <TouchableOpacity style={styles.ratingsContainer} onPress={handleNavigate}>
-      <Icon name="star" size={FontSize.medium} color={COLORS.yellow} />
+      <Icon name="star" size={FontSize.medium} color={COLORS.warning} />
       <CustomText label={` ${rating}`} style={styles.ratingStyle} />
     </TouchableOpacity>
   );
@@ -24,7 +24,7 @@ export const CustomRatingInfo = ({ rating }: { rating: string }) => {
 
 const styles = StyleSheet.create({
   ratingsContainer: {
-    backgroundColor: COLORS.green, // You may want to use a constant for green color
+    backgroundColor: COLORS.success, // You may want to use a constant for success color
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

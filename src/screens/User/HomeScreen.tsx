@@ -13,6 +13,7 @@ import CustomServiceCards from '../../components/CustomServiceCard';
 import {FallBack} from '../../components/FallBack';
 import dataNotFound from '../../assets/error-in-calendar.png';
 import {WORD_DIR} from '../../utils/local/en';
+import {MAX_SCHEDULE_DISPLAY} from '../../utils/constants';
 
 const HomeScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
@@ -26,7 +27,8 @@ const HomeScreen = ({navigation}: any) => {
     try {
       const categories = ['Photography', 'Guitar', 'Art', 'Music'];
       const response = await getServiceProviders(user?.id, categories);
-
+      console.log('Service data', response.data);
+      
       setData(response.data);
       setFilteredData(response.data); // Set filtered data as the default
     } catch (error) {
@@ -70,7 +72,7 @@ const HomeScreen = ({navigation}: any) => {
           renderItem={({item}) => (
             <CustomServiceCards
               item={item}
-              maxDisplay={4}
+              maxDisplay={MAX_SCHEDULE_DISPLAY}
               handlePress={() => {
                 navigation.navigate('ServiceDetails', item);
               }}

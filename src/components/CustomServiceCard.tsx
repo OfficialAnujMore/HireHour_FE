@@ -9,11 +9,11 @@ import {
   CustomCardsProps,
   ScheduleItem,
   ServiceDetails,
-  TimeSlot,
 } from 'interfaces';
 import CustomText from './CustomText';
 import {removeServiceFromCart} from '../redux/cartSlice';
 import {useDispatch} from 'react-redux';
+import { MAX_SCHEDULE_DISPLAY } from '../utils/constants';
 
 // Type definition for the component props
 interface CustomServiceCardsProps {
@@ -73,7 +73,7 @@ export const ScheduleDetails: React.FC<{
                 }
                 handleRemoveScheduledDate(serviceId, scheduleItem.id);
               }}>
-              <Icon name="delete" size={FontSize.medium} color={COLORS.red} />
+              <Icon name="delete" size={FontSize.medium} color={COLORS.error} />
             </TouchableOpacity>
           )}
         </TouchableOpacity>
@@ -141,7 +141,7 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
             onPress={() => {
               handleRemoveService(item.serviceId);
             }}>
-            <Icon name="delete" size={FontSize.medium} color={COLORS.red} />
+            <Icon name="delete" size={FontSize.medium} color={COLORS.error} />
           </TouchableOpacity>
         ) : (
           <CustomText
@@ -160,7 +160,7 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
       {(visibleSchedules[item.serviceId] || handleRemoveService)  && (
         <ScheduleDetails
           schedule={item.schedule}
-          maxDisplay={maxDisplay}
+          maxDisplay={MAX_SCHEDULE_DISPLAY}
           serviceId={item.serviceId}
           handleRemoveScheduledDate={handleRemoveScheduledDate}
           onServiceSelect={() => {}}

@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     },
     clickableText: {
         textDecorationLine: 'underline',
-        color: COLORS.grey,
+        color: COLORS.gray,
     },
 });
 

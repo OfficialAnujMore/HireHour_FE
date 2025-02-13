@@ -96,10 +96,10 @@ const CustomInput: React.FC<CustomInputProps> = ({
               styles.input,
               {
                 borderColor: errorMessage
-                  ? COLORS.red
+                  ? COLORS.error
                   : isFocused
                   ? COLORS.black
-                  : COLORS.grey,
+                  : COLORS.gray,
                 backgroundColor: disabled ? COLORS.lightGrey : COLORS.white,
               },
             ]}
@@ -119,7 +119,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
               <Icon
                 name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
                 size={20}
-                color={COLORS.grey}
+                color={COLORS.gray}
               />
             </TouchableOpacity>
           )}
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     right: 10,
   },
   errorText: {
-    color: COLORS.red,
+    color: COLORS.error,
     fontSize: 12,
     marginTop: 5,
   },

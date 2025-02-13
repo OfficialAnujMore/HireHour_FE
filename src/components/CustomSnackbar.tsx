@@ -43,8 +43,8 @@ const CustomSnackbar: React.FC = () => {
 
   // Conditional styles based on the success flag
   const snackbarStyle = success
-    ? {backgroundColor: COLORS.green, color: COLORS.white}
-    : {backgroundColor: COLORS.red, color: COLORS.white};
+    ? {backgroundColor: COLORS.success, color: COLORS.white}
+    : {backgroundColor: COLORS.error, color: COLORS.white};
 
   return (
     <Animated.View

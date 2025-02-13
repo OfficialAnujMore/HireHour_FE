@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   slider: {
     width: 50,
     height: 50,
-    backgroundColor: 'green',
+    backgroundColor: 'success',
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',

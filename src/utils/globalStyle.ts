@@ -7,7 +7,7 @@ export const globalStyle = StyleSheet.create({
     backgroundColor: COLORS.white,
     borderRadius: 5,
     borderWidth: 0.5,
-    borderColor: COLORS.grey,
+    borderColor: COLORS.gray,
     marginBottom: Spacing.medium,
     padding: Spacing.small,
     elevation: 5,
@@ -19,5 +19,6 @@ export const globalStyle = StyleSheet.create({
   globalContainer: {
     flex: 1,
     margin:Spacing.small,
+    marginBottom:Spacing.extraLarge
   },
 });

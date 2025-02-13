@@ -4,13 +4,12 @@ import CustomText from '../components/CustomText';
 import {getUpcomingEvents} from '../services/serviceProviderService';
 import {useSelector} from 'react-redux';
 import {RootState} from 'redux/store';
-import CustomEventCard from '../components/CustomEventCard';
 import {useFocusEffect} from '@react-navigation/native';
 import {WORD_DIR} from '../utils/local/en';
-import {FontSize, Screen} from '../utils/dimension';
 import CustomServiceCards from '../components/CustomServiceCard';
 import {FallBack} from '../components/FallBack';
 import dataNotFound from '../assets/error-in-calendar.png';
+import { globalStyle } from '../utils/globalStyle';
 const UpcomingEvents = ({}) => {
   const user = useSelector((state: RootState) => state.auth.user);
   const [data, setData] = useState();
@@ -26,7 +25,7 @@ const UpcomingEvents = ({}) => {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyle.globalContainer}>
       {data && data?.length === 0 ? (
         <View>
           <CustomText label={WORD_DIR.upcomingEvents} />
@@ -45,7 +44,6 @@ const UpcomingEvents = ({}) => {
           />
         </View>
       ) : (
-        <>
           <FallBack
             imageSrc={dataNotFound}
             heading={WORD_DIR.noUpcomingEvents}
@@ -53,15 +51,9 @@ const UpcomingEvents = ({}) => {
             buttonLabel={WORD_DIR.goHome}
             navigationRoute="Home"
           />
-        </>
       )}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 export default UpcomingEvents;

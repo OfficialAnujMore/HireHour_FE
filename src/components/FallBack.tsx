@@ -4,22 +4,25 @@ import CustomText from './CustomText';
 import CustomButton from './CustomButton';
 import {FontSize, Screen, Spacing} from '../utils/dimension';
 import {useNavigation} from '@react-navigation/native';
-import { COLORS } from '../utils/globalConstants/color';
-import { globalStyle } from '../utils/globalStyle';
+import {COLORS} from '../utils/globalConstants/color';
+import {globalStyle} from '../utils/globalStyle';
+import defaultImage from '../assets/disconnected.png';
 
 export const FallBack = ({
-  imageSrc = '',
+  imageSrc = defaultImage,
   heading = '',
   subHeading = '',
   buttonLabel = '',
   navigationRoute = 'Home',
 }) => {
   const navigation = useNavigation();
+  const safeNavigationRoute = navigationRoute ?? 'DefaultScreen';
+
   return (
     <View style={[styles.fallBackContainer, globalStyle.globalContainer]}>
       <View style={styles.detailsContaier}>
         <View style={{alignItems: 'center'}}>
-          <Image source={imageSrc} />
+          <Image source={imageSrc} style={styles.fallBackImage} />
           <CustomText style={styles.emptyText} label={heading} />
           <CustomText style={styles.emptyText} label={subHeading} />
         </View>
@@ -28,7 +31,7 @@ export const FallBack = ({
         <CustomButton
           label={buttonLabel}
           onPress={() => {
-            navigation.navigate('Home');
+            navigation.navigate(safeNavigationRoute);
           }}
         />
       )}
@@ -51,6 +54,11 @@ const styles = StyleSheet.create({
     fontSize: FontSize.medium,
     textAlign: 'center',
     marginTop: Spacing.small,
-    color: COLORS.grey,
+    color: COLORS.gray,
+  },
+  fallBackImage: {
+    objectFit: 'contain',
+    width: Screen.width,
+    height: Screen.height / 2,
   },
 });

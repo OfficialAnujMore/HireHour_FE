@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     borderRadius: 10, // To make the thumb round
     backgroundColor: COLORS.white,
     borderWidth: 2,
-    borderColor: COLORS.grey, // Border color of the thumb
+    borderColor: COLORS.gray, // Border color of the thumb
   },
 });
 

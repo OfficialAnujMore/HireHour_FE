@@ -69,7 +69,7 @@ const EnrollAsServiceProvider: React.FC = () => {
         <Switch
           value={isServiceProviderEnrolled}
           onValueChange={value => setIsServiceProviderEnrolled(value)}
-          trackColor={{true: COLORS.black, false: COLORS.grey}}
+          trackColor={{true: COLORS.black, false: COLORS.gray}}
           thumbColor={isServiceProviderEnrolled ? COLORS.black : COLORS.white}
         />
       </View>
