@@ -2,7 +2,7 @@ import {FallBack} from '../../components/FallBack';
 import React, {useState} from 'react';
 import {View, FlatList, StyleSheet} from 'react-native';
 import {globalStyle} from '../../utils/globalStyle';
-import {WORD_DIR} from '../../utils/local/en.js';
+import {WORD_DIR} from '../../utils/local/en';
 import noRecordFound from '../../assets/no-records.png';
 import {useNavigation} from '@react-navigation/native';
 import CustomTransactionCard from '../../components/CustomTransactionCard';
