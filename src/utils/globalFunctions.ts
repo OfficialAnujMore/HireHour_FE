@@ -1,4 +1,5 @@
 import {ErrorResponse} from 'interfaces';
+import {ERROR} from './local/error';
 
 export const getGreeting = () => {
   const currentHour = new Date().getHours();
@@ -11,8 +12,8 @@ export const getGreeting = () => {
   }
 };
 
-export const handleError = (error: unknown): ErrorResponse => {
-  console.error('API Error:', error); // Always log for debugging
+export const handleError = (error: unknown, context: string): ErrorResponse => {
+  console.error(` An api error has occured in => ${context} \n ${error}`);
 
   if (
     typeof error === 'object' &&
@@ -29,11 +30,11 @@ export const handleError = (error: unknown): ErrorResponse => {
   }
 
   if (error instanceof Error && error.message.includes('Network Error')) {
-    return {success: false, message: 'Network error. Please try again later.'};
+    return {success: false, message: ERROR.networkError};
   }
 
   return {
     success: false,
-    message: 'An unexpected error occurred. Please try again.',
+    message: ERROR.error,
   };
 };

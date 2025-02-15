@@ -13,6 +13,6 @@ export const updateUserRole = async (
     );
     return response;
   } catch (error) {
-    return handleError(error); // Return the error handled by handleError function
+    return handleError(error, 'updateUserRole'); // Return the error handled by handleError function
   }
 };

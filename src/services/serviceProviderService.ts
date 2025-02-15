@@ -13,7 +13,7 @@ import {
 export const getServiceProviders = async (
   userId: string | undefined,
   categories?: string[],
-): Promise<ApiResponse<ServiceDetails[] | ErrorResponse>> => {
+): Promise<ApiResponse<ServiceDetails[]> | ErrorResponse> => {
   try {
     const serializedCategories = categories
       ? JSON.stringify(categories)
@@ -26,58 +26,58 @@ export const getServiceProviders = async (
       },
     );
   } catch (error) {
-    return handleError(error); // Return the error handled by handleError function
+    return handleError(error, 'getServiceProviders'); // Return the error handled by handleError function
   }
 };
 
 export const addService = async (
   data: unknown,
-): Promise<ApiResponse<ServiceDetails[] | ErrorResponse>> => {
+): Promise<ApiResponse<ServiceDetails[]> | ErrorResponse> => {
   try {
     return await post<ServiceDetails[]>(
       `${V1_SERVICE_BASE_ROUTE}${ADD_SERVICE}`,
       data,
     );
   } catch (error) {
-    return handleError(error); // Return the error handled by handleError function
+    return handleError(error, 'addService'); // Return the error handled by handleError function
   }
 };
 
 export const getUserServices = async (
   data: unknown,
-): Promise<ApiResponse<ServiceDetails[] | ErrorResponse>> => {
+): Promise<ApiResponse<ServiceDetails[]> | ErrorResponse> => {
   try {
     return await post<ServiceDetails[]>(
       `${V1_SERVICE_BASE_ROUTE}${GET_USER_SERVICES}`,
       data,
     );
   } catch (error) {
-    return handleError(error); // Return the error handled by handleError function
+    return handleError(error, 'getUserServices'); // Return the error handled by handleError function
   }
 };
 
 export const bookService = async (
   data: unknown,
-): Promise<ApiResponse<ServiceDetails | ErrorResponse>> => {
+): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
   try {
     return await post<ServiceDetails>(
       `${V1_SERVICE_BASE_ROUTE}${BOOK_SERVICE}`,
       data,
     );
   } catch (error) {
-    return handleError(error); // Return the error handled by handleError function
+    return handleError(error, 'bookService'); // Return the error handled by handleError function
   }
 };
 
 export const getUpcomingEvents = async (
   data: unknown,
-): Promise<ApiResponse<ServiceDetails | ErrorResponse>> => {
+): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
   try {
     return await post<ServiceDetails>(
       `${V1_SERVICE_BASE_ROUTE}${UPCOMING_EVENTS}`,
       data,
     );
   } catch (error) {
-    return handleError(error); // Return the error handled by handleError function
+    return handleError(error, 'getUpcomingEvents'); // Return the error handled by handleError function
   }
 };

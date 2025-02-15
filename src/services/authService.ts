@@ -16,7 +16,7 @@ export const loginUser = async (
   try {
     return await post<User>(`${V1_AUTH_BASE_ROUTE}${LOGIN_USER}`, user);
   } catch (error) {
-    return handleError(error);
+    return handleError(error,'loginUser');
   }
 };
 
@@ -26,7 +26,7 @@ export const registerUser = async (
   try {
     return await post<User>(`${V1_AUTH_BASE_ROUTE}${REGISTER_USER}`, user);
   } catch (error) {
-    return handleError(error);
+    return handleError(error, 'registerUser');
   }
 };
 
@@ -41,7 +41,7 @@ export const verifyUsernameAndEmail = async (data: {
       data,
     );
   } catch (error) {
-    return handleError(error);
+    return handleError(error, 'verifyUsernameAndEmail');
   }
 };
 
@@ -52,6 +52,6 @@ export const verifyOTP = async (data: {
   try {
     return await post<OTPStatus>(`${V1_AUTH_BASE_ROUTE}${VERIFY_OTP}`, data);
   } catch (error) {
-    return handleError(error);
+    return handleError(error, 'verifyOTP');
   }
 };
