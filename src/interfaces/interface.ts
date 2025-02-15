@@ -1,3 +1,4 @@
+import {GestureResponderEvent} from 'react-native/types';
 export interface OTPStatus {
   otpStatus: boolean;
 }
@@ -12,8 +13,6 @@ export interface RegisterUser {
 export type RootStackParamList = {
   RegisterUser: RegisterUser;
 };
-
-import {GestureResponderEvent} from 'react-native/types';
 
 export interface CustomCardsProps {
   item: {
@@ -35,27 +34,6 @@ export interface CustomCarouselProps {
   data: CarouselItem[];
 }
 
-export interface TimeSlot {
-  id: string;
-  time: string;
-  available: boolean;
-}
-
-export interface DateInfo {
-  id: string;
-  day: string;
-  month: string;
-  date: string;
-  fullDate: string;
-  timeSlots: TimeSlot[];
-}
-
-export interface CustomScheduleProps {
-  dateInfo: DateInfo[];
-  selectedTimeIds: string[]; // Changed to an array
-  onValueChange: (value: string[]) => void; // Updated to accept an array
-}
-
 export interface CustomTabBarButtonProps {
   onPress?: (event: GestureResponderEvent) => void;
 }
@@ -73,7 +51,6 @@ export interface Schedule {
   date: string;
   fullDate: string;
   servicesId: string;
-  timeSlots: TimeSlot[];
 }
 
 export interface CartItem {
@@ -104,7 +81,7 @@ export interface CartState {
 
 export interface SnackbarState {
   message: string;
-  success?:boolean;
+  success?: boolean;
   visible: boolean;
 }
 // Auth State Interface
@@ -146,13 +123,13 @@ export interface ServiceDetails {
 }
 
 export interface AuthUser {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 
 export interface Errors {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 
 export interface MenuItemProps {
@@ -161,3 +138,7 @@ export interface MenuItemProps {
   callback?: () => void;
 }
 
+export interface ErrorResponse {
+  success: false;
+  message: string;
+}
