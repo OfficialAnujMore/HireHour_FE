@@ -5,28 +5,35 @@ import CustomText from '../../components/CustomText';
 import {RootState} from 'redux/store';
 import {useSelector} from 'react-redux';
 import {getUserServices} from '../../services/serviceProviderService';
-import CustomCards from '../../components/CustomCards';
 import {useNavigation} from '@react-navigation/native';
 import CustomServiceCards from '../../components/CustomServiceCard';
+import {ErrorResponse, ServiceDetails} from 'interfaces';
+import {ApiResponse} from 'services/apiClient';
+import {useDispatch} from 'react-redux';
+import {showSnackbar} from 'redux/snackbarSlice';
 
 const MyServices = () => {
   // const { serviceId } = route.params;
   const [serviceDetails, setServiceDetails] = useState(null);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
   useEffect(() => {
-    const fetchService = async () => {
-      try {
-        const service = await getUserServices({
+    const fetchService = async (): Promise<void> => {
+      const response: ApiResponse<ServiceDetails> | ErrorResponse =
+        await getUserServices({
           id: user?.id,
-        }); // Function to fetch service details
-        
+        });
 
-        setServiceDetails(service.data);
-      } catch (error) {
-        
-
-        Alert.alert('Error', 'Failed to fetch service details.');
+      if (response.success && response.data) {
+        setServiceDetails(response.data);
+      } else {
+        dispatch(
+          showSnackbar({
+            message: response.message,
+            success: false,
+          }),
+        );
       }
     };
 

@@ -32,9 +32,9 @@ export const getServiceProviders = async (
 
 export const addService = async (
   data: unknown,
-): Promise<ApiResponse<ServiceDetails[]> | ErrorResponse> => {
+): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
   try {
-    return await post<ServiceDetails[]>(
+    return await post<ServiceDetails>(
       `${V1_SERVICE_BASE_ROUTE}${ADD_SERVICE}`,
       data,
     );
@@ -45,9 +45,9 @@ export const addService = async (
 
 export const getUserServices = async (
   data: unknown,
-): Promise<ApiResponse<ServiceDetails[]> | ErrorResponse> => {
+): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
   try {
-    return await post<ServiceDetails[]>(
+    return await post<ServiceDetails>(
       `${V1_SERVICE_BASE_ROUTE}${GET_USER_SERVICES}`,
       data,
     );
@@ -71,9 +71,9 @@ export const bookService = async (
 
 export const getUpcomingEvents = async (
   data: unknown,
-): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
+): Promise<ApiResponse<ServiceDetails[]> | ErrorResponse> => {
   try {
-    return await post<ServiceDetails>(
+    return await post<ServiceDetails[]>(
       `${V1_SERVICE_BASE_ROUTE}${UPCOMING_EVENTS}`,
       data,
     );

@@ -18,6 +18,9 @@ import CustomButton from '../../components/CustomButton';
 import {COLORS} from '../../utils/globalConstants/color';
 import CustomText from '../../components/CustomText';
 import {useNavigation} from '@react-navigation/native';
+import {ApiResponse} from 'services/apiClient';
+import {ErrorResponse, ServiceDetails} from 'interfaces';
+import {API_RESPONSE} from 'utils/local/apiResponse';
 interface SelectedDates {
   [key: string]: {selected: boolean};
 }
@@ -34,7 +37,6 @@ const CreateSchedule = (props: any) => {
 
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
-  const navigation = useNavigation();
   // Get today's date in 'yyyy-mm-dd' format
   const today = new Date().toISOString().split('T')[0];
 
@@ -54,7 +56,7 @@ const CreateSchedule = (props: any) => {
     });
   };
 
-  const handleServiceCreation = async () => {
+  const handleServiceCreation = async (): Promise<void> => {
     if (
       !serviceDetails.title ||
       !serviceDetails.description ||
@@ -66,38 +68,35 @@ const CreateSchedule = (props: any) => {
           success: false,
         }),
       );
-
       return;
     }
 
-    try {
-      // Prepare the data for the API call
-      const data = {
-        id: user?.id, // Replace with the actual user ID
-        userRole: user?.isServiceProvider,
-        serviceData: {
-          title: serviceDetails.title,
-          description: serviceDetails.description,
-          chargesPerHour: serviceDetails.chargesPerHour,
-          userId: user?.id,
-          category: serviceDetails.category,
-          servicePreview: serviceDetails.images,
-          selectedDates: selectedDates,
-        },
-      };
-      const response = await addService(data);
-      if (response) {
-        dispatch(
-          showSnackbar({
-            message: 'Service created ',
-            success: true,
-          }),
-        );
-      }
-    } catch (error) {
+    const data = {
+      id: user?.id,
+      userRole: user?.isServiceProvider,
+      serviceData: {
+        title: serviceDetails.title,
+        description: serviceDetails.description,
+        chargesPerHour: serviceDetails.chargesPerHour,
+        userId: user?.id,
+        category: serviceDetails.category,
+        servicePreview: serviceDetails.images,
+        selectedDates: selectedDates,
+      },
+    };
+    const response: ApiResponse<ServiceDetails> | ErrorResponse =
+      await addService(data);
+    if (response.success) {
       dispatch(
         showSnackbar({
-          message: 'Failed to create a service ',
+          message: API_RESPONSE.serviceSuccess,
+          success: true,
+        }),
+      );
+    } else {
+      dispatch(
+        showSnackbar({
+          message: response.message,
           success: false,
         }),
       );
@@ -138,7 +137,11 @@ const CreateSchedule = (props: any) => {
               <TouchableOpacity
                 style={styles.removeIcon}
                 onPress={() => handleDayPress({dateString: item})}>
-                <Icon name="delete" size={FontSize.medium} color={COLORS.error} />
+                <Icon
+                  name="delete"
+                  size={FontSize.medium}
+                  color={COLORS.error}
+                />
               </TouchableOpacity>
             </View>
           )}

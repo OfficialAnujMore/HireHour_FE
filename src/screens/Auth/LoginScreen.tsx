@@ -15,8 +15,9 @@ import {PLACEHOLDER_DIR} from '../../utils/local/placeholder';
 import {loginUser} from '../../services/authService';
 import {EMAIL_REGEX} from '../../utils/regex';
 import {USER_DETAILS} from '../../utils/constants';
-import {AuthUser, Errors} from 'interfaces';
+import {AuthUser, ErrorResponse, Errors, User} from 'interfaces';
 import {login} from '../../redux/authSlice';
+import {ApiResponse} from 'services/apiClient';
 
 const LoginScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -72,16 +73,16 @@ const LoginScreen: React.FC = () => {
   );
 
   const handleLogin = async (): Promise<void> => {
-    try {
-      const response = await loginUser(user);
-      if (response?.data) {
-        await AsyncStorage.setItem('token', response.data.token);
-        dispatch(login({user: response.data}));
-      }
-    } catch (error: any) {
+    const response: ApiResponse<User> | ErrorResponse = await loginUser(user);
+    if (response.success && response.data) {
+      // If the login is successful, store the token and dispatch the login action
+      await AsyncStorage.setItem('token', response.data.token);
+      dispatch(login({user: response.data}));
+    } else {
+      // If the response is an error, show the snackbar with the error message
       dispatch(
         showSnackbar({
-          message: error.message,
+          message: response.message,
         }),
       );
     }
@@ -112,7 +113,9 @@ const LoginScreen: React.FC = () => {
         <View style={styles.buttonContainer}>
           <CustomButton
             label={WORD_DIR.login}
-            onPress={handleLogin}
+            onPress={() => {
+              handleLogin();
+            }}
             textStyle={{fontSize: FontSize.large}}
             disabled={!isFormValid()}
           />

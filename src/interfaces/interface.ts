@@ -139,6 +139,7 @@ export interface MenuItemProps {
 }
 
 export interface ErrorResponse {
-  success: false;
+  success: boolean;
   message: string;
+  data?:any
 }

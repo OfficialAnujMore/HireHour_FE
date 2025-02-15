@@ -20,6 +20,8 @@ import {useNavigation} from '@react-navigation/native';
 import {FallBack} from '../../components/FallBack';
 import {WORD_DIR} from '../../utils/local/en';
 import {globalStyle} from '../../utils/globalStyle';
+import {ApiResponse} from 'services/apiClient';
+import {ErrorResponse, ServiceDetails} from 'interfaces';
 export const CartScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -27,15 +29,14 @@ export const CartScreen = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handlePaymentSelect = async (method: string) => {
-    const schedule = cartItems.flatMap(service => {
-      return service.schedule;
-    });
+  const handlePaymentSelect = async (method: string): Promise<void> => {
+    const schedule = cartItems.flatMap(service => service.schedule);
 
-    const response = await bookService({
-      userId: user?.id,
-      schedule: schedule,
-    });
+    const response: ApiResponse<ServiceDetails> | ErrorResponse =
+      await bookService({
+        userId: user?.id,
+        schedule: schedule,
+      });
 
     if (response.success) {
       dispatch(
@@ -45,11 +46,17 @@ export const CartScreen = () => {
         }),
       );
       dispatch(clearCart());
+    } else {
+      dispatch(
+        showSnackbar({
+          message: response.message,
+          success: false,
+        }),
+      );
     }
-
-    Alert.alert('Payment Selected', `You chose: ${method}`);
     setModalVisible(false);
   };
+
   const handleRemoveService = (serviceId: string) => {
     dispatch(removeServiceFromCart(serviceId)); // This will automatically update the state and re-render the component
   };

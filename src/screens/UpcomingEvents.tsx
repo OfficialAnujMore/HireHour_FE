@@ -9,15 +9,34 @@ import {WORD_DIR} from '../utils/local/en';
 import CustomServiceCards from '../components/CustomServiceCard';
 import {FallBack} from '../components/FallBack';
 import dataNotFound from '../assets/error-in-calendar.png';
-import { globalStyle } from '../utils/globalStyle';
+import {globalStyle} from '../utils/globalStyle';
+import {ApiResponse} from 'services/apiClient';
+import {ErrorResponse, ServiceDetails} from 'interfaces';
+import {useDispatch} from 'react-redux';
+import {showSnackbar} from 'redux/snackbarSlice';
 const UpcomingEvents = ({}) => {
   const user = useSelector((state: RootState) => state.auth.user);
   const [data, setData] = useState();
+  const dispatch = useDispatch();
 
-  const apiCall = async () => {
-    const response = await getUpcomingEvents({userId: user?.id});
-    setData(response?.data);
+  const apiCall = async (): Promise<void> => {
+    const response: ApiResponse<ServiceDetails[]> | ErrorResponse =
+      await getUpcomingEvents({
+        userId: user?.id,
+      });
+
+    if (response.success && response.data) {
+      setData(response.data);
+    } else {
+      dispatch(
+        showSnackbar({
+          message: response.message,
+          success: false,
+        }),
+      );
+    }
   };
+
   useFocusEffect(
     useCallback(() => {
       apiCall();
@@ -44,13 +63,13 @@ const UpcomingEvents = ({}) => {
           />
         </View>
       ) : (
-          <FallBack
-            imageSrc={dataNotFound}
-            heading={WORD_DIR.noUpcomingEvents}
-            subHeading={WORD_DIR.scheduleEvent}
-            buttonLabel={WORD_DIR.goHome}
-            navigationRoute="Home"
-          />
+        <FallBack
+          imageSrc={dataNotFound}
+          heading={WORD_DIR.noUpcomingEvents}
+          subHeading={WORD_DIR.scheduleEvent}
+          buttonLabel={WORD_DIR.goHome}
+          navigationRoute="Home"
+        />
       )}
     </View>
   );

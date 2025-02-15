@@ -9,6 +9,8 @@ export const WORD_DIR = {
   forgotPassword: 'Forgot Password',
   login: 'Login',
   register: 'Register',
+  registerUser:'User registration successful',
+  verificationFailed:"Verification failed. Please try again.",
   haveAnAccount: 'Already have an account? ',
   dontHaveAnAccount: "Don't have an account? ",
   emailOTP: 'Enter email OTP',
@@ -17,6 +19,7 @@ export const WORD_DIR = {
   upcomingEvents: 'Upcoming events',
 
   serviceDetails: 'Service Details',
+  
   title: 'Title',
   description: 'Description',
   chargesPerHour: 'Charges per hour',

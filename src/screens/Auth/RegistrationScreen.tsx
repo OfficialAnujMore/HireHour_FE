@@ -14,7 +14,8 @@ import CustomText from '../../components/CustomText';
 import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import {COLORS} from '../../utils/globalConstants/color';
 import {USER_DETAILS} from '../../utils/constants';
-import {RootStackParamList} from 'interfaces';
+import {ErrorResponse, RootStackParamList, User} from 'interfaces';
+import {ApiResponse} from 'services/apiClient';
 
 // Validation patterns
 const PASSWORD_PATTERN = /^.{6,}$/;
@@ -94,16 +95,26 @@ const RegistrationScreen = () => {
     const {confirmPassword, ...payload} = user;
 
     try {
-      const response = await verifyUsernameAndEmail(payload);
+      // Attempt to verify username and email
+      const response: ApiResponse<User> | ErrorResponse =
+        await verifyUsernameAndEmail(payload);
+
       if (response?.data) {
+        // Navigate to OTP verification screen if verification is successful
         navigation.navigate('VerifyOTP', payload);
+      } else {
+        // Handle case where no data is returned
+        dispatch(
+          showSnackbar({
+            message: WORD_DIR.verificationFailed,
+          }),
+        );
       }
     } catch (error: any) {
-      // Extract and dispatch the error message to the Snackbar
-      const errorMessage = error ?? 'Registration failed. Please try again.';
+      // Handle error case, show appropriate error message in snackbar
       dispatch(
         showSnackbar({
-          message: errorMessage,
+          message: error.message,
         }),
       );
     }

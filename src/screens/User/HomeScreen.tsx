@@ -8,12 +8,14 @@ import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import {getGreeting} from '../../utils/globalFunctions';
 import {getServiceProviders} from '../../services/serviceProviderService';
 import {useFocusEffect} from '@react-navigation/native';
-import {User} from 'interfaces';
+import {ErrorResponse, ServiceDetails, User} from 'interfaces';
 import CustomServiceCards from '../../components/CustomServiceCard';
 import {FallBack} from '../../components/FallBack';
 import dataNotFound from '../../assets/error-in-calendar.png';
 import {WORD_DIR} from '../../utils/local/en';
 import {MAX_SCHEDULE_DISPLAY} from '../../utils/constants';
+import {showSnackbar} from 'redux/snackbarSlice';
+import {ApiResponse} from 'services/apiClient';
 
 const HomeScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
@@ -22,17 +24,20 @@ const HomeScreen = ({navigation}: any) => {
   const [data, setData] = useState<User[]>([]);
   const [filteredData, setFilteredData] = useState<User[]>([]);
 
-  // Function to fetch service providers
-  const fetchServiceProviders = useCallback(async () => {
-    try {
-      const categories = ['Photography', 'Guitar', 'Art', 'Music'];
-      const response = await getServiceProviders(user?.id, categories);
-      console.log('Service data', response.data);
-      
+  const fetchServiceProviders = useCallback(async (): Promise<void> => {
+    const categories = ['Photography', 'Guitar', 'Art', 'Music'];
+    const response: ApiResponse<ServiceDetails[]> | ErrorResponse =
+      await getServiceProviders(user?.id, categories);
+
+    if (response.success && response.data) {
       setData(response.data);
       setFilteredData(response.data); // Set filtered data as the default
-    } catch (error) {
-      console.error('Error fetching service providers:', error);
+    } else {
+      dispatch(
+        showSnackbar({
+          message: response.message,
+        }),
+      );
     }
   }, [user?.id]);
 

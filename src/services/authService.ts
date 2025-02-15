@@ -15,7 +15,8 @@ export const loginUser = async (
 ): Promise<ApiResponse<User> | ErrorResponse> => {
   try {
     return await post<User>(`${V1_AUTH_BASE_ROUTE}${LOGIN_USER}`, user);
-  } catch (error) {
+  } catch (error : unknown) {
+
     return handleError(error,'loginUser');
   }
 };

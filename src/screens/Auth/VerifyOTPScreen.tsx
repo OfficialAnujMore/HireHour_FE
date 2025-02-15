@@ -16,8 +16,9 @@ import {useDispatch} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {Screen, Spacing} from '../../utils/dimension';
-import {RegisterUser} from 'interfaces';
+import {ErrorResponse, RegisterUser, User} from 'interfaces';
 import {login} from '../../redux/authSlice';
+import {ApiResponse} from 'services/apiClient';
 const OTP_LENGTH: number = 6;
 
 const VerifyOTPScreen: React.FC<RegisterUser> = props => {
@@ -87,6 +88,8 @@ const VerifyOTPScreen: React.FC<RegisterUser> = props => {
 
   const handleSubmit = async (): Promise<any> => {
     Keyboard.dismiss();
+
+    // Verify OTP before proceeding with registration
     const emailOTPResponse = await verifyOTP({
       key: data.email,
       otp: emailOTP.join(''),
@@ -101,27 +104,28 @@ const VerifyOTPScreen: React.FC<RegisterUser> = props => {
       return;
     }
 
-    // const phoneOTPResponse = await verifyOTP({
-    //   key: data.phoneNumber,
-    //   otp: phoneOTP.join(''),
-    // });
+    // Register the user if OTP verification is successful
+    const registerUserResponse: ApiResponse<User> | ErrorResponse =
+      await registerUser(data);
 
-    // if (!phoneOTPResponse.success) {
-    //   dispatch(showSnackbar(phoneOTPResponse.message));
-    //   return;
-    // }
-
-    const registerUserResponse = await registerUser(data);
-    if (registerUserResponse) {
+    if (registerUserResponse.success && registerUserResponse.data) {
       dispatch(
         showSnackbar({
-          message: 'Registered successfully',
+          message: WORD_DIR.registerUser,
           success: true,
         }),
       );
+      // Save token in AsyncStorage if available
       dispatch(login({user: registerUserResponse.data}));
+
       // Navigate to the home screen
       navigation.navigate('Home');
+    } else {
+      dispatch(
+        showSnackbar({
+          message: registerUserResponse.message,
+        }),
+      );
     }
   };
 
