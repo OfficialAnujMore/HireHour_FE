@@ -13,7 +13,7 @@ import {globalStyle} from '../utils/globalStyle';
 import {ApiResponse} from 'services/apiClient';
 import {ErrorResponse, ServiceDetails} from 'interfaces';
 import {useDispatch} from 'react-redux';
-import {showSnackbar} from 'redux/snackbarSlice';
+import {showSnackbar} from '../redux/snackbarSlice';
 const UpcomingEvents = ({}) => {
   const user = useSelector((state: RootState) => state.auth.user);
   const [data, setData] = useState();

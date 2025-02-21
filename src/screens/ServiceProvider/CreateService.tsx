@@ -19,6 +19,7 @@ import {
 import CustomCarousel from '../../components/CustomCarousel';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import { globalStyle } from '../../utils/globalStyle';
 
 const CreateService = () => {
   const [serviceDetails, setServiceDetails] = useState({
@@ -161,9 +162,6 @@ const CreateService = () => {
     );
   };
 
-  useEffect(() => {
-    
-  }, [serviceDetails]);
 
   return (
     <ScrollView style={styles.container}>
@@ -233,6 +231,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: Spacing.medium,
     backgroundColor: COLORS.white,
+    marginBottom:120
   },
   heading: {
     fontSize: FontSize.large,

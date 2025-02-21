@@ -3,14 +3,13 @@ import {View, StyleSheet, Image, Alert, FlatList} from 'react-native';
 import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import CustomText from '../../components/CustomText';
 import {RootState} from 'redux/store';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {getUserServices} from '../../services/serviceProviderService';
 import {useNavigation} from '@react-navigation/native';
 import CustomServiceCards from '../../components/CustomServiceCard';
 import {ErrorResponse, ServiceDetails} from 'interfaces';
-import {ApiResponse} from 'services/apiClient';
-import {useDispatch} from 'react-redux';
-import {showSnackbar} from 'redux/snackbarSlice';
+import {ApiResponse} from '../../services/apiClient';
+import {showSnackbar} from '../../redux/snackbarSlice';
 
 const MyServices = () => {
   // const { serviceId } = route.params;

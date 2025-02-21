@@ -20,7 +20,7 @@ import CustomText from '../../components/CustomText';
 import {useNavigation} from '@react-navigation/native';
 import {ApiResponse} from 'services/apiClient';
 import {ErrorResponse, ServiceDetails} from 'interfaces';
-import {API_RESPONSE} from 'utils/local/apiResponse';
+import {API_RESPONSE} from '../../utils/local/apiResponse';
 interface SelectedDates {
   [key: string]: {selected: boolean};
 }
@@ -71,6 +71,9 @@ const CreateSchedule = (props: any) => {
       return;
     }
 
+    console.log(user);
+    
+
     const data = {
       id: user?.id,
       userRole: user?.isServiceProvider,
@@ -84,6 +87,10 @@ const CreateSchedule = (props: any) => {
         selectedDates: selectedDates,
       },
     };
+    console.log(
+   JSON.stringify(data)
+    );
+    
     const response: ApiResponse<ServiceDetails> | ErrorResponse =
       await addService(data);
     if (response.success) {

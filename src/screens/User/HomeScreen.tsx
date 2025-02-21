@@ -14,8 +14,8 @@ import {FallBack} from '../../components/FallBack';
 import dataNotFound from '../../assets/error-in-calendar.png';
 import {WORD_DIR} from '../../utils/local/en';
 import {MAX_SCHEDULE_DISPLAY} from '../../utils/constants';
-import {showSnackbar} from 'redux/snackbarSlice';
-import {ApiResponse} from 'services/apiClient';
+import {showSnackbar} from '../../redux/snackbarSlice';
+import {ApiResponse} from '../../services/apiClient';
 
 const HomeScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
