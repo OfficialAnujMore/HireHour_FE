@@ -22,7 +22,7 @@ export const WORD_DIR = {
   
   title: 'Title',
   description: 'Description',
-  chargesPerHour: 'Charges per hour',
+  chargesPerHour: 'Pricing',
   selectDate: 'Select Date',
   selectTimeSlots: 'Select Time Slots',
   next: 'Next',

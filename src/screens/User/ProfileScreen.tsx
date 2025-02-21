@@ -17,6 +17,7 @@ import CustomText from '../../components/CustomText';
 import {WORD_DIR} from '../../utils/local/en';
 import {MenuItemProps} from 'interfaces';
 import {logout} from '../../redux/authSlice';
+import { globalStyle } from '../../utils/globalStyle';
 
 const ProfileScreen: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -74,7 +75,7 @@ const ProfileScreen: React.FC = () => {
   }, [navigation, dispatch, isServiceProvider]);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={globalStyle.globalContainer}>
       <TouchableOpacity
         style={styles.editItemContainer}
         onPress={() => navigation.navigate('EditProfile')}

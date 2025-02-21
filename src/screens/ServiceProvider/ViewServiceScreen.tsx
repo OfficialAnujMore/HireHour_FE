@@ -7,13 +7,14 @@ import {
 } from 'react-native';
 import {FontSize, Spacing} from '../../utils/dimension';
 import CustomText from '../../components/CustomText';
+import { globalStyle } from '../../utils/globalStyle';
 
 const ViewServiceScreen = (props: any) => {
   const item = props.route.params;
   
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={globalStyle.globalContainer}>
       <CustomText label={item.title} style={styles.heading} />
       <CustomText label={`Category: ${item.category}`} style={styles.text} />
       <CustomText

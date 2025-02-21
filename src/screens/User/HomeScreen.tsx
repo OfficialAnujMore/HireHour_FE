@@ -16,6 +16,8 @@ import {WORD_DIR} from '../../utils/local/en';
 import {MAX_SCHEDULE_DISPLAY} from '../../utils/constants';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {ApiResponse} from '../../services/apiClient';
+import { COLORS } from '../../utils/globalConstants/color';
+import { globalStyle } from '../../utils/globalStyle';
 
 const HomeScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
@@ -63,7 +65,7 @@ const HomeScreen = ({navigation}: any) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyle.globalContainer}>
       <CustomSearchBar onSearch={handleSearch} />
       <CustomText
         label={`${getGreeting()}, ${user?.firstName}`}
@@ -93,12 +95,6 @@ const HomeScreen = ({navigation}: any) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    margin: Spacing.small,
-    backgroundColor: '#f6f6f6',
-    paddingBottom: Screen.height / 30,
-  },
   greetingText: {
     fontSize: FontSize.large,
     fontWeight: '600',

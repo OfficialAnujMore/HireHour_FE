@@ -9,6 +9,7 @@ import {useNavigation} from '@react-navigation/native';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {WORD_DIR} from '../../utils/local/en';
 import CustomSwitch from '../../components/CustomSwitch';
+import { globalStyle } from '../../utils/globalStyle';
 
 const userCategories = [
   {name: 'Art', selected: false},
@@ -45,7 +46,7 @@ const SettingsScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyle.globalContainer}>
       <ScrollView>
         <View style={styles.elevatedContainer}>
           <CustomText

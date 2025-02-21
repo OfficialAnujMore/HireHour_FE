@@ -18,6 +18,7 @@ import {USER_DETAILS} from '../../utils/constants';
 import {AuthUser, ErrorResponse, Errors, User} from 'interfaces';
 import {login} from '../../redux/authSlice';
 import {ApiResponse} from 'services/apiClient';
+import { globalStyle } from '../../utils/globalStyle';
 
 const LoginScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -89,7 +90,7 @@ const LoginScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyle.globalContainer}>
       <View style={styles.imgContainer}>
         <Image style={styles.logo} source={logo} />
       </View>

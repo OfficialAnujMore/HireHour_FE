@@ -19,6 +19,7 @@ import {Screen, Spacing} from '../../utils/dimension';
 import {ErrorResponse, RegisterUser, User} from 'interfaces';
 import {login} from '../../redux/authSlice';
 import {ApiResponse} from 'services/apiClient';
+import { globalStyle } from '../../utils/globalStyle';
 const OTP_LENGTH: number = 6;
 
 const VerifyOTPScreen: React.FC<RegisterUser> = props => {
@@ -159,7 +160,7 @@ const VerifyOTPScreen: React.FC<RegisterUser> = props => {
     <ScrollView
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.container}>
+      contentContainerStyle={globalStyle.globalContainer}>
       <Image
         source={require('../../assets/otp-security.png')}
         style={{width: Screen.width, height: Screen.height / 2.5}}
@@ -171,14 +172,6 @@ const VerifyOTPScreen: React.FC<RegisterUser> = props => {
         )}`}
       />
       {renderOtpInputs(emailOTP, 'email')}
-      {/* <CustomText
-        label={`OTP has been sent to your phone number ending with ${maskSensitiveData(
-          data.phoneNumber,
-          'phone',
-        )}`}
-      />
-      {renderOtpInputs(phoneOTP, 'phone')} */}
-
       <CustomButton label={WORD_DIR.verifyOTP} onPress={handleSubmit} />
     </ScrollView>
   );

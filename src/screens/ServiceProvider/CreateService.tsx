@@ -19,7 +19,7 @@ import {
 import CustomCarousel from '../../components/CustomCarousel';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
-import { globalStyle } from '../../utils/globalStyle';
+import {globalStyle} from '../../utils/globalStyle';
 
 const CreateService = () => {
   const [serviceDetails, setServiceDetails] = useState({
@@ -76,6 +76,7 @@ const CreateService = () => {
     placeholder: string,
     field: keyof typeof serviceDetails,
     errorMessage: string,
+    maxLength?: number,
     keyboardType?: 'default' | 'email-address' | 'phone-pad',
     secureTextEntry?: boolean,
   ) => (
@@ -89,6 +90,7 @@ const CreateService = () => {
       keyboardType={keyboardType}
       secureTextEntry={secureTextEntry}
       errorMessage={errorMessage}
+      maxLength={maxLength}
     />
   );
 
@@ -138,33 +140,27 @@ const CreateService = () => {
       {mediaType: 'photo', selectionLimit: 5}, // Allow multiple selection
       (response: ImagePickerResponse) => {
         if (response.didCancel) {
-          
           return;
         }
 
         if (response.errorMessage) {
-          
           Alert.alert('Error', response.errorMessage);
           return;
         }
 
         if (response.assets && response.assets.length > 0) {
-          
-
           setServiceDetails(prev => ({
             ...prev,
             images: response.assets,
           }));
         } else {
-          
         }
       },
     );
   };
 
-
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={globalStyle.globalContainer}>
       <CustomText label={WORD_DIR.serviceDetails} style={styles.heading} />
       <View style={styles.imagePickerContainer}>
         {serviceDetails.images.length > 0 && (
@@ -188,6 +184,7 @@ const CreateService = () => {
         WORD_DIR.title,
         'title',
         errors.title,
+        20
       )}
       {renderInput(
         WORD_DIR.description,
@@ -195,6 +192,7 @@ const CreateService = () => {
         WORD_DIR.description,
         'description',
         errors.description,
+        1600
       )}
       {renderInput(
         WORD_DIR.chargesPerHour,
@@ -231,7 +229,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: Spacing.medium,
     backgroundColor: COLORS.white,
-    marginBottom:120
   },
   heading: {
     fontSize: FontSize.large,

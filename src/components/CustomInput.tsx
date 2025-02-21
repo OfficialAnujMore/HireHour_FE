@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   TextInput,
   Text,
@@ -9,10 +9,10 @@ import {
   Keyboard,
   TouchableOpacity,
 } from 'react-native';
-import {FontSize, Screen, Spacing} from '../utils/dimension';
+import { FontSize, Screen, Spacing } from '../utils/dimension';
 import CustomText from './CustomText';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {COLORS} from '../utils/globalConstants/color';
+import { COLORS } from '../utils/globalConstants/color';
 
 type CustomInputProps = TextInputProps & {
   label?: string;
@@ -28,6 +28,7 @@ type CustomInputProps = TextInputProps & {
     | 'ascii-capable';
   secureTextEntry?: boolean;
   disabled?: boolean;
+  maxLength?: number;
 };
 
 const formatPhoneNumber = (value: string) => {
@@ -40,7 +41,7 @@ const formatPhoneNumber = (value: string) => {
   }
   return `(${cleanedValue.slice(0, 3)})-${cleanedValue.slice(
     3,
-    6,
+    6
   )}-${cleanedValue.slice(6, 10)}`;
 };
 
@@ -52,12 +53,11 @@ const CustomInput: React.FC<CustomInputProps> = ({
   keyboardType = 'default',
   secureTextEntry = false,
   disabled = false,
+  maxLength,
   ...textInputProps
 }) => {
-  const [isFocused, setIsFocused] = React.useState(false);
-  const [isPasswordVisible, setIsPasswordVisible] = React.useState(
-    !secureTextEntry,
-  );
+  const [isFocused, setIsFocused] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(!secureTextEntry);
 
   const handleFocus = useCallback(() => {
     if (!disabled) setIsFocused(true);
@@ -70,16 +70,19 @@ const CustomInput: React.FC<CustomInputProps> = ({
   const handleChangeText = useCallback(
     (text: string) => {
       if (!disabled) {
-        const formattedText =
+        let formattedText =
           keyboardType === 'phone-pad' ? formatPhoneNumber(text) : text;
-        onValueChange(formattedText); // Notify the parent component
+        if (maxLength !== undefined) {
+          formattedText = formattedText.slice(0, maxLength);
+        }
+        onValueChange(formattedText);
       }
     },
-    [disabled, keyboardType, onValueChange],
+    [disabled, keyboardType, maxLength, onValueChange]
   );
 
   const togglePasswordVisibility = useCallback(() => {
-    if (!disabled) setIsPasswordVisible(prev => !prev);
+    if (!disabled) setIsPasswordVisible((prev) => !prev);
   }, [disabled]);
 
   const dismissKeyboard = () => {
@@ -106,16 +109,20 @@ const CustomInput: React.FC<CustomInputProps> = ({
             onFocus={handleFocus}
             onBlur={handleBlur}
             onChangeText={handleChangeText}
-            value={value} // Value is now controlled via props
+            value={value}
             keyboardType={keyboardType}
             secureTextEntry={!isPasswordVisible && secureTextEntry}
             editable={!disabled}
+            maxLength={maxLength}
+            multiline={true} // Enables multi-line text wrapping
+            // textAlignVertical="top" 
             {...textInputProps}
           />
           {secureTextEntry && !disabled && (
             <TouchableOpacity
               onPress={togglePasswordVisibility}
-              style={styles.iconContainer}>
+              style={styles.iconContainer}
+            >
               <Icon
                 name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
                 size={20}
@@ -124,6 +131,9 @@ const CustomInput: React.FC<CustomInputProps> = ({
             </TouchableOpacity>
           )}
         </View>
+        {maxLength !== undefined && (
+          <Text style={styles.charCount}>{`${value.length}/${maxLength}`}</Text>
+        )}
         {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
       </View>
     </TouchableWithoutFeedback>
@@ -140,7 +150,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   input: {
-    flex: 1, // Ensure it expands fully within its container
+    flex: 1,
     height: Screen.height / 15,
     borderWidth: 1,
     borderRadius: Spacing.small,
@@ -150,6 +160,12 @@ const styles = StyleSheet.create({
   iconContainer: {
     position: 'absolute',
     right: 10,
+  },
+  charCount: {
+    alignSelf: 'flex-end',
+    color: COLORS.gray,
+    fontSize: FontSize.small,
+    marginTop: 5,
   },
   errorText: {
     color: COLORS.error,

@@ -8,7 +8,7 @@ export const globalStyle = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 0.5,
     borderColor: COLORS.gray,
-    marginBottom: Spacing.medium,
+    // marginBottom: Spacing.medium,
     padding: Spacing.small,
     elevation: 5,
     shadowColor: COLORS.black,
@@ -18,7 +18,9 @@ export const globalStyle = StyleSheet.create({
   },
   globalContainer: {
     flex: 1,
-    margin:Spacing.small,
-    marginBottom:Spacing.extraLarge
+    paddingVertical: Spacing.small,
+    paddingHorizontal: Spacing.small,
+    backgroundColor: COLORS.white,
+    // justifyContent: 'center',
   },
 });

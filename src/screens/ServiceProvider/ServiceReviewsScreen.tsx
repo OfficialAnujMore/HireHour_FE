@@ -12,6 +12,7 @@ import {
 import { AirbnbRating } from "react-native-ratings"; // Import AirbnbRating from react-native-ratings
 import { Screen, Spacing, FontSize } from "../../utils/dimension";
 import CustomButton from "../../components/CustomButton";
+import { globalStyle } from "../../utils/globalStyle";
 
 // Reviews Data (for rendering)
 const reviews = [
@@ -103,7 +104,7 @@ const ServiceReviewScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyle.globalContainer}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Koffee Cafe NYC</Text>

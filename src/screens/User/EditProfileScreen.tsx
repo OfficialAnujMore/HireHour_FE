@@ -19,6 +19,7 @@ import {WORD_DIR} from '../../utils/local/en';
 import {useDispatch, useSelector} from 'react-redux';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {RootState} from '../../redux/store';
+import { globalStyle } from '../../utils/globalStyle';
 
 const EditProfileScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -152,7 +153,7 @@ const EditProfileScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={globalStyle.globalContainer}>
       <CustomSnackbar />
       <View style={styles.imageWrapper}>
         <Image

@@ -43,9 +43,19 @@ const UpcomingEvents = ({}) => {
     }, []),
   );
 
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   return (
     <View style={globalStyle.globalContainer}>
       {data && data?.length === 0 ? (
+        <FallBack
+          imageSrc={dataNotFound}
+          heading={WORD_DIR.noUpcomingEvents}
+          subHeading={WORD_DIR.scheduleEvent}
+        />
+      ) : (
         <View>
           <CustomText label={WORD_DIR.upcomingEvents} />
           <FlatList
@@ -62,14 +72,6 @@ const UpcomingEvents = ({}) => {
             showsVerticalScrollIndicator={false}
           />
         </View>
-      ) : (
-        <FallBack
-          imageSrc={dataNotFound}
-          heading={WORD_DIR.noUpcomingEvents}
-          subHeading={WORD_DIR.scheduleEvent}
-          buttonLabel={WORD_DIR.goHome}
-          navigationRoute="Home"
-        />
       )}
     </View>
   );

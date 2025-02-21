@@ -2,7 +2,7 @@ import {ErrorResponse, ServiceDetails} from 'interfaces';
 import {ApiResponse, get, post} from './apiClient';
 import {handleError} from '../utils/globalFunctions';
 import {
-  ADD_SERVICE,
+  UPSERT_SERVICE,
   BOOK_SERVICE,
   GET_SERVICE_PROVIDERS,
   GET_USER_SERVICES,
@@ -35,7 +35,7 @@ export const addService = async (
 ): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
   try {
     return await post<ServiceDetails>(
-      `${V1_SERVICE_BASE_ROUTE}${ADD_SERVICE}`,
+      `${V1_SERVICE_BASE_ROUTE}${UPSERT_SERVICE}`,
       data,
     );
   } catch (error) {

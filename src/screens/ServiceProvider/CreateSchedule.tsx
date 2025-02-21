@@ -21,6 +21,7 @@ import {useNavigation} from '@react-navigation/native';
 import {ApiResponse} from 'services/apiClient';
 import {ErrorResponse, ServiceDetails} from 'interfaces';
 import {API_RESPONSE} from '../../utils/local/apiResponse';
+import {globalStyle} from '../../utils/globalStyle';
 interface SelectedDates {
   [key: string]: {selected: boolean};
 }
@@ -32,6 +33,7 @@ interface DayObject {
 
 const CreateSchedule = (props: any) => {
   const serviceDetails = props.route.params;
+  const navigation = useNavigation();
 
   const [selectedDates, setSelectedDates] = useState<SelectedDates>({});
 
@@ -71,26 +73,18 @@ const CreateSchedule = (props: any) => {
       return;
     }
 
-    console.log(user);
-    
-
     const data = {
-      id: user?.id,
-      userRole: user?.isServiceProvider,
-      serviceData: {
-        title: serviceDetails.title,
-        description: serviceDetails.description,
-        chargesPerHour: serviceDetails.chargesPerHour,
-        userId: user?.id,
-        category: serviceDetails.category,
-        servicePreview: serviceDetails.images,
-        selectedDates: selectedDates,
-      },
+      title: serviceDetails.title,
+      description: serviceDetails.description,
+      chargesPerHour: serviceDetails.chargesPerHour,
+      userId: user?.id,
+      category: serviceDetails.category,
+      servicePreview: serviceDetails.images,
+      selectedDates: selectedDates,
     };
-    console.log(
-   JSON.stringify(data)
-    );
-    
+
+    console.log(data);
+
     const response: ApiResponse<ServiceDetails> | ErrorResponse =
       await addService(data);
     if (response.success) {
@@ -100,6 +94,7 @@ const CreateSchedule = (props: any) => {
           success: true,
         }),
       );
+      navigation.navigate('Tabs', {screen: 'Home'});
     } else {
       dispatch(
         showSnackbar({
@@ -115,7 +110,7 @@ const CreateSchedule = (props: any) => {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyle.globalContainer}>
       <View style={styles.calendarContainer}>
         <Calendar
           onDayPress={handleDayPress}
@@ -166,12 +161,6 @@ const CreateSchedule = (props: any) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'space-between',
-    padding: Spacing.medium,
-    backgroundColor: '#f7f7f7',
-  },
   calendarContainer: {
     width: '100%',
     maxWidth: 400,

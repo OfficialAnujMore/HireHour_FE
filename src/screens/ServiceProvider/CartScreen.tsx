@@ -75,12 +75,10 @@ export const CartScreen = () => {
           heading={WORD_DIR.emptyCartHeading}
           subHeading={WORD_DIR.emptyCartSubHeading}
           imageSrc={emptyCart}
-          buttonLabel={WORD_DIR.goHome}
-          navigationRoute="Home"
         />
       ) : (
         <ScrollView>
-          <View style={styles.container}>
+          <View style={globalStyle.globalContainer}>
             <CustomText style={styles.sectionTitle} label={'Order Summary'} />
             {cartItems.map(item => {
               return (

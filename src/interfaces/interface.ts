@@ -40,17 +40,16 @@ export interface CustomTabBarButtonProps {
 
 export interface ServicePreview {
   id: string;
-  imageUri: string;
+  uri: string;
   servicesId: string;
 }
 
 export interface Schedule {
   id: string;
-  day: string;
-  month: string;
   date: string;
-  fullDate: string;
-  servicesId: string;
+  isAvailable: boolean;
+  servicesId?: string;
+  bookedUserId?: string;
 }
 
 export interface CartItem {
@@ -109,17 +108,13 @@ export interface User {
 }
 
 export interface ServiceDetails {
-  id: string;
   title: string;
   description: string;
-  location: string;
-  status: string;
-  offer: string | null;
-  rating: number;
-  time: string;
-  distance: string;
-  image: string;
-  previewImages: [];
+  chargesPerHour: string;
+  userId: string;
+  category: string;
+  servicePreview: ServicePreview[];
+  selectedDates: Schedule;
 }
 
 export interface AuthUser {
@@ -141,5 +136,5 @@ export interface MenuItemProps {
 export interface ErrorResponse {
   success: boolean;
   message: string;
-  data?:any
+  data?: any;
 }

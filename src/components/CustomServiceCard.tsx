@@ -5,15 +5,11 @@ import {CustomRatingInfo} from './CustomRatingInfo';
 import {COLORS} from '../utils/globalConstants/color';
 import {FontSize, Screen, Spacing} from '../utils/dimension';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Importing MaterialIcons for icons
-import {
-  CustomCardsProps,
-  ScheduleItem,
-  ServiceDetails,
-} from 'interfaces';
+import {CustomCardsProps, ScheduleItem, ServiceDetails} from 'interfaces';
 import CustomText from './CustomText';
 import {removeServiceFromCart} from '../redux/cartSlice';
 import {useDispatch} from 'react-redux';
-import { MAX_SCHEDULE_DISPLAY } from '../utils/constants';
+import {MAX_SCHEDULE_DISPLAY} from '../utils/constants';
 
 // Type definition for the component props
 interface CustomServiceCardsProps {
@@ -133,7 +129,11 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
               style={styles.orderMeta}
               label={` ${item.ratings} ★ | ${item.chargesPerHour}/hr`}
             />
-            <CustomText style={styles.orderMeta} label={item.description} />
+            <CustomText
+              style={styles.orderMeta}
+              label={item.description}
+              numberOfLines={2}
+            />
           </View>
         </View>
         {handleRemoveService ? (
@@ -157,7 +157,7 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
       </View>
 
       {/* Conditionally render ScheduleDetails based on visibility state */}
-      {(visibleSchedules[item.serviceId] || handleRemoveService)  && (
+      {(visibleSchedules[item.serviceId] || handleRemoveService) && (
         <ScheduleDetails
           schedule={item.schedule}
           maxDisplay={MAX_SCHEDULE_DISPLAY}
@@ -167,7 +167,6 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
           selectedServices={[]}
         />
       )}
-
     </TouchableOpacity>
   );
 };
@@ -198,6 +197,7 @@ const styles = StyleSheet.create({
   },
   orderDetails: {
     marginHorizontal: Spacing.medium,
+    width: Screen.width / 2,
   },
   orderTitle: {
     fontSize: FontSize.medium,

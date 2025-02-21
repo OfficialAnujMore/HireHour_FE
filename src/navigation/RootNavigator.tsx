@@ -61,7 +61,7 @@ const AuthenticatedTabs = () => {
         tabBarActiveTintColor: COLORS.white,
         tabBarInactiveTintColor: COLORS.black,
         headerShown: false,
-        tabBarStyle: [styles.tabBarStyle, {position: 'absolute'}],
+        tabBarStyle: [styles.tabBarStyle],
         tabBarLabel: ({focused}: {focused: boolean}) => (
           <Text
             style={{
@@ -72,7 +72,7 @@ const AuthenticatedTabs = () => {
             {route.name}
           </Text>
         ),
-        safeAreaInsets: {bottom: Screen.height / 40},
+        safeAreaInsets: {bottom: Screen.height},
       })}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Events" component={UpcomingEvents} />
@@ -115,10 +115,7 @@ const RootNavigator = () => {
                 component={AuthenticatedTabs}
                 options={{headerShown: false}}
               />
-              <Stack.Screen
-                name="Home"
-                component={HomeScreen}
-              />
+              <Stack.Screen name="Home" component={HomeScreen} />
               <Stack.Screen
                 name="Service Details"
                 component={ServiceDetailsScreen}
@@ -160,11 +157,13 @@ const RootNavigator = () => {
 const styles = StyleSheet.create({
   tabBarStyle: {
     backgroundColor: COLORS.primary,
-    height: Screen.height / 15,
+    height: Screen.height / 10,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
-    justifyContent: 'space-between',
-    // paddingBottom: Screen.height / , // Ensure there's space above the tab bar
+    justifyContent: 'center',
+    alignContent: 'center',
+    paddingTop: Spacing.small,
+    paddingBottom: Spacing.medium, // Prevents text/icons from sticking to the bottom
   },
   customButton: {
     backgroundColor: COLORS.secondary,
@@ -173,7 +172,6 @@ const styles = StyleSheet.create({
     borderRadius: Screen.moderateScale(50),
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10, // Add margin to prevent content from being hidden
   },
 });
 

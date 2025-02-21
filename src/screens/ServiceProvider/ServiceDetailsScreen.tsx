@@ -12,6 +12,7 @@ import CustomButton from '../../components/CustomButton';
 import {addToCart} from '../../redux/cartSlice';
 import {ServiceDetails} from 'interfaces';
 import {ScheduleDetails} from '../../components/CustomServiceCard';
+import { globalStyle } from '../../utils/globalStyle';
 
 const ServiceDetailsScreen = (props: ServiceDetails) => {
   const navigation = useNavigation();
@@ -67,7 +68,7 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyle.globalContainer}>
       <ScrollView contentContainerStyle={styles.scrollContentContainer}>
         <View style={styles.detailsContainer}>
           <CustomCarouselSlider data={item.servicePreview} />
