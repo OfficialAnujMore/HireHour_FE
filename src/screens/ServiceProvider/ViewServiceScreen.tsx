@@ -31,7 +31,7 @@ const ViewServiceScreen = (props: any) => {
         {item.servicePreview.map((image, index) => (
           <Image
             key={index}
-            source={{uri: image.imageUri}}
+            source={{uri: image.uri}}
             style={styles.image}
           />
         ))}

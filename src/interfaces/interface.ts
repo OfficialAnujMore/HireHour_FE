@@ -27,7 +27,7 @@ export interface CustomCardsProps {
 }
 
 export interface CarouselItem {
-  imageUri: string;
+  uri: string;
 }
 
 export interface CustomCarouselProps {

@@ -118,13 +118,16 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
           <Image
             source={{
               uri:
-                item.servicePreview[0]?.imageUri ||
-                'https://via.placeholder.com/60',
+                item.servicePreview[0]?.uri || 'https://via.placeholder.com/60',
             }}
             style={styles.orderImage}
           />
           <View style={styles.orderDetails}>
-            <CustomText style={styles.orderTitle} label={item.title} />
+            <CustomText
+              style={styles.orderTitle}
+              label={item.title}
+              numberOfLines={2}
+            />
             <CustomText
               style={styles.orderMeta}
               label={` ${item.ratings} ★ | ${item.chargesPerHour}/hr`}
@@ -196,7 +199,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   orderDetails: {
-    marginHorizontal: Spacing.medium,
+    marginLeft: Spacing.small,
     width: Screen.width / 2,
   },
   orderTitle: {

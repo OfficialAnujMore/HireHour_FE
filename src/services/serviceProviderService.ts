@@ -1,5 +1,5 @@
 import {ErrorResponse, ServiceDetails} from 'interfaces';
-import {ApiResponse, get, post} from './apiClient';
+import {ApiResponse, del, get, post} from './apiClient';
 import {handleError} from '../utils/globalFunctions';
 import {
   UPSERT_SERVICE,
@@ -8,6 +8,7 @@ import {
   GET_USER_SERVICES,
   UPCOMING_EVENTS,
   V1_SERVICE_BASE_ROUTE,
+  DELETE_SERVICE,
 } from './routes';
 
 export const getServiceProviders = async (
@@ -81,3 +82,19 @@ export const getUpcomingEvents = async (
     return handleError(error, 'getUpcomingEvents'); // Return the error handled by handleError function
   }
 };
+
+export const deleteServiceById = async (
+  serviceId: string,
+): Promise<ApiResponse<ServiceDetails[]> | ErrorResponse> => {
+  try {
+    return await del<ServiceDetails[]>(
+      `${V1_SERVICE_BASE_ROUTE}${DELETE_SERVICE}`,
+      {
+        params: {serviceId: serviceId},
+      },
+    );
+  } catch (error) {
+    return handleError(error, 'deleteServiceById'); // Corrected error message
+  }
+};
+

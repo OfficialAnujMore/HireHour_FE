@@ -1,15 +1,17 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {View, StyleSheet, Image, Alert, FlatList} from 'react-native';
 import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import CustomText from '../../components/CustomText';
 import {RootState} from 'redux/store';
 import {useSelector, useDispatch} from 'react-redux';
 import {getUserServices} from '../../services/serviceProviderService';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import CustomServiceCards from '../../components/CustomServiceCard';
 import {ErrorResponse, ServiceDetails} from 'interfaces';
 import {ApiResponse} from '../../services/apiClient';
 import {showSnackbar} from '../../redux/snackbarSlice';
+import {FallBack} from '../../components/FallBack';
+import {globalStyle} from '../../utils/globalStyle';
 
 const MyServices = () => {
   // const { serviceId } = route.params;
@@ -17,32 +19,35 @@ const MyServices = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
-  useEffect(() => {
-    const fetchService = async (): Promise<void> => {
-      const response: ApiResponse<ServiceDetails> | ErrorResponse =
-        await getUserServices({
-          id: user?.id,
-        });
 
-      if (response.success && response.data) {
-        setServiceDetails(response.data);
-      } else {
-        dispatch(
-          showSnackbar({
-            message: response.message,
-            success: false,
-          }),
-        );
-      }
-    };
+  const fetchService = async (): Promise<void> => {
+    const response: ApiResponse<ServiceDetails> | ErrorResponse =
+      await getUserServices({
+        id: user?.id,
+      });
 
-    fetchService();
-  }, []);
+    if (response.success && response.data) {
+      setServiceDetails(response.data);
+    } else {
+      dispatch(
+        showSnackbar({
+          message: response.message,
+          success: false,
+        }),
+      );
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchService();
+    }, []),
+  );
 
   if (!serviceDetails) return null;
 
   return (
-    <View>
+    <View style={globalStyle.globalContainer}>
       {serviceDetails && serviceDetails?.length > 0 ? (
         <View>
           <FlatList
@@ -60,16 +65,20 @@ const MyServices = () => {
           />
         </View>
       ) : (
-        <View style={styles.dataNotFound}>
-          <Image
-            source={require('../../assets/error-in-calendar.png')}
-            style={{width: Screen.width, height: Screen.height / 2}}
-          />
-          <CustomText
-            style={styles.noDataText}
-            label={'Kindly create a service first before continuing!'}
-          />
-        </View>
+        <FallBack
+          imageSrc={require('../../assets/error-in-calendar.png')}
+          heading="Kindly create a service first before continuing!"
+        />
+        // <View style={styles.dataNotFound}>
+        //   <Image
+        //     source={require('../../assets/error-in-calendar.png')}
+        //     style={{width: Screen.width, height: Screen.height / 2}}
+        //   />
+        //   <CustomText
+        //     style={styles.noDataText}
+        //     label={'Kindly create a service first before continuing!'}
+        //   />
+        // </View>
       )}
     </View>
   );

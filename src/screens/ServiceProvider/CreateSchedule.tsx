@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -8,8 +8,8 @@ import {
   ScrollView,
 } from 'react-native';
 import {Calendar} from 'react-native-calendars';
-import {Screen, Spacing, FontSize} from '../../utils/dimension'; // assuming dimensions file is in the same directory
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Importing MaterialIcons for icons
+import {Screen, Spacing, FontSize} from '../../utils/dimension';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from 'redux/store';
 import {showSnackbar} from '../../redux/snackbarSlice';
@@ -22,37 +22,49 @@ import {ApiResponse} from 'services/apiClient';
 import {ErrorResponse, ServiceDetails} from 'interfaces';
 import {API_RESPONSE} from '../../utils/local/apiResponse';
 import {globalStyle} from '../../utils/globalStyle';
+
 interface SelectedDates {
   [key: string]: {selected: boolean};
 }
 
 interface DayObject {
   dateString: string;
-  // You can extend this interface based on other properties the day object might contain
 }
 
 const CreateSchedule = (props: any) => {
-  const serviceDetails = props.route.params;
+  const serviceDetails = props.route.params; // Data from CreateService
   const navigation = useNavigation();
-
   const [selectedDates, setSelectedDates] = useState<SelectedDates>({});
 
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
-  // Get today's date in 'yyyy-mm-dd' format
   const today = new Date().toISOString().split('T')[0];
+
+  // Initialize selected dates from serviceDetails.schedule when the component mounts
+  useEffect(() => {
+    if (serviceDetails.schedule) {
+      const initialSelectedDates: SelectedDates = {};
+
+      // Ensure each date string is set correctly and doesn't become [object Object]
+      serviceDetails.schedule.forEach((date: string) => {
+        console.log(date);
+
+        initialSelectedDates[date.date] = {selected: true, isAvailable: true};
+      });
+
+      setSelectedDates(initialSelectedDates);
+    }
+  }, [serviceDetails.schedule]);
 
   const handleDayPress = (day: DayObject) => {
     const date = day.dateString;
 
     setSelectedDates(prev => {
       if (prev[date]) {
-        // Remove date if already selected
         const updated = {...prev};
         delete updated[date];
         return updated;
       } else {
-        // Add selected date
         return {...prev, [date]: {selected: true, isAvailable: true}};
       }
     });
@@ -78,19 +90,21 @@ const CreateSchedule = (props: any) => {
       description: serviceDetails.description,
       chargesPerHour: serviceDetails.chargesPerHour,
       userId: user?.id,
+      id: serviceDetails.serviceId,
       category: serviceDetails.category,
-      servicePreview: serviceDetails.images,
+      servicePreview: serviceDetails.servicePreview,
       selectedDates: selectedDates,
     };
-
-    console.log(data);
+    console.log('Upsert data \n ', JSON.stringify(data));
 
     const response: ApiResponse<ServiceDetails> | ErrorResponse =
       await addService(data);
     if (response.success) {
       dispatch(
         showSnackbar({
-          message: API_RESPONSE.serviceSuccess,
+          message: data.id
+            ? API_RESPONSE.serviceUpdated
+            : API_RESPONSE.serviceSuccess,
           success: true,
         }),
       );
@@ -131,7 +145,7 @@ const CreateSchedule = (props: any) => {
         contentContainerStyle={styles.selectedContentContainer}>
         <CustomText label={'Selected Dates'} />
         <FlatList
-          data={sortedDates} // Use sorted array of dates
+          data={sortedDates}
           keyExtractor={item => item}
           renderItem={({item}) => (
             <View style={styles.dateItem}>
@@ -151,10 +165,8 @@ const CreateSchedule = (props: any) => {
       </ScrollView>
 
       <CustomButton
-        label="Create service"
-        onPress={() => {
-          handleServiceCreation();
-        }}
+        label={serviceDetails.serviceId ? 'Update Service' : 'Create Service'}
+        onPress={handleServiceCreation}
       />
     </View>
   );
@@ -168,7 +180,6 @@ const styles = StyleSheet.create({
   },
   selectedContainer: {
     width: '100%',
-    // maxWidth: 400,
     backgroundColor: '#ffffff',
     borderRadius: 12,
     shadowColor: '#000',
@@ -179,14 +190,7 @@ const styles = StyleSheet.create({
     padding: Spacing.medium,
   },
   selectedContentContainer: {
-    paddingBottom: Spacing.medium, // Adds some space at the bottom of the scroll view
-  },
-  heading: {
-    fontSize: FontSize.large,
-    fontWeight: 'bold',
-    color: '#3CB4E6',
-    marginBottom: Spacing.small,
-    textAlign: 'center',
+    paddingBottom: Spacing.medium,
   },
   dateItem: {
     padding: Spacing.small,
@@ -195,22 +199,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#ddd',
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
   },
   dateText: {
     fontSize: FontSize.medium,
-    color: '#333',
-    flex: 1,
+    color: '#000',
   },
   removeIcon: {
-    paddingLeft: Spacing.small,
+    position: 'absolute',
+    right: Spacing.small,
+    top: Spacing.small,
   },
 });
 

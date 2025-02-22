@@ -23,8 +23,16 @@ export const FallBack = ({
       <View style={styles.detailsContaier}>
         <View style={{alignItems: 'center'}}>
           <Image source={imageSrc} style={styles.fallBackImage} />
-          <CustomText style={styles.emptyText} label={heading} />
-          <CustomText style={styles.emptyText} label={subHeading} />
+          <CustomText
+            style={styles.emptyText}
+            label={heading}
+            numberOfLines={2}
+          />
+          <CustomText
+            style={styles.emptyText}
+            label={subHeading}
+            numberOfLines={2}
+          />
         </View>
       </View>
       {buttonLabel && (

@@ -21,21 +21,26 @@ import {showSnackbar} from '../../redux/snackbarSlice';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import {globalStyle} from '../../utils/globalStyle';
 
-const CreateService = () => {
+const CreateService = (props: any) => {
+  console.log('asassaa', JSON.stringify(props.route.params));
+  
+  const initialServiceDetails = props.route.params || {};
+
   const [serviceDetails, setServiceDetails] = useState({
     title: '',
     description: '',
     chargesPerHour: '',
     category: CATEGORY[Object.keys(CATEGORY)[0] as keyof typeof CATEGORY],
-    images: [] as any[],
+    servicePreview: [] as any[],
+    ...(initialServiceDetails || {}),
   });
-  const dispatch = useDispatch();
 
+  const dispatch = useDispatch();
   const [errors, setErrors] = useState({
     title: '',
     description: '',
     chargesPerHour: '',
-    images: '',
+    servicePreview: '',
   });
 
   const navigation = useNavigation();
@@ -45,7 +50,7 @@ const CreateService = () => {
       title: '',
       description: '',
       chargesPerHour: '',
-      images: '',
+      servicePreview: '',
     };
     let valid = true;
 
@@ -61,8 +66,8 @@ const CreateService = () => {
       newErrors.chargesPerHour = 'Charges per hour is required';
       valid = false;
     }
-    if (serviceDetails.images.length === 0) {
-      newErrors.images = 'Please select at least one image';
+    if (serviceDetails.servicePreview.length === 0) {
+      newErrors.servicePreview = 'Please select at least one image';
       valid = false;
     }
 
@@ -70,41 +75,14 @@ const CreateService = () => {
     return valid;
   };
 
-  const renderInput = (
-    label: string,
-    value: string,
-    placeholder: string,
-    field: keyof typeof serviceDetails,
-    errorMessage: string,
-    maxLength?: number,
-    keyboardType?: 'default' | 'email-address' | 'phone-pad',
-    secureTextEntry?: boolean,
-  ) => (
-    <CustomInput
-      label={label}
-      value={value}
-      placeholder={placeholder}
-      onValueChange={value =>
-        setServiceDetails(prev => ({...prev, [field]: value}))
-      }
-      keyboardType={keyboardType}
-      secureTextEntry={secureTextEntry}
-      errorMessage={errorMessage}
-      maxLength={maxLength}
-    />
-  );
-
   const handleImagePicker = async () => {
     if (Platform.OS === 'android') {
-      const permission = PERMISSIONS.ANDROID.READ_MEDIA_IMAGES; // For Android 13+ use READ_MEDIA_IMAGES
-
+      const permission = PERMISSIONS.ANDROID.READ_MEDIA_IMAGES;
       const permissionStatus = await check(permission);
 
       if (permissionStatus === RESULTS.GRANTED) {
-        // Permission already granted, open image picker
         openImagePicker();
       } else {
-        // Request permission
         const requestResult = await request(permission);
         if (requestResult === RESULTS.GRANTED) {
           openImagePicker();
@@ -137,45 +115,63 @@ const CreateService = () => {
 
   const openImagePicker = () => {
     launchImageLibrary(
-      {mediaType: 'photo', selectionLimit: 5}, // Allow multiple selection
+      {mediaType: 'photo', selectionLimit: 5},
       (response: ImagePickerResponse) => {
         if (response.didCancel) {
           return;
         }
-
         if (response.errorMessage) {
           Alert.alert('Error', response.errorMessage);
           return;
         }
-
         if (response.assets && response.assets.length > 0) {
-          setServiceDetails(prev => ({
-            ...prev,
-            images: response.assets,
-          }));
-        } else {
+          setServiceDetails(prev => ({...prev, servicePreview: response.assets}));
         }
       },
     );
   };
 
+  const renderInput = (
+    label: string,
+    value: string,
+    placeholder: string,
+    field: keyof typeof serviceDetails,
+    errorMessage: string,
+    maxLength?: number,
+    keyboardType?: 'default' | 'email-address' | 'phone-pad',
+    secureTextEntry?: boolean,
+  ) => (
+    <CustomInput
+      label={label}
+      value={value}
+      placeholder={placeholder}
+      onValueChange={value =>
+        setServiceDetails(prev => ({...prev, [field]: value}))
+      }
+      keyboardType={keyboardType}
+      secureTextEntry={secureTextEntry}
+      errorMessage={errorMessage}
+      maxLength={maxLength}
+    />
+  );
+
   return (
     <ScrollView style={globalStyle.globalContainer}>
       <CustomText label={WORD_DIR.serviceDetails} style={styles.heading} />
       <View style={styles.imagePickerContainer}>
-        {serviceDetails.images.length > 0 && (
-          <CustomCarousel data={serviceDetails.images} />
+        {serviceDetails.servicePreview.length > 0 && (
+          <CustomCarousel data={serviceDetails.servicePreview} />
         )}
       </View>
       <View style={styles.actionContainer}>
         <CustomText
           label={
-            errors.images
-              ? errors.images
+            errors.servicePreview
+              ? errors.servicePreview
               : 'Click here for select image for service'
           }
           action={handleImagePicker}
-          style={errors.images && {color: COLORS.error}}
+          style={errors.servicePreview && {color: COLORS.error}}
         />
       </View>
       {renderInput(
@@ -184,7 +180,7 @@ const CreateService = () => {
         WORD_DIR.title,
         'title',
         errors.title,
-        20
+        30,
       )}
       {renderInput(
         WORD_DIR.description,
@@ -192,7 +188,7 @@ const CreateService = () => {
         WORD_DIR.description,
         'description',
         errors.description,
-        1600
+        50,
       )}
       {renderInput(
         WORD_DIR.chargesPerHour,
@@ -200,6 +196,8 @@ const CreateService = () => {
         WORD_DIR.chargesPerHour,
         'chargesPerHour',
         errors.chargesPerHour,
+        3,
+        'phone-pad'
       )}
 
       <CustomDropdown
@@ -223,6 +221,8 @@ const CreateService = () => {
     </ScrollView>
   );
 };
+
+// styles remain the same
 
 const styles = StyleSheet.create({
   container: {
