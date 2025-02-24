@@ -1,5 +1,5 @@
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
-import {API_BASE_URL} from '@env';
+import {API_BASE_URL} from  '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface ApiResponse<T> {

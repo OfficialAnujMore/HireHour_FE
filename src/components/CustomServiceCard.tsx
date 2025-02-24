@@ -130,7 +130,7 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
             />
             <CustomText
               style={styles.orderMeta}
-              label={` ${item.ratings} ★ | ${item.chargesPerHour}/hr`}
+              label={` ${item.ratings} ★ | $ ${item.pricing}`}
             />
             <CustomText
               style={styles.orderMeta}

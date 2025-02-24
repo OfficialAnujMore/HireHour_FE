@@ -22,7 +22,7 @@ export const WORD_DIR = {
   
   title: 'Title',
   description: 'Description',
-  chargesPerHour: 'Pricing',
+  pricing: 'Pricing',
   selectDate: 'Select Date',
   selectTimeSlots: 'Select Time Slots',
   next: 'Next',
@@ -44,6 +44,7 @@ export const WORD_DIR = {
   emptyCartSubHeading:'Choose a service and proceed to checkout',
   goHome:"Go To Home",
   noService:"Oops! Not service found",
+  noSchedule:"There are no dates been scheduled by the service provider",
   noUpcomingEvents:"Opps! No Upcoming events",
   scheduleEvent:"Schedule and event to view upcoming events",
 

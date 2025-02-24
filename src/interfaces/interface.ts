@@ -20,7 +20,7 @@ export interface CustomCardsProps {
     title: string;
     description: string;
     category: string;
-    chargesPerHour: string;
+    pricing: string;
     ratings: number;
   };
   handlePress: () => {};
@@ -63,7 +63,7 @@ export interface CartItem {
   serviceId: string;
   title: string;
   description: string;
-  chargesPerHour: string;
+  pricing: string;
   ratings: string;
   category: string;
   deletedAt: string | null;
@@ -110,7 +110,7 @@ export interface User {
 export interface ServiceDetails {
   title: string;
   description: string;
-  chargesPerHour: string;
+  pricing: string;
   userId: string;
   category: string;
   servicePreview: ServicePreview[];

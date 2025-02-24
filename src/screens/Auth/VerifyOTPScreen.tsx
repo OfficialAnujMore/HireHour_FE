@@ -170,6 +170,8 @@ const VerifyOTPScreen: React.FC<RegisterUser> = props => {
           data.email,
           'email',
         )}`}
+        numberOfLines={2}
+        style={{alignSelf:'center'}}
       />
       {renderOtpInputs(emailOTP, 'email')}
       <CustomButton label={WORD_DIR.verifyOTP} onPress={handleSubmit} />

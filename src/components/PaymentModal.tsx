@@ -10,12 +10,14 @@ import {COLORS} from '../utils/globalConstants/color';
 import CustomText from '../components/CustomText';
 
 interface PaymentModalProps {
+  amount: Number;
   isVisible: boolean;
   onClose: () => void;
   onPaymentSelect: (method: string) => void;
 }
 
 const PaymentModal: React.FC<PaymentModalProps> = ({
+  amount,
   isVisible,
   onClose,
   onPaymentSelect,
@@ -36,7 +38,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
       animationIn="slideInUp"
       animationOut="slideOutDown">
       <View style={styles.container}>
-        <CustomPaymentSummary amount={'10'} tax={'0.2'} totalAmount={'12.0'} />
+        <CustomPaymentSummary amount={amount} />
 
         {/* Payment Methods Section */}
         <CustomText style={styles.title} label={WORD_DIR.choosePayment} />

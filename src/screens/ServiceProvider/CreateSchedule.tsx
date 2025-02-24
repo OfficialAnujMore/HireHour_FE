@@ -74,7 +74,7 @@ const CreateSchedule = (props: any) => {
     if (
       !serviceDetails.title ||
       !serviceDetails.description ||
-      !serviceDetails.chargesPerHour
+      !serviceDetails.pricing
     ) {
       dispatch(
         showSnackbar({
@@ -88,7 +88,7 @@ const CreateSchedule = (props: any) => {
     const data = {
       title: serviceDetails.title,
       description: serviceDetails.description,
-      chargesPerHour: serviceDetails.chargesPerHour,
+      pricing: serviceDetails.pricing,
       userId: user?.id,
       id: serviceDetails.serviceId,
       category: serviceDetails.category,

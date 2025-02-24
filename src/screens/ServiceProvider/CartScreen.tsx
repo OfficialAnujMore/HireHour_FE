@@ -1,5 +1,5 @@
 import {useSelector, useDispatch} from 'react-redux';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, ScrollView, Alert} from 'react-native';
 import {RootState} from 'redux/store';
 import CustomServiceCards from '../../components/CustomServiceCard';
@@ -28,6 +28,19 @@ export const CartScreen = () => {
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const user = useSelector((state: RootState) => state.auth.user);
   const [modalVisible, setModalVisible] = useState(false);
+  const [amount, setAmount] = useState(0.0);
+  useEffect(() => {
+    console.log(cartItems);
+
+    const amt = cartItems.reduce((total, item) => {
+      console.log(item);
+      
+      return total + Number(item.pricing) * item.schedule.length;
+    }, 0);
+
+    console.log(amt);
+    setAmount(amt);
+  }, [cartItems]);
 
   const handlePaymentSelect = async (method: string): Promise<void> => {
     const schedule = cartItems.flatMap(service => service.schedule);
@@ -78,7 +91,7 @@ export const CartScreen = () => {
         />
       ) : (
         <ScrollView>
-          <View style={globalStyle.globalContainer}>
+          <View style={{justifyContent: 'space-between'}}>
             <CustomText style={styles.sectionTitle} label={'Order Summary'} />
             {cartItems.map(item => {
               return (
@@ -90,17 +103,14 @@ export const CartScreen = () => {
                 />
               );
             })}
-            <CustomPaymentSummary
-              amount={'10'}
-              tax={'0.2'}
-              totalAmount={'12.0'}
-            />
-            <CustomButton label={'Proceed to checkout'} onPress={handlePress} />
+            <CustomPaymentSummary amount={amount} />
           </View>
+          <CustomButton label={'Proceed to checkout'} onPress={handlePress} />
         </ScrollView>
       )}
 
       <PaymentModal
+        amount={amount}
         isVisible={modalVisible}
         onClose={() => setModalVisible(false)}
         onPaymentSelect={handlePaymentSelect}

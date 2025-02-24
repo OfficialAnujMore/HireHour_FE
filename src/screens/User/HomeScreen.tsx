@@ -27,7 +27,7 @@ const HomeScreen = ({navigation}: any) => {
   const [filteredData, setFilteredData] = useState<User[]>([]);
 
   const fetchServiceProviders = useCallback(async (): Promise<void> => {
-    const categories = ['Photography', 'Guitar', 'Art', 'Music'];
+    const categories = ['Photography', 'Guitar', 'Art', 'Music', 'Sports'];
     const response: ApiResponse<ServiceDetails[]> | ErrorResponse =
       await getServiceProviders(user?.id, categories);
 

@@ -22,7 +22,7 @@ const ViewServiceScreen = (props: any) => {
         style={styles.text}
       />
       <CustomText
-        label={`Charges Per Hour: $${item.chargesPerHour}`}
+        label={`Charges Per Hour: $${item.pricing}`}
         style={styles.text}
       />
 

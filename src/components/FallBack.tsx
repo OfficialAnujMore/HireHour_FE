@@ -9,7 +9,7 @@ import {globalStyle} from '../utils/globalStyle';
 import defaultImage from '../assets/disconnected.png';
 
 export const FallBack = ({
-  imageSrc = defaultImage,
+  imageSrc = '',
   heading = '',
   subHeading = '',
   buttonLabel = '',
@@ -22,7 +22,12 @@ export const FallBack = ({
     <View style={[styles.fallBackContainer, globalStyle.globalContainer]}>
       <View style={styles.detailsContaier}>
         <View style={{alignItems: 'center'}}>
-          <Image source={imageSrc} style={styles.fallBackImage} />
+          {imageSrc && (
+            <Image
+              source={imageSrc ?? defaultImage}
+              style={styles.fallBackImage}
+            />
+          )}
           <CustomText
             style={styles.emptyText}
             label={heading}
@@ -49,10 +54,11 @@ export const FallBack = ({
 
 const styles = StyleSheet.create({
   fallBackContainer: {
-    flex: 1,
+    // flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.small,
+    backgroundColor: 'red',
   },
   detailsContaier: {
     flex: 1,

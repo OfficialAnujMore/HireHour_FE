@@ -22,14 +22,12 @@ import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import {globalStyle} from '../../utils/globalStyle';
 
 const CreateService = (props: any) => {
-  console.log('asassaa', JSON.stringify(props.route.params));
-  
   const initialServiceDetails = props.route.params || {};
 
   const [serviceDetails, setServiceDetails] = useState({
     title: '',
     description: '',
-    chargesPerHour: '',
+    pricing: '',
     category: CATEGORY[Object.keys(CATEGORY)[0] as keyof typeof CATEGORY],
     servicePreview: [] as any[],
     ...(initialServiceDetails || {}),
@@ -39,7 +37,7 @@ const CreateService = (props: any) => {
   const [errors, setErrors] = useState({
     title: '',
     description: '',
-    chargesPerHour: '',
+    pricing: '',
     servicePreview: '',
   });
 
@@ -49,7 +47,7 @@ const CreateService = (props: any) => {
     const newErrors = {
       title: '',
       description: '',
-      chargesPerHour: '',
+      pricing: '',
       servicePreview: '',
     };
     let valid = true;
@@ -62,8 +60,8 @@ const CreateService = (props: any) => {
       newErrors.description = 'Description is required';
       valid = false;
     }
-    if (!serviceDetails.chargesPerHour) {
-      newErrors.chargesPerHour = 'Charges per hour is required';
+    if (!serviceDetails.pricing) {
+      newErrors.pricing = 'Charges per hour is required';
       valid = false;
     }
     if (serviceDetails.servicePreview.length === 0) {
@@ -191,11 +189,11 @@ const CreateService = (props: any) => {
         50,
       )}
       {renderInput(
-        WORD_DIR.chargesPerHour,
-        serviceDetails.chargesPerHour,
-        WORD_DIR.chargesPerHour,
-        'chargesPerHour',
-        errors.chargesPerHour,
+        WORD_DIR.pricing,
+        serviceDetails.pricing,
+        WORD_DIR.pricing,
+        'pricing',
+        errors.pricing,
         3,
         'phone-pad'
       )}
