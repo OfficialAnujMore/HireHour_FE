@@ -1,22 +1,19 @@
-import React, { useState, useMemo } from "react";
+import React, {useState, useMemo} from 'react';
 import {
   View,
-  Text,
   Image,
   StyleSheet,
   Dimensions,
   ScrollView,
   NativeScrollEvent,
   NativeSyntheticEvent,
-} from "react-native";
-import { Screen, Spacing } from "../utils/dimension";
-import { CustomCarouselProps } from "interfaces";
+} from 'react-native';
+import {Screen, Spacing} from '../utils/dimension';
+import {CustomCarouselProps} from 'interfaces';
 
-const { width } = Dimensions.get("window");
+const {width} = Dimensions.get('window');
 
-
-
-const CustomCarousel: React.FC<CustomCarouselProps> = ({ data }) => {
+const CustomCarousel: React.FC<CustomCarouselProps> = ({data}) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -31,7 +28,7 @@ const CustomCarousel: React.FC<CustomCarouselProps> = ({ data }) => {
         styles.indicator,
         activeIndex === index && styles.activeIndicator,
       ]),
-    [activeIndex, data.length]
+    [activeIndex, data.length],
   );
 
   return (
@@ -41,11 +38,10 @@ const CustomCarousel: React.FC<CustomCarouselProps> = ({ data }) => {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onScroll={handleScroll}
-        scrollEventThrottle={16}
-      >
-        {data.map((item) => (
-          <View key={item.imageUri} style={styles.card}>
-            <Image source={{ uri: item.imageUri }} style={styles.image} />
+        scrollEventThrottle={16}>
+        {data.map((item, index) => (
+          <View key={index} style={styles.card}>
+            <Image source={{uri: item.uri}} style={styles.image} />
           </View>
         ))}
       </ScrollView>
@@ -64,28 +60,28 @@ const styles = StyleSheet.create({
   card: {
     width: Screen.width,
     height: Screen.height / 3,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   image: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   indicatorContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: Spacing.small,
   },
   indicator: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#D3D3D3",
+    backgroundColor: '#D3D3D3',
     marginHorizontal: 4,
   },
   activeIndicator: {
-    backgroundColor: "#000",
+    backgroundColor: '#000',
     width: 16,
   },
 });

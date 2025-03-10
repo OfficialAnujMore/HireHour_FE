@@ -1,5 +1,5 @@
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
-import {API_BASE_URL} from '@env';
+import {API_BASE_URL} from  '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface ApiResponse<T> {
@@ -15,9 +15,10 @@ const unprotectedRoutes = [
   '/auth/register',
   'api/v1/user/loginUser',
 ];
+console.log({API_BASE_URL});
 
 const apiClient = axios.create({
-  baseURL: 'http://192.168.1.252:3000/', // Replace with your API base URL
+  baseURL: API_BASE_URL, // Replace with your API base URL
   timeout: 10000, // Timeout after 10 seconds
   headers: {
     'Content-Type': 'application/json',

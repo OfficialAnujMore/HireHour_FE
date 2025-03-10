@@ -13,8 +13,9 @@ import CustomButton from '../../components/CustomButton';
 import CustomText from '../../components/CustomText';
 import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import {COLORS} from '../../utils/globalConstants/color';
-import { USER_DETAILS } from '../../utils/constants';
-import { RootStackParamList } from 'interfaces';
+import {USER_DETAILS} from '../../utils/constants';
+import {ErrorResponse, RootStackParamList, User} from 'interfaces';
+import {ApiResponse} from 'services/apiClient';
 
 // Validation patterns
 const PASSWORD_PATTERN = /^.{6,}$/;
@@ -29,7 +30,7 @@ const initialUserState = {
   email: USER_DETAILS.email,
   phoneNumber: USER_DETAILS.phoneNumber,
   password: USER_DETAILS.password,
-  confirmPassword:USER_DETAILS.password,
+  confirmPassword: USER_DETAILS.password,
 };
 
 const initialErrorState = {
@@ -50,7 +51,7 @@ const RegistrationScreen = () => {
   const [errors, setErrors] = useState(initialErrorState);
 
   const handleValueChange = (field: keyof typeof user, value: string) => {
-    // console.log(field,value);
+    //
 
     setUser(prevState => ({...prevState, [field]: value}));
     validateField(field, value);
@@ -91,21 +92,31 @@ const RegistrationScreen = () => {
     user.confirmPassword;
 
   const verifyEmail = async () => {
-    console.log('verifyEmail user...');
-    const { confirmPassword, ...payload} = user;
-    console.log('Payload without confirmPassword:', payload);
+    const {confirmPassword, ...payload} = user;
 
     try {
-      const response = await verifyUsernameAndEmail(payload);
+      // Attempt to verify username and email
+      const response: ApiResponse<User> | ErrorResponse =
+        await verifyUsernameAndEmail(payload);
+
       if (response?.data) {
-        navigation.navigate('VerifyOTP',payload);
+        // Navigate to OTP verification screen if verification is successful
+        navigation.navigate('VerifyOTP', payload);
+      } else {
+        // Handle case where no data is returned
+        dispatch(
+          showSnackbar({
+            message: WORD_DIR.verificationFailed,
+          }),
+        );
       }
     } catch (error: any) {
-      console.log({error});
-
-      // Extract and dispatch the error message to the Snackbar
-      const errorMessage = error ?? 'Registration failed. Please try again.';
-      dispatch(showSnackbar(errorMessage));
+      // Handle error case, show appropriate error message in snackbar
+      dispatch(
+        showSnackbar({
+          message: error.message,
+        }),
+      );
     }
   };
 

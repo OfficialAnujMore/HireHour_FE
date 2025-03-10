@@ -1,3 +1,4 @@
+import {GestureResponderEvent} from 'react-native/types';
 export interface OTPStatus {
   otpStatus: boolean;
 }
@@ -13,47 +14,24 @@ export type RootStackParamList = {
   RegisterUser: RegisterUser;
 };
 
-import {GestureResponderEvent} from 'react-native/types';
-
 export interface CustomCardsProps {
   item: {
     avatarUri?: string;
     title: string;
     description: string;
     category: string;
-    chargesPerHour: string;
+    pricing: string;
     ratings: number;
   };
   handlePress: () => {};
 }
 
 export interface CarouselItem {
-  imageUri: string;
+  uri: string;
 }
 
 export interface CustomCarouselProps {
   data: CarouselItem[];
-}
-
-export interface TimeSlot {
-  id: string;
-  time: string;
-  available: boolean;
-}
-
-export interface DateInfo {
-  id: string;
-  day: string;
-  month: string;
-  date: string;
-  fullDate: string;
-  timeSlots: TimeSlot[];
-}
-
-export interface CustomScheduleProps {
-  dateInfo: DateInfo[];
-  selectedTimeIds: string[]; // Changed to an array
-  onValueChange: (value: string[]) => void; // Updated to accept an array
 }
 
 export interface CustomTabBarButtonProps {
@@ -62,18 +40,16 @@ export interface CustomTabBarButtonProps {
 
 export interface ServicePreview {
   id: string;
-  imageUri: string;
+  uri: string;
   servicesId: string;
 }
 
 export interface Schedule {
   id: string;
-  day: string;
-  month: string;
   date: string;
-  fullDate: string;
-  servicesId: string;
-  timeSlots: TimeSlot[];
+  isAvailable: boolean;
+  servicesId?: string;
+  bookedUserId?: string;
 }
 
 export interface CartItem {
@@ -87,7 +63,7 @@ export interface CartItem {
   serviceId: string;
   title: string;
   description: string;
-  chargesPerHour: string;
+  pricing: string;
   ratings: string;
   category: string;
   deletedAt: string | null;
@@ -104,6 +80,7 @@ export interface CartState {
 
 export interface SnackbarState {
   message: string;
+  success?: boolean;
   visible: boolean;
 }
 // Auth State Interface
@@ -131,27 +108,23 @@ export interface User {
 }
 
 export interface ServiceDetails {
-  id: string;
   title: string;
   description: string;
-  location: string;
-  status: string;
-  offer: string | null;
-  rating: number;
-  time: string;
-  distance: string;
-  image: string;
-  previewImages: [];
+  pricing: string;
+  userId: string;
+  category: string;
+  servicePreview: ServicePreview[];
+  selectedDates: Schedule;
 }
 
 export interface AuthUser {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 
 export interface Errors {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 
 export interface MenuItemProps {
@@ -160,3 +133,8 @@ export interface MenuItemProps {
   callback?: () => void;
 }
 
+export interface ErrorResponse {
+  success: boolean;
+  message: string;
+  data?: any;
+}

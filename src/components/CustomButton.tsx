@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, {useRef} from 'react';
 import {
   Text,
   TouchableOpacity,
@@ -8,8 +8,8 @@ import {
   Animated,
   GestureResponderEvent,
 } from 'react-native';
-import { FontSize, Spacing } from '../utils/dimension';
-import { COLORS } from '../utils/globalConstants/color';
+import {FontSize, Spacing} from '../utils/dimension';
+import {COLORS} from '../utils/globalConstants/color';
 
 type CustomButtonProps = {
   label: string;
@@ -38,72 +38,69 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     }).start();
   };
 
-  const handlePressIn = () => handleAnimation(animationType === 'scale' ? 0.95 : 0.5);
+  const handlePressIn = () =>
+    handleAnimation(animationType === 'scale' ? 0.95 : 0.5);
   const handlePressOut = () => handleAnimation(1);
 
   const animatedStyle =
     animationType === 'scale'
-      ? { transform: [{ scale: animationValue }] }
-      : { opacity: animationValue };
+      ? {transform: [{scale: animationValue}]}
+      : {opacity: animationValue};
 
   return (
-    <Animated.View style={[styles.container, animatedStyle, style]}>
-      <TouchableOpacity
+    <TouchableOpacity
+      style={[
+        style,
+        styles.button,
+        disabled ? styles.disabledButton : styles.activeButton,
+      ]}
+      onPress={onPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      activeOpacity={0.7}
+      disabled={disabled}>
+      <Text
         style={[
-          styles.button,
-          disabled ? styles.disabledButton : styles.activeButton,
-        ]}
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        activeOpacity={0.7}
-        disabled={disabled}
-      >
-        <Text
-          style={[
-            styles.label,
-            textStyle,
-            disabled ? styles.disabledLabel : styles.activeLabel,
-          ]}
-        >
-          {label}
-        </Text>
-      </TouchableOpacity>
-    </Animated.View>
+          styles.label,
+          textStyle,
+          disabled ? styles.disabledLabel : styles.activeLabel,
+        ]}>
+        {label}
+      </Text>
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginVertical: Spacing.medium,
-  },
   button: {
-    paddingVertical: Spacing.medium,
-    paddingHorizontal: Spacing.small,
+    paddingVertical: Spacing.medium - 4,
     borderRadius: Spacing.small,
     borderWidth: 0.5,
+    borderColor:COLORS.white,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: COLORS.grey,
+    shadowColor: COLORS.primary,
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
+    marginVertical:Spacing.medium,
+    backgroundColor: COLORS.primary,
   },
   activeButton: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.primary,
   },
   disabledButton: {
-    backgroundColor: COLORS.grey,
+    backgroundColor: COLORS.gray,
   },
   label: {
     fontSize: FontSize.medium,
-    fontWeight: 'bold',
+    fontWeight: 600,
   },
   activeLabel: {
-    color: COLORS.black,
+    color: COLORS.white,
   },
   disabledLabel: {
-    color: COLORS.black,
+    color: COLORS.white,
   },
 });
 

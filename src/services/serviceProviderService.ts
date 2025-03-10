@@ -1,103 +1,100 @@
-import { ServiceDetails } from 'interfaces';
-import {ApiResponse, get, post} from './apiClient';
+import {ErrorResponse, ServiceDetails} from 'interfaces';
+import {ApiResponse, del, get, post} from './apiClient';
+import {handleError} from '../utils/globalFunctions';
 import {
-  ADD_SERVICE,
+  UPSERT_SERVICE,
   BOOK_SERVICE,
   GET_SERVICE_PROVIDERS,
   GET_USER_SERVICES,
   UPCOMING_EVENTS,
   V1_SERVICE_BASE_ROUTE,
+  DELETE_SERVICE,
 } from './routes';
 
 export const getServiceProviders = async (
   userId: string | undefined,
   categories?: string[],
-): Promise<ApiResponse<ServiceDetails[]>> => {
+): Promise<ApiResponse<ServiceDetails[]> | ErrorResponse> => {
   try {
-    // If categories exist, serialize the array into a JSON string before passing as query params
     const serializedCategories = categories
       ? JSON.stringify(categories)
       : undefined;
 
-    // Return the response from the GET request with serialized categories as query params
-    const response = await get<ServiceDetails[]>(
+    return await get<ServiceDetails[]>(
       `${V1_SERVICE_BASE_ROUTE}${GET_SERVICE_PROVIDERS}`,
       {
-        params: {
-          id: userId,
-          category: serializedCategories, // Send serialized categories as a query param
-        },
+        params: {id: userId, category: serializedCategories},
       },
     );
-    return response;
   } catch (error) {
-    throw error;
+    return handleError(error, 'getServiceProviders'); // Return the error handled by handleError function
   }
 };
 
-export const addService = async (data: any): Promise<ApiResponse<ServiceDetails[]>> => {
+export const addService = async (
+  data: unknown,
+): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
   try {
-    const response = await post<ServiceDetails[]>(
-      `${V1_SERVICE_BASE_ROUTE}${ADD_SERVICE}`,
+    return await post<ServiceDetails>(
+      `${V1_SERVICE_BASE_ROUTE}${UPSERT_SERVICE}`,
       data,
     );
-    console.log('addService response', response);
-    
-    return response;
   } catch (error) {
-    throw error;
+    return handleError(error, 'addService'); // Return the error handled by handleError function
   }
 };
 
 export const getUserServices = async (
-  data: any,
-): Promise<ApiResponse<ServiceDetails[]>> => {
+  data: unknown,
+): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
   try {
-    const response = await post<ServiceDetails[]>(
+    return await post<ServiceDetails>(
       `${V1_SERVICE_BASE_ROUTE}${GET_USER_SERVICES}`,
       data,
     );
-    return response;
-  } catch (error: any) {
-    console.log(error);
-
-    const errorMessage =
-      error?.message ?? 'An unexpected error occurred during registration.';
-    throw errorMessage;
+  } catch (error) {
+    return handleError(error, 'getUserServices'); // Return the error handled by handleError function
   }
 };
 
-export const bookService = async (data: any): Promise<ApiResponse<ServiceDetails>> => {
+export const bookService = async (
+  data: unknown,
+): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
   try {
-    console.log(data);
-
-    // Return the response from the POST request
-    const response = await post<ServiceDetails>(
+    return await post<ServiceDetails>(
       `${V1_SERVICE_BASE_ROUTE}${BOOK_SERVICE}`,
       data,
     );
-    return response; // Return the response here
   } catch (error) {
-    throw error; // It's important to throw the error so handleLogin can catch it
+    return handleError(error, 'bookService'); // Return the error handled by handleError function
   }
 };
 
 export const getUpcomingEvents = async (
-  data: any,
-): Promise<ApiResponse<ServiceDetails>> => {
+  data: unknown,
+): Promise<ApiResponse<ServiceDetails[]> | ErrorResponse> => {
   try {
-    console.log('getUpcomingEvents', data);
-
-    // Return the response from the POST request
-    const response = await post<ServiceDetails>(
+    return await post<ServiceDetails[]>(
       `${V1_SERVICE_BASE_ROUTE}${UPCOMING_EVENTS}`,
       data,
     );
-    console.log('getUpcomingEvents response', response);
-    return response; // Return the response here
   } catch (error) {
-    console.log({error});
-    
-    throw error; // It's important to throw the error so handleLogin can catch it
+    return handleError(error, 'getUpcomingEvents'); // Return the error handled by handleError function
   }
 };
+
+export const deleteServiceById = async (
+  serviceId: string,
+): Promise<ApiResponse<ServiceDetails[]> | ErrorResponse> => {
+  try {
+    return await del<ServiceDetails[]>(
+      `${V1_SERVICE_BASE_ROUTE}${DELETE_SERVICE}`,
+      {
+        params: {serviceId: serviceId},
+      },
+    );
+  } catch (error) {
+    return handleError(error, 'deleteServiceById'); // Corrected error message
+  }
+};
+

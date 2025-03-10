@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   iconFallback: {
     flex: 1,
     borderWidth: 0.5,
-    borderColor: COLORS.grey,
+    borderColor: COLORS.gray,
   },
   content: {
     flex: 1,

@@ -1,5 +1,12 @@
 import React, {useRef, useState} from 'react';
-import {View, TextInput, StyleSheet, Keyboard, Image, ScrollView} from 'react-native';
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  Keyboard,
+  Image,
+  ScrollView,
+} from 'react-native';
 import CustomText from '../../components/CustomText';
 import {WORD_DIR} from '../../utils/local/en';
 import CustomButton from '../../components/CustomButton';
@@ -9,15 +16,16 @@ import {useDispatch} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {Screen, Spacing} from '../../utils/dimension';
-import { RegisterUser } from 'interfaces';
-import { login } from '../../redux/authSlice';
+import {ErrorResponse, RegisterUser, User} from 'interfaces';
+import {login} from '../../redux/authSlice';
+import {ApiResponse} from 'services/apiClient';
+import { globalStyle } from '../../utils/globalStyle';
 const OTP_LENGTH: number = 6;
 
 const VerifyOTPScreen: React.FC<RegisterUser> = props => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const data = props.route.params;
-  console.log(data);
 
   const [emailOTP, setEmailOTP] = useState<string[]>(
     Array(OTP_LENGTH).fill(''),
@@ -81,34 +89,44 @@ const VerifyOTPScreen: React.FC<RegisterUser> = props => {
 
   const handleSubmit = async (): Promise<any> => {
     Keyboard.dismiss();
+
+    // Verify OTP before proceeding with registration
     const emailOTPResponse = await verifyOTP({
       key: data.email,
       otp: emailOTP.join(''),
     });
-    console.log(emailOTPResponse);
 
     if (!emailOTPResponse.success) {
-      dispatch(showSnackbar(emailOTPResponse.message));
+      dispatch(
+        showSnackbar({
+          message: emailOTPResponse.message,
+        }),
+      );
       return;
     }
 
-    const phoneOTPResponse = await verifyOTP({
-      key: data.phoneNumber,
-      otp: phoneOTP.join(''),
-    });
-    console.log(phoneOTPResponse);
+    // Register the user if OTP verification is successful
+    const registerUserResponse: ApiResponse<User> | ErrorResponse =
+      await registerUser(data);
 
-    if (!phoneOTPResponse.success) {
-      dispatch(showSnackbar(phoneOTPResponse.message));
-      return;
-    }
-
-    const registerUserResponse = await registerUser(data);
-    if (registerUserResponse) {
-      dispatch(showSnackbar('Registered successfully'));
+    if (registerUserResponse.success && registerUserResponse.data) {
+      dispatch(
+        showSnackbar({
+          message: WORD_DIR.registerUser,
+          success: true,
+        }),
+      );
+      // Save token in AsyncStorage if available
       dispatch(login({user: registerUserResponse.data}));
+
       // Navigate to the home screen
       navigation.navigate('Home');
+    } else {
+      dispatch(
+        showSnackbar({
+          message: registerUserResponse.message,
+        }),
+      );
     }
   };
 
@@ -142,7 +160,7 @@ const VerifyOTPScreen: React.FC<RegisterUser> = props => {
     <ScrollView
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.container}>
+      contentContainerStyle={globalStyle.globalContainer}>
       <Image
         source={require('../../assets/otp-security.png')}
         style={{width: Screen.width, height: Screen.height / 2.5}}
@@ -152,16 +170,10 @@ const VerifyOTPScreen: React.FC<RegisterUser> = props => {
           data.email,
           'email',
         )}`}
+        numberOfLines={2}
+        style={{alignSelf:'center'}}
       />
       {renderOtpInputs(emailOTP, 'email')}
-      <CustomText
-        label={`OTP has been sent to your phone number ending with ${maskSensitiveData(
-          data.phoneNumber,
-          'phone',
-        )}`}
-      />
-      {renderOtpInputs(phoneOTP, 'phone')}
-
       <CustomButton label={WORD_DIR.verifyOTP} onPress={handleSubmit} />
     </ScrollView>
   );

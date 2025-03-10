@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { Animated, Text, View, StyleSheet } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { COLORS } from '../utils/globalConstants/color';
-import { RootState } from '../redux/store';
-import { hideSnackbar } from '../redux/snackbarSlice';
-import { FontSize, Screen, Spacing } from '../utils/dimension';
+import React, {useEffect, useState} from 'react';
+import {Animated, Text, View, StyleSheet} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import {COLORS} from '../utils/globalConstants/color';
+import {RootState} from '../redux/store';
+import {hideSnackbar} from '../redux/snackbarSlice';
+import {FontSize, Screen, Spacing} from '../utils/dimension';
 
 const CustomSnackbar: React.FC = () => {
   const dispatch = useDispatch();
-  const { message = '', visible } = useSelector((state: RootState) => state.snackbar);
+  const {
+    message = '',
+    success,
+    visible,
+  } = useSelector((state: RootState) => state.snackbar);
   const animation = useState(new Animated.Value(0))[0];
 
   useEffect(() => {
@@ -37,6 +41,11 @@ const CustomSnackbar: React.FC = () => {
     };
   }, [visible, dispatch, animation]);
 
+  // Conditional styles based on the success flag
+  const snackbarStyle = success
+    ? {backgroundColor: COLORS.success, color: COLORS.white}
+    : {backgroundColor: COLORS.error, color: COLORS.white};
+
   return (
     <Animated.View
       style={[
@@ -51,10 +60,12 @@ const CustomSnackbar: React.FC = () => {
               }),
             },
           ],
+          backgroundColor: snackbarStyle.backgroundColor, // Apply background color
         },
-      ]}
-    >
-      <Text style={styles.snackbarText}>{message}</Text>
+      ]}>
+      <Text style={[styles.snackbarText, {color: snackbarStyle.color}]}>
+        {message}
+      </Text>
     </Animated.View>
   );
 };
@@ -63,7 +74,6 @@ const styles = StyleSheet.create({
   snackbarContainer: {
     position: 'absolute',
     bottom: 0,
-    backgroundColor: COLORS.black,
     padding: Spacing.medium,
     width: Screen.width,
     flexDirection: 'row',
@@ -72,7 +82,6 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   snackbarText: {
-    color: COLORS.white,
     fontSize: FontSize.medium,
   },
 });

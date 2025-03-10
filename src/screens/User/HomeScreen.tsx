@@ -3,34 +3,45 @@ import {View, FlatList, StyleSheet, Image} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import CustomSearchBar from '../../components/CustomSearchBar';
-import CustomCards from '../../components/CustomCards';
 import CustomText from '../../components/CustomText';
 import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import {getGreeting} from '../../utils/globalFunctions';
 import {getServiceProviders} from '../../services/serviceProviderService';
 import {useFocusEffect} from '@react-navigation/native';
-import { User } from 'interfaces';
+import {ErrorResponse, ServiceDetails, User} from 'interfaces';
+import CustomServiceCards from '../../components/CustomServiceCard';
+import {FallBack} from '../../components/FallBack';
+import dataNotFound from '../../assets/error-in-calendar.png';
+import {WORD_DIR} from '../../utils/local/en';
+import {MAX_SCHEDULE_DISPLAY} from '../../utils/constants';
+import {showSnackbar} from '../../redux/snackbarSlice';
+import {ApiResponse} from '../../services/apiClient';
+import { COLORS } from '../../utils/globalConstants/color';
+import { globalStyle } from '../../utils/globalStyle';
 
 const HomeScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
-  console.log(user);
 
   const [data, setData] = useState<User[]>([]);
   const [filteredData, setFilteredData] = useState<User[]>([]);
 
-  // Function to fetch service providers
-  const fetchServiceProviders = useCallback(async () => {
-    try {
-      const categories = ['Photography', 'Guitar', 'Art', 'Music'];
-      const response = await getServiceProviders(user?.id, categories);
+  const fetchServiceProviders = useCallback(async (): Promise<void> => {
+    const categories = ['Photography', 'Guitar', 'Art', 'Music', 'Sports'];
+    const response: ApiResponse<ServiceDetails[]> | ErrorResponse =
+      await getServiceProviders(user?.id, categories);
 
+    if (response.success && response.data) {
       setData(response.data);
       setFilteredData(response.data); // Set filtered data as the default
-    } catch (error) {
-      console.error('Error fetching service providers:', error);
+    } else {
+      dispatch(
+        showSnackbar({
+          message: response.message,
+        }),
+      );
     }
-  }, []);
+  }, [user?.id]);
 
   // Use `useFocusEffect` to call the API whenever the screen is focused
   useFocusEffect(
@@ -54,47 +65,36 @@ const HomeScreen = ({navigation}: any) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyle.globalContainer}>
       <CustomSearchBar onSearch={handleSearch} />
       <CustomText
         label={`${getGreeting()}, ${user?.firstName}`}
         style={styles.greetingText}
       />
 
-      {filteredData && filteredData?.length > 0 ? (
-        <View>
-          <FlatList
-            data={filteredData}
-            keyExtractor={item => item.id}
-            renderItem={({item}) => (
-              <CustomCards
-                item={item}
-                handlePress={() => {
-                  navigation.navigate('ServiceDetails', item);
-                }}
-              />
-            )}
-            showsVerticalScrollIndicator={false}
-          />
-        </View>
+      {filteredData?.length > 0 ? (
+        <FlatList
+          data={filteredData}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => (
+            <CustomServiceCards
+              item={item}
+              maxDisplay={MAX_SCHEDULE_DISPLAY}
+              handlePress={() => {
+                navigation.navigate('ServiceDetails', item);
+              }}
+            />
+          )}
+          showsVerticalScrollIndicator={false}
+        />
       ) : (
-        <View style={styles.dataNotFound}>
-          <Image
-            source={require('../../assets/error-in-calendar.png')}
-            style={{width: Screen.width, height: Screen.height / 2}}
-          />
-          <CustomText style={styles.noDataText} label={'No service found'} />
-        </View>
+        <FallBack imageSrc={dataNotFound} heading={WORD_DIR.noService} />
       )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    margin: Spacing.small,
-  },
   greetingText: {
     fontSize: FontSize.large,
     fontWeight: '600',

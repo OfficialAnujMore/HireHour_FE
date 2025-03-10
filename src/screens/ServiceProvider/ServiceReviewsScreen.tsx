@@ -12,6 +12,7 @@ import {
 import { AirbnbRating } from "react-native-ratings"; // Import AirbnbRating from react-native-ratings
 import { Screen, Spacing, FontSize } from "../../utils/dimension";
 import CustomButton from "../../components/CustomButton";
+import { globalStyle } from "../../utils/globalStyle";
 
 // Reviews Data (for rendering)
 const reviews = [
@@ -53,7 +54,7 @@ const RatingInput = ({ rating, onRatingChange }: any) => {
       size={30} // Adjust size for better visibility
       showRating={false} // Hide the text rating and just show stars
       selectedColor="#FFD700" // Gold color for selected stars
-      unSelectedColor="#d3d3d3" // Light grey for unselected stars
+      unSelectedColor="#d3d3d3" // Light gray for unselected stars
     />
   );
 };
@@ -97,13 +98,13 @@ const ServiceReviewScreen: React.FC = () => {
     }
 
     // Handle the review submission (for now, just log it)
-    console.log("Review submitted:", { reviewText, rating });
+    
     setIsModalVisible(false);
     setErrorMessage(""); // Clear error message after submission
   };
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyle.globalContainer}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Koffee Cafe NYC</Text>
@@ -319,7 +320,7 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
   },
   errorText: {
-    color: "red",
+    color: "error",
     fontSize: FontSize.small,
     marginBottom: Spacing.small,
   },

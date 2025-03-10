@@ -7,13 +7,14 @@ import {
 } from 'react-native';
 import {FontSize, Spacing} from '../../utils/dimension';
 import CustomText from '../../components/CustomText';
+import { globalStyle } from '../../utils/globalStyle';
 
 const ViewServiceScreen = (props: any) => {
   const item = props.route.params;
-  console.log('ViewService screen item====.', item);
+  
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={globalStyle.globalContainer}>
       <CustomText label={item.title} style={styles.heading} />
       <CustomText label={`Category: ${item.category}`} style={styles.text} />
       <CustomText
@@ -21,7 +22,7 @@ const ViewServiceScreen = (props: any) => {
         style={styles.text}
       />
       <CustomText
-        label={`Charges Per Hour: $${item.chargesPerHour}`}
+        label={`Charges Per Hour: $${item.pricing}`}
         style={styles.text}
       />
 
@@ -30,7 +31,7 @@ const ViewServiceScreen = (props: any) => {
         {item.servicePreview.map((image, index) => (
           <Image
             key={index}
-            source={{uri: image.imageUri}}
+            source={{uri: image.uri}}
             style={styles.image}
           />
         ))}

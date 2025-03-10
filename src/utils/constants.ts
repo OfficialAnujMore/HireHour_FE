@@ -4,6 +4,8 @@ export const CATEGORY={
     sports: 'Sports',
   }
 
+
+
 export const USER_DETAILS={
   firstName: '',
   lastName: '',
@@ -26,3 +28,5 @@ export const USER_DETAILS={
   // password:'serviceprovideR@123'
 
 }
+
+export const MAX_SCHEDULE_DISPLAY = 5

@@ -1,21 +1,42 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, StyleSheet, FlatList, Image} from 'react-native';
+import {View, StyleSheet, FlatList, Image, Text} from 'react-native';
 import CustomText from '../components/CustomText';
 import {getUpcomingEvents} from '../services/serviceProviderService';
 import {useSelector} from 'react-redux';
 import {RootState} from 'redux/store';
-import CustomEventCard from '../components/CustomEventCard';
 import {useFocusEffect} from '@react-navigation/native';
 import {WORD_DIR} from '../utils/local/en';
-import {FontSize, Screen} from '../utils/dimension';
+import CustomServiceCards from '../components/CustomServiceCard';
+import {FallBack} from '../components/FallBack';
+import dataNotFound from '../assets/error-in-calendar.png';
+import {globalStyle} from '../utils/globalStyle';
+import {ApiResponse} from 'services/apiClient';
+import {ErrorResponse, ServiceDetails} from 'interfaces';
+import {useDispatch} from 'react-redux';
+import {showSnackbar} from '../redux/snackbarSlice';
 const UpcomingEvents = ({}) => {
   const user = useSelector((state: RootState) => state.auth.user);
   const [data, setData] = useState();
+  const dispatch = useDispatch();
 
-  const apiCall = async () => {
-    const response = await getUpcomingEvents({userId: user?.id});
-    setData(response?.data);
+  const apiCall = async (): Promise<void> => {
+    const response: ApiResponse<ServiceDetails[]> | ErrorResponse =
+      await getUpcomingEvents({
+        userId: user?.id,
+      });
+
+    if (response.success && response.data) {
+      setData(response.data);
+    } else {
+      dispatch(
+        showSnackbar({
+          message: response.message,
+          success: false,
+        }),
+      );
+    }
   };
+
   useFocusEffect(
     useCallback(() => {
       apiCall();
@@ -25,48 +46,35 @@ const UpcomingEvents = ({}) => {
   useEffect(() => {
     console.log(data);
   }, [data]);
+
   return (
-    <View style={styles.container}>
-      {data && data?.length > 0 ? (
+    <View style={globalStyle.globalContainer}>
+      {data && data?.length === 0 ? (
+        <FallBack
+          imageSrc={dataNotFound}
+          heading={WORD_DIR.noUpcomingEvents}
+          subHeading={WORD_DIR.scheduleEvent}
+        />
+      ) : (
         <View>
           <CustomText label={WORD_DIR.upcomingEvents} />
           <FlatList
             data={data}
             keyExtractor={item => item.id}
             renderItem={({item}) => (
-              <CustomEventCard
+              <CustomServiceCards
                 item={item}
                 handlePress={() => {
-                  // navigation.navigate("ServiceDetails", item)
+                  // navigation.navigate('ServiceDetails', item);
                 }}
               />
             )}
             showsVerticalScrollIndicator={false}
           />
         </View>
-      ) : (
-        <View style={styles.dataNotFound}>
-          <Image
-            source={require('../assets/error-in-calendar.png')}
-            style={{width: Screen.width, height: Screen.height / 2}}
-          />
-          <CustomText style={styles.noDataText} label={'No upcoming events'} />
-        </View>
       )}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {padding: 0},
-  dataNotFound: {
-    height:Screen.height,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  noDataText: {
-    fontSize: FontSize.large,
-    fontWeight: '600',
-  },
-});
 export default UpcomingEvents;

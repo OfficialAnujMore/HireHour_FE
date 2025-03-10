@@ -13,12 +13,13 @@ import {COLORS} from '../../utils/globalConstants/color';
 import CustomButton from '../../components/CustomButton';
 import {WORD_DIR} from '../../utils/local/en';
 import {updateUserRole} from '../../services/userService';
-import { RootState} from '../../redux/store';
+import {RootState} from '../../redux/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import CustomText from '../../components/CustomText';
 import {useNavigation} from '@react-navigation/native';
-import { login } from '../../redux/authSlice';
+import {login} from '../../redux/authSlice';
+import { globalStyle } from '../../utils/globalStyle';
 
 const EnrollAsServiceProvider: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -38,20 +39,30 @@ const EnrollAsServiceProvider: React.FC = () => {
         id: user?.id,
         isEnrolled: isServiceProviderEnrolled,
       });
-      console.log(response);
 
       if (response?.data) {
         dispatch(login({user: response.data}));
-        dispatch(showSnackbar('Successfully enrolled as a service provider'));
+
+        dispatch(
+          showSnackbar({
+            message: 'Successfully enrolled as a service provider',
+            success: true,
+          }),
+        );
         navigation.goBack();
       }
     } catch (error: any) {
-      dispatch(showSnackbar(error));
+      dispatch(
+        showSnackbar({
+          message: error,
+          success: true,
+        }),
+      );
     }
   };
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyle.globalContainer}>
       <CustomText label={`Hello ${user?.firstName}`} />
       <CustomText label={`Do you wish to be enrolled as a service provider?`} />
       <View style={styles.toggleContainer}>
@@ -59,7 +70,7 @@ const EnrollAsServiceProvider: React.FC = () => {
         <Switch
           value={isServiceProviderEnrolled}
           onValueChange={value => setIsServiceProviderEnrolled(value)}
-          trackColor={{true: COLORS.black, false: COLORS.grey}}
+          trackColor={{true: COLORS.black, false: COLORS.gray}}
           thumbColor={isServiceProviderEnrolled ? COLORS.black : COLORS.white}
         />
       </View>
@@ -87,13 +98,6 @@ const EnrollAsServiceProvider: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.white,
-    paddingHorizontal: Spacing.large,
-    paddingTop: Spacing.extraLarge,
-  },
-
   toggleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
