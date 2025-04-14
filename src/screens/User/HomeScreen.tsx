@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {View, FlatList, StyleSheet, Image} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
@@ -18,6 +18,15 @@ import {showSnackbar} from '../../redux/snackbarSlice';
 import {ApiResponse} from '../../services/apiClient';
 import { COLORS } from '../../utils/globalConstants/color';
 import { globalStyle } from '../../utils/globalStyle';
+import messaging from '@react-native-firebase/messaging';
+import {Platform} from 'react-native';
+import {
+  check,
+  request,
+  PERMISSIONS,
+  RESULTS,
+  PermissionStatus,
+} from 'react-native-permissions';
 
 const HomeScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
@@ -63,6 +72,62 @@ const HomeScreen = ({navigation}: any) => {
       setFilteredData(data); // Reset filtered data to the full data if no query
     }
   };
+
+  const getFCMToken = async () => {
+    const fcmToken = await messaging().getToken();
+    if (fcmToken) {
+      console.log('FCM Token:', fcmToken);
+    }
+  };
+  
+  const askNotificationPermission = async (): Promise<PermissionStatus> => {
+    let permission: typeof PERMISSIONS[keyof typeof PERMISSIONS] | null = null;
+  
+    if (Platform.OS === 'ios') {
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  
+      if (enabled) {
+        getFCMToken();
+        return RESULTS.GRANTED;
+      } else {
+        console.warn('iOS notification permission denied');
+        return RESULTS.DENIED;
+      }
+    } else if (Platform.OS === 'android' && Platform.Version >= 33) {
+      permission = 'android.permission.POST_NOTIFICATIONS';
+    }
+  
+    if (!permission) {
+      getFCMToken();
+      return RESULTS.GRANTED;
+    }
+  
+    const result = await check(permission);
+  
+    if (result === RESULTS.GRANTED) {
+      console.log('Notification permission already granted');
+      getFCMToken();
+      return result;
+    }
+  
+    const newStatus = await request(permission);
+  
+    if (newStatus === RESULTS.GRANTED) {
+      console.log('Notification permission granted');
+      getFCMToken();
+    } else {
+      console.warn('Notification permission denied or blocked');
+    }
+  
+    return newStatus;
+  };
+  
+  useEffect(() => {
+    askNotificationPermission();
+  }, []);
 
   return (
     <View style={globalStyle.globalContainer}>

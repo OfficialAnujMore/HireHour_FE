@@ -18,7 +18,7 @@ import {USER_DETAILS} from '../../utils/constants';
 import {AuthUser, ErrorResponse, Errors, User} from 'interfaces';
 import {login} from '../../redux/authSlice';
 import {ApiResponse} from 'services/apiClient';
-import { globalStyle } from '../../utils/globalStyle';
+import {globalStyle} from '../../utils/globalStyle';
 
 const LoginScreen: React.FC = () => {
   const dispatch = useDispatch();
