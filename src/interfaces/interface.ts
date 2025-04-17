@@ -101,6 +101,7 @@ export interface User {
   profileImageURL: string;
   bannerImageURL: string;
   token: string;
+  fcmToken:string;
   refreshToken: string;
   lastLogin: string;
   createdAt: string;

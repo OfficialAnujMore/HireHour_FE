@@ -24,6 +24,8 @@ export const VERIFY_EMAIL_AND_USERNAME = '/verifyUsernameAndEmail'
 export const VERIFY_PHONE = '/verifyPhone'
 export const VERIFY_OTP = '/verifyOTP'
 export const UPDATE_ROLE = '/updateRole'
+export const UPSERT_FCM_TOKEN = '/upsertFCMToken'
+
 export const GET_ALL_USERS = '/getAllUsers'
 export const DELETE_ALL_USERS = '/deleteAllUsers'
 

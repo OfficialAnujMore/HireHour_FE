@@ -27,6 +27,9 @@ import {
   RESULTS,
   PermissionStatus,
 } from 'react-native-permissions';
+import PushNotification from 'react-native-push-notification';
+import { upsertFCMToken } from '../../services/userService';
+import { login } from '../../redux/authSlice';
 
 const HomeScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
@@ -50,6 +53,7 @@ const HomeScreen = ({navigation}: any) => {
         }),
       );
     }
+    askNotificationPermission();
   }, [user?.id]);
 
   // Use `useFocusEffect` to call the API whenever the screen is focused
@@ -76,7 +80,11 @@ const HomeScreen = ({navigation}: any) => {
   const getFCMToken = async () => {
     const fcmToken = await messaging().getToken();
     if (fcmToken) {
-      console.log('FCM Token:', fcmToken);
+      const res = await upsertFCMToken({
+        userId: user?.id,
+        token:fcmToken
+      })
+      dispatch(login({user: res.data}));
     }
   };
   
@@ -90,7 +98,8 @@ const HomeScreen = ({navigation}: any) => {
         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
   
       if (enabled) {
-        getFCMToken();
+        // console.log('iOS notification permission granted');
+        getFCMToken(); // Call it after permission is granted
         return RESULTS.GRANTED;
       } else {
         console.warn('iOS notification permission denied');
@@ -101,7 +110,8 @@ const HomeScreen = ({navigation}: any) => {
     }
   
     if (!permission) {
-      getFCMToken();
+      // console.log('Android permission granted by default');
+      getFCMToken(); // Call it for Android if no specific permission is required
       return RESULTS.GRANTED;
     }
   
@@ -109,7 +119,7 @@ const HomeScreen = ({navigation}: any) => {
   
     if (result === RESULTS.GRANTED) {
       console.log('Notification permission already granted');
-      getFCMToken();
+      getFCMToken(); // Call it after permission check
       return result;
     }
   
@@ -117,17 +127,56 @@ const HomeScreen = ({navigation}: any) => {
   
     if (newStatus === RESULTS.GRANTED) {
       console.log('Notification permission granted');
-      getFCMToken();
+      getFCMToken(); // Call it after permission granted
     } else {
       console.warn('Notification permission denied or blocked');
     }
   
     return newStatus;
   };
+
   
+  
+  const createNotificationChannel = () => {
+    if (Platform.OS === 'android' && Platform.Version >= 26) {
+      PushNotification.createChannel(
+        {
+          channelId: 'default-channel', // Channel ID (unique)
+          channelName: 'Default Channel', // Channel Name (can be anything)
+          channelDescription: 'A default channel for notifications', // Channel Description
+          soundName: 'default', // Sound for notifications
+          importance: 4, // Importance level (4 is high importance)
+          vibrate: true, // Vibration for notifications
+        },
+        (created:any) => console.log(`Create channel returned ${created}`)
+      );
+    }
+  };
+
+
   useEffect(() => {
-    askNotificationPermission();
+    // Request user permission for notifications (iOS only)
+    // if (Platform.OS === 'ios') {
+    //   messaging().requestPermission();
+    // }
+    // Create notification channel for Android
+    createNotificationChannel();
+    // Foreground message handler
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      if (remoteMessage.notification) {
+        PushNotification.localNotification({
+          channelId: 'default-channel', // Use the channel ID here
+          title: remoteMessage.notification.title,
+          message: remoteMessage.notification.body,
+        });
+      } else {
+        console.log('No notification data found in remote message');
+      }
+    });
+  
+    return unsubscribe;
   }, []);
+  
 
   return (
     <View style={globalStyle.globalContainer}>
