@@ -15,7 +15,7 @@ const unprotectedRoutes = [
   '/auth/register',
   'api/v1/user/loginUser',
 ];
-console.log({API_BASE_URL});
+console.log('App Running on ===> ', {API_BASE_URL});
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL, // Replace with your API base URL

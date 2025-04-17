@@ -30,15 +30,15 @@ export const CartScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [amount, setAmount] = useState(0.0);
   useEffect(() => {
-    console.log(cartItems);
+    
 
     const amt = cartItems.reduce((total, item) => {
-      console.log(item);
+      
       
       return total + Number(item.pricing) * item.schedule.length;
     }, 0);
 
-    console.log(amt);
+    
     setAmount(amt);
   }, [cartItems]);
 

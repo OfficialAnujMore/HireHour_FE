@@ -79,7 +79,7 @@ const HomeScreen = ({navigation}: any) => {
 
   const getFCMToken = async () => {
     const fcmToken = await messaging().getToken();
-    console.log({fcmToken}, user.id);
+    
     
     if (fcmToken) {
       const res = await upsertFCMToken({
@@ -100,7 +100,7 @@ const HomeScreen = ({navigation}: any) => {
         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
   
       if (enabled) {
-        // console.log('iOS notification permission granted');
+        // 
         getFCMToken(); // Call it after permission is granted
         return RESULTS.GRANTED;
       } else {
@@ -112,7 +112,7 @@ const HomeScreen = ({navigation}: any) => {
     }
   
     if (!permission) {
-      // console.log('Android permission granted by default');
+      // 
       getFCMToken(); // Call it for Android if no specific permission is required
       return RESULTS.GRANTED;
     }
@@ -120,7 +120,7 @@ const HomeScreen = ({navigation}: any) => {
     const result = await check(permission);
   
     if (result === RESULTS.GRANTED) {
-      console.log('Notification permission already granted');
+      
       getFCMToken(); // Call it after permission check
       return result;
     }
@@ -128,7 +128,7 @@ const HomeScreen = ({navigation}: any) => {
     const newStatus = await request(permission);
   
     if (newStatus === RESULTS.GRANTED) {
-      console.log('Notification permission granted');
+      
       getFCMToken(); // Call it after permission granted
     } else {
       console.warn('Notification permission denied or blocked');
@@ -172,7 +172,7 @@ const HomeScreen = ({navigation}: any) => {
           message: remoteMessage.notification.body,
         });
       } else {
-        console.log('No notification data found in remote message');
+        
       }
     });
   

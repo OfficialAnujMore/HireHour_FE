@@ -26,7 +26,7 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
   const item = props.route.params;
 
   const user = useSelector((state: RootState) => state.auth.user);
-  // console.log(JSON.stringify(item), user?.id);
+  // 
 
   const [selectedServices, setSelectedServices] = useState<ServiceDetails[]>(
     [],
@@ -65,14 +65,10 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
 
   // Navigate to the Edit Service Screen
   const handleEditService = () => {
-    // console.log(JSON.stringify(item));
-
     navigation.navigate('Create Service', item);
   };
 
   const handleDeleteService = async () => {
-    // console.log(item.serviceId);
-
     const response = await deleteServiceById(item.serviceId, user?.fcmToken);
     if (response.success) {
       navigation.goBack();
@@ -85,7 +81,7 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
       }),
     );
   };
-  console.log(item.userId === user?.id, item.userId , user?.id);
+  
   
   React.useLayoutEffect(() => {
     navigation.setOptions({

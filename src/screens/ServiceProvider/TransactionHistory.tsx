@@ -48,7 +48,7 @@ export const TransactionHistory = () => {
 
   const handlePress = (serviceId: string) => {
     // Handle navigation or actions when a transaction is clicked
-    console.log('Transaction clicked:', serviceId);
+    // console.log('Transaction clicked:', serviceId);
   };
 
   return (
