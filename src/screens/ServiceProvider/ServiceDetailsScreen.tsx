@@ -73,7 +73,7 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
   const handleDeleteService = async () => {
     // console.log(item.serviceId);
 
-    const response = await deleteServiceById(item.serviceId);
+    const response = await deleteServiceById(item.serviceId, user?.fcmToken);
     if (response.success) {
       navigation.goBack();
     }

@@ -79,10 +79,12 @@ const HomeScreen = ({navigation}: any) => {
 
   const getFCMToken = async () => {
     const fcmToken = await messaging().getToken();
+    console.log({fcmToken}, user.id);
+    
     if (fcmToken) {
       const res = await upsertFCMToken({
         userId: user?.id,
-        token:fcmToken
+        fcmToken:fcmToken
       })
       dispatch(login({user: res.data}));
     }
