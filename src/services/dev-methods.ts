@@ -10,7 +10,7 @@ interface User {
 const fetchAllUsers = async (): Promise<void> => {
   try {
     const response = await get<User[]>('/users');
-    console.log('Users:', response.data);
+    
   } catch (error) {
     console.error('Error fetching users:', error);
   }
@@ -21,7 +21,7 @@ const addNewUser = async (): Promise<void> => {
   const newUser = { name: 'Alice', email: 'alice@example.com' };
   try {
     const response = await post<User>('/users', newUser);
-    console.log('Added User:', response.data);
+    
   } catch (error) {
     console.error('Error adding user:', error);
   }

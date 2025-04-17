@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "612379269995",
+    "project_id": "music-market-place-a4364",
+    "storage_bucket": "music-market-place-a4364.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:612379269995:android:50dd440f20335769ff0a2e",
+        "android_client_info": {
+          "package_name": "com.hirehour_fe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyxf8MnP7Z82FofgefpIZDCh7X0uu9Bs8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

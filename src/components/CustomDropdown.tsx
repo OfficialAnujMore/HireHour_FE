@@ -68,10 +68,10 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
             styles.dropdown,
             {
               borderColor: errorMessage
-                ? COLORS.red
+                ? COLORS.error
                 : isDropdownVisible
                 ? COLORS.black
-                : COLORS.grey,
+                : COLORS.gray,
               backgroundColor: disabled ? COLORS.lightGrey : COLORS.white,
             },
           ]}
@@ -81,7 +81,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
           <Text
             style={[
               styles.dropdownText,
-              { color: value ? COLORS.black : COLORS.grey },
+              { color: value ? COLORS.black : COLORS.gray },
             ]}
           >
             {value || placeholder}
@@ -89,7 +89,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
           <Icon
             name={isDropdownVisible ? 'chevron-up-outline' : 'chevron-down-outline'}
             size={20}
-            color={COLORS.grey}
+            color={COLORS.gray}
           />
         </TouchableOpacity>
         {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.medium,
   },
   errorText: {
-    color: COLORS.red,
+    color: COLORS.error,
     fontSize: 12,
     marginTop: 5,
   },

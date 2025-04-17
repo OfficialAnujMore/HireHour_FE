@@ -11,10 +11,13 @@ import {Screen, Spacing, FontSize} from '../../utils/dimension';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {COLORS} from '../../utils/globalConstants/color';
 import {useNavigation} from '@react-navigation/native';
-import {logout, RootState} from '../../redux/store';
+import {RootState} from '../../redux/store';
 import {useDispatch, useSelector} from 'react-redux';
 import CustomText from '../../components/CustomText';
 import {WORD_DIR} from '../../utils/local/en';
+import {MenuItemProps} from 'interfaces';
+import {logout} from '../../redux/authSlice';
+import { globalStyle } from '../../utils/globalStyle';
 
 const ProfileScreen: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -33,12 +36,19 @@ const ProfileScreen: React.FC = () => {
 
   const menuItems = useMemo(() => {
     const items = [
-      {label: 'Transaction History', icon: 'receipt-outline'},
+      {
+        label: 'Transaction History',
+        icon: 'receipt-outline',
+        routeName:'Transaction History',
+      },
+
       {
         label: 'Settings',
         icon: 'settings-outline',
-        callback: () => navigation.navigate('Settings'),
+        routeName:'Settings',
+        // callback: () => navigation.navigate('Settings'),
       },
+      
       {label: 'Privacy Policy', icon: 'lock-closed-outline'},
       {
         label: 'Log out',
@@ -51,13 +61,13 @@ const ProfileScreen: React.FC = () => {
       items.splice(2, 0, {
         label: 'Enroll As Service Provider',
         icon: 'person-add',
-        callback: () => navigation.navigate('Enroll'),
+        routeName:'Enrollment',
       });
     } else {
       items.splice(2, 0, {
         label: 'My Services',
         icon: 'briefcase-outline',
-        callback: () => navigation.navigate('MyService'),
+        routeName:'MyService',
       });
     }
 
@@ -65,7 +75,7 @@ const ProfileScreen: React.FC = () => {
   }, [navigation, dispatch, isServiceProvider]);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={globalStyle.globalContainer}>
       <TouchableOpacity
         style={styles.editItemContainer}
         onPress={() => navigation.navigate('EditProfile')}
@@ -85,7 +95,7 @@ const ProfileScreen: React.FC = () => {
             <Icon
               name="person-outline"
               size={FontSize.extraLarge * 1.5}
-              color={COLORS.grey}
+              color={COLORS.gray}
             />
           </View>
         )}
@@ -99,18 +109,12 @@ const ProfileScreen: React.FC = () => {
           key={index}
           label={item.label}
           icon={item.icon}
-          callback={item.callback}
+          callback={ item.routeName ? ()=> navigation.navigate(item.routeName) : item.callback}
         />
       ))}
     </ScrollView>
   );
 };
-
-interface MenuItemProps {
-  label: string;
-  icon: string;
-  callback?: () => void;
-}
 
 const MenuItem: React.FC<MenuItemProps> = ({label, icon, callback}) => (
   <TouchableOpacity
@@ -144,7 +148,7 @@ const styles = StyleSheet.create({
   },
   iconFallback: {
     borderWidth: 1,
-    borderColor: COLORS.grey,
+    borderColor: COLORS.gray,
   },
   name: {
     fontSize: FontSize.large,
@@ -184,7 +188,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: FontSize.large,
-    color: COLORS.red,
+    color: COLORS.error,
     textAlign: 'center',
     marginTop: Spacing.large,
   },
