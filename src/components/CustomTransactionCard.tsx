@@ -13,7 +13,7 @@ interface CustomTransactionCardProps {
     description: string;
     totalAmt: string;
     status: string;
-    transactionId: string;
+    paymentId: string;
     transactionDateTime: string;
   };
   handlePress: (id: string) => void;
@@ -57,7 +57,7 @@ const CustomTransactionCard: React.FC<CustomTransactionCardProps> = ({
   item,
   handlePress,
 }) => {
-  const formatted = formatTransactionDateTime(item.transactionDateTime);
+  const formatted = formatTransactionDateTime(item.createdAt);
   const transactionIcon = getTransactionIcon(item.transactionType);
   const statusColor = getStatusColor(item.status);
 
@@ -71,12 +71,12 @@ const CustomTransactionCard: React.FC<CustomTransactionCardProps> = ({
 
         <View style={styles.orderDetails}>
           <View style={styles.row}>
-            <CustomText style={styles.orderTitle} label={item.title} />
-            <CustomText style={styles.orderTitle} label={`$${item.totalAmt}`} />
+            <CustomText style={styles.orderTitle} label={item.service?.title} />
+            <CustomText style={styles.orderTitle} label={`$${item.amount}`} />
           </View>
 
           <View style={styles.row}>
-            <CustomText style={styles.orderMeta} label={item.description} />
+            <CustomText style={styles.orderMeta} label={item.service?.description} />
             <View
               style={[
                 styles.statusContainer,
@@ -95,7 +95,7 @@ const CustomTransactionCard: React.FC<CustomTransactionCardProps> = ({
           </View>
 
           <View style={styles.row}>
-            <CustomText style={styles.orderMeta} label={item.transactionId} />
+            <CustomText style={styles.orderMeta} label={item.paymentId} />
             <CustomText style={styles.orderMeta} label={formatted.time} />
           </View>
         </View>

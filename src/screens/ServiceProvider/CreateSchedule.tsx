@@ -47,7 +47,7 @@ const CreateSchedule = (props: any) => {
 
       // Ensure each date string is set correctly and doesn't become [object Object]
       serviceDetails.schedule.forEach((date: string) => {
-        console.log(date);
+        
 
         initialSelectedDates[date.date] = {selected: true, isAvailable: true};
       });
@@ -95,7 +95,7 @@ const CreateSchedule = (props: any) => {
       servicePreview: serviceDetails.servicePreview,
       selectedDates: selectedDates,
     };
-    console.log('Upsert data \n ', JSON.stringify(data));
+    
 
     const response: ApiResponse<ServiceDetails> | ErrorResponse =
       await addService(data);

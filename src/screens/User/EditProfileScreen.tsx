@@ -160,7 +160,7 @@ const EditProfileScreen: React.FC = () => {
           source={
             user.profileImage
               ? {uri: user.profileImage}
-              : require('../../assets/logo.jpeg')
+              : require('../../assets/logo.png')
           }
           style={styles.profileImage}
         />

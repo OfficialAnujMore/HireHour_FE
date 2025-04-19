@@ -61,6 +61,7 @@ export const bookService = async (
   data: unknown,
 ): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
   try {
+    
     return await post<ServiceDetails>(
       `${V1_SERVICE_BASE_ROUTE}${BOOK_SERVICE}`,
       data,
@@ -85,12 +86,13 @@ export const getUpcomingEvents = async (
 
 export const deleteServiceById = async (
   serviceId: string,
+  fcmToken:string|undefined
 ): Promise<ApiResponse<ServiceDetails[]> | ErrorResponse> => {
   try {
     return await del<ServiceDetails[]>(
       `${V1_SERVICE_BASE_ROUTE}${DELETE_SERVICE}`,
       {
-        params: {serviceId: serviceId},
+        params: {serviceId: serviceId, fcmToken:fcmToken},
       },
     );
   } catch (error) {

@@ -17,7 +17,7 @@ const SplashScreen = ({onFinish}: {onFinish: (status: boolean) => void}) => {
 
   return (
     <View style={styles.container}>
-      <Image source={require('../../assets/logo.jpeg')} style={styles.image} />
+      <Image source={require('../../assets/logo.png')} style={styles.image} />
       <CustomText style={styles.text} label={WORD_DIR.welcomeMsg} />
     </View>
   );

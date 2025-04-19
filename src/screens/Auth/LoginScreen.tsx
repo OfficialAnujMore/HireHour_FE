@@ -4,7 +4,7 @@ import {useDispatch} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {showSnackbar} from '../../redux/snackbarSlice';
-import logo from '../../assets/logo.jpeg';
+import logo from '../../assets/logo.png';
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
 import CustomText from '../../components/CustomText';

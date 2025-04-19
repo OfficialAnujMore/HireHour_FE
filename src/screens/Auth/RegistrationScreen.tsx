@@ -3,7 +3,7 @@ import {View, Image, ScrollView, StyleSheet} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {showSnackbar} from '../../redux/snackbarSlice';
-import logo from '../../assets/logo.jpeg';
+import logo from '../../assets/logo.png';
 import {EMAIL_REGEX} from '../../utils/regex';
 import {verifyUsernameAndEmail} from '../../services/authService';
 import CustomInput from '../../components/CustomInput';

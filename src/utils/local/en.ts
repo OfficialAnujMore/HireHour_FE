@@ -1,5 +1,5 @@
 export const WORD_DIR = {
-  welcomeMsg: 'Welcome to the app!',
+  welcomeMsg: 'Welcome to Harmoniq',
   firstName: 'First name',
   lastName: 'Last name',
   username: 'Username',
