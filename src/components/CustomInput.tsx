@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   TextInput,
   Text,
@@ -9,10 +9,10 @@ import {
   Keyboard,
   TouchableOpacity,
 } from 'react-native';
-import { FontSize, Screen, Spacing } from '../utils/dimension';
+import {FontSize, Screen, Spacing} from '../utils/dimension';
 import CustomText from './CustomText';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { COLORS } from '../utils/globalConstants/color';
+import {COLORS} from '../utils/globalConstants/color';
 
 type CustomInputProps = TextInputProps & {
   label?: string;
@@ -41,7 +41,7 @@ const formatPhoneNumber = (value: string) => {
   }
   return `(${cleanedValue.slice(0, 3)})-${cleanedValue.slice(
     3,
-    6
+    6,
   )}-${cleanedValue.slice(6, 10)}`;
 };
 
@@ -57,7 +57,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
   ...textInputProps
 }) => {
   const [isFocused, setIsFocused] = useState(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(!secureTextEntry);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleFocus = useCallback(() => {
     if (!disabled) setIsFocused(true);
@@ -78,12 +78,8 @@ const CustomInput: React.FC<CustomInputProps> = ({
         onValueChange(formattedText);
       }
     },
-    [disabled, keyboardType, maxLength, onValueChange]
+    [disabled, keyboardType, maxLength, onValueChange],
   );
-
-  const togglePasswordVisibility = useCallback(() => {
-    if (!disabled) setIsPasswordVisible((prev) => !prev);
-  }, [disabled]);
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -109,20 +105,20 @@ const CustomInput: React.FC<CustomInputProps> = ({
             onFocus={handleFocus}
             onBlur={handleBlur}
             onChangeText={handleChangeText}
-            value={value}
+            value={value || ''}
             keyboardType={keyboardType}
-            secureTextEntry={!isPasswordVisible && secureTextEntry}
+            secureTextEntry={!isPasswordVisible}
             editable={!disabled}
             maxLength={maxLength}
-            multiline={true} // Enables multi-line text wrapping
-            // textAlignVertical="top" 
+            multiline={true}
             {...textInputProps}
           />
           {secureTextEntry && !disabled && (
             <TouchableOpacity
-              onPress={togglePasswordVisibility}
-              style={styles.iconContainer}
-            >
+              onPress={() => {
+                setIsPasswordVisible(prev => !prev);
+              }}
+              style={styles.iconContainer}>
               <Icon
                 name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
                 size={20}

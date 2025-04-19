@@ -1,13 +1,18 @@
 import {FallBack} from '../../components/FallBack';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, FlatList, StyleSheet} from 'react-native';
 import {globalStyle} from '../../utils/globalStyle';
 import {WORD_DIR} from '../../utils/local/en';
 import noRecordFound from '../../assets/no-records.png';
 import {useNavigation} from '@react-navigation/native';
 import CustomTransactionCard from '../../components/CustomTransactionCard';
+import {getTransactions} from '../../services/transactionService';
+import {RootState} from 'redux/store';
+import {useSelector} from 'react-redux';
 
 export const TransactionHistory = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
+
   const [transactionHistory, setTransactionHistory] = useState([
     {
       userId: '1df1aaba-153a-4e70-9e01-0e831ae3fd26',
@@ -50,6 +55,16 @@ export const TransactionHistory = () => {
     // Handle navigation or actions when a transaction is clicked
     // console.log('Transaction clicked:', serviceId);
   };
+
+  const apiCall = async () => {
+    const response = await getTransactions(user.id);
+    if (response.data) {
+      setTransactionHistory(response.data);
+    }
+  };
+  useEffect(() => {
+    apiCall();
+  }, []);
 
   return (
     <View style={globalStyle.globalContainer}>

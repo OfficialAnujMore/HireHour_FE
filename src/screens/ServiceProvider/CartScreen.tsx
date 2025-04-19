@@ -30,25 +30,34 @@ export const CartScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [amount, setAmount] = useState(0.0);
   useEffect(() => {
-    
-
     const amt = cartItems.reduce((total, item) => {
-      
-      
       return total + Number(item.pricing) * item.schedule.length;
     }, 0);
-
-    
     setAmount(amt);
   }, [cartItems]);
 
   const handlePaymentSelect = async (method: string): Promise<void> => {
+    console.log(method);
+
     const schedule = cartItems.flatMap(service => service.schedule);
 
+    console.log(JSON.stringify({
+      userId: user?.id,
+      schedule: schedule,
+      paymentId: 'abc',
+      transactionType: method,
+      status: 'pending',
+      amount: '20',
+    }));
+    
     const response: ApiResponse<ServiceDetails> | ErrorResponse =
       await bookService({
         userId: user?.id,
         schedule: schedule,
+        paymentId: 'abc',
+        transactionType: method,
+        status: 'pending',
+        amount: '20',
       });
 
     if (response.success) {

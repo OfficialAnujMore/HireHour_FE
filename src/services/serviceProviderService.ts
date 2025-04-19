@@ -61,6 +61,7 @@ export const bookService = async (
   data: unknown,
 ): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
   try {
+    
     return await post<ServiceDetails>(
       `${V1_SERVICE_BASE_ROUTE}${BOOK_SERVICE}`,
       data,

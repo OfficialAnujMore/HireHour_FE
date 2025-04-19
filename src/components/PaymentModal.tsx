@@ -26,7 +26,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
   const paymentOptions = [
     {id: 'cash', label: 'Record a Cash Payment', icon: 'money'},
-    {id: 'debit_card', label: 'Debit Card', icon: 'credit-card'},
+    {id: 'card', label: 'Debit Card', icon: 'credit-card'},
     {id: 'paypal', label: 'PayPal', icon: 'paypal'},
   ];
 

@@ -61,6 +61,7 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
       schedule: selectedServices,
     };
     dispatch(addToCart(updatedItems));
+    navigation.navigate('Tabs', {screen: 'Cart'});
   };
 
   // Navigate to the Edit Service Screen
