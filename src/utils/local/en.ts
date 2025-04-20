@@ -1,5 +1,6 @@
 export const WORD_DIR = {
-  welcomeMsg: 'Welcome to Harmoniq',
+  welcomeText: 'Welcome to Harmoniq',
+  welcomeSubText:'Discover amazing artists and book live performances that will make your event truly memorable.',
   firstName: 'First name',
   lastName: 'Last name',
   username: 'Username',
