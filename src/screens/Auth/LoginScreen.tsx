@@ -24,7 +24,7 @@ import {AuthUser, ErrorResponse, Errors, User} from 'interfaces';
 import {login} from '../../redux/authSlice';
 import {ApiResponse} from 'services/apiClient';
 import {globalStyle} from '../../utils/globalStyle';
-import renderInput from 'utils/renderInputUtil';
+import renderInput from '../../utils/renderInputUtil';
 
 const LoginScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -102,7 +102,7 @@ const LoginScreen: React.FC = () => {
                 placeholder: PLACEHOLDER_DIR.PLACEHOLDER_PASSWORD,
                 field: 'password',
                 errors,
-                secureTextEntry:true
+                secureTextEntry:true,
                 handleValueChange,
               })}
             
