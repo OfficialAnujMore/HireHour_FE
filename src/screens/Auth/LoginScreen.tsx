@@ -87,7 +87,6 @@ const LoginScreen: React.FC = () => {
             />
 
             {renderInput({
-              label: WORD_DIR.email,
               value: user.email,
               placeholder: PLACEHOLDER_DIR.PLACEHOLDER_EMAIL,
               field: 'email',
@@ -97,7 +96,6 @@ const LoginScreen: React.FC = () => {
             
             <View style={styles.passwordSection}>
               {renderInput({
-                label: WORD_DIR.password,
                 value: user.password,
                 placeholder: PLACEHOLDER_DIR.PLACEHOLDER_PASSWORD,
                 field: 'password',

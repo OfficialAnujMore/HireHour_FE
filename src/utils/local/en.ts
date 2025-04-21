@@ -23,9 +23,8 @@ export const WORD_DIR = {
   phoneOTP: 'Enter phone OTP',
   verifyOTP: 'Verify OTP',
   upcomingEvents: 'Upcoming events',
-
   serviceDetails: 'Service Details',
-
+  serviceProviderEnrollment:"Become a Service Provider",
   title: 'Title',
   description: 'Description',
   pricing: 'Pricing',
@@ -33,6 +32,7 @@ export const WORD_DIR = {
   selectTimeSlots: 'Select Time Slots',
   next: 'Next',
   createService: 'Create Service',
+  whyEnroll:'Why become a service provider?',
 
   userNotFound: 'User not found',
   submit: 'Submit',
@@ -63,4 +63,5 @@ export const WORD_DIR = {
   selectTwoOrMore: 'Please select two or more to proceed.',
   saveSettings: 'Save Settings',
   settingsUpdated: 'Settings updated!',
+  tnc:"Terms and Conditions"
 };

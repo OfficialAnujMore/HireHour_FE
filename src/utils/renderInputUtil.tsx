@@ -3,18 +3,17 @@ import CustomInput from '../components/CustomInput'; // adjust the import path b
 import {Errors} from 'interfaces'; // adjust based on the location of your types
 
 type RenderInputProps = {
-  label: string;
   value: string;
   placeholder: string;
-  field: string;
-  errors: Errors;
   handleValueChange: (field: string, value: string) => void;
+  field?: string;
+  errors?: Errors;
   keyboardType?: 'default' | 'email-address' | 'phone-pad';
   secureTextEntry?: boolean;
+  maxLength?: number;
 };
 
 const renderInput = ({
-  label,
   value,
   placeholder,
   field,
@@ -22,15 +21,16 @@ const renderInput = ({
   handleValueChange,
   keyboardType = 'default',
   secureTextEntry,
+  maxLength,
 }: RenderInputProps) => (
   <CustomInput
-    label={label}
     value={value}
     placeholder={placeholder}
-    onValueChange={(newValue) => handleValueChange(field, newValue)}
+    onValueChange={newValue => handleValueChange(field, newValue)}
     errorMessage={errors[field]}
     keyboardType={keyboardType}
     secureTextEntry={secureTextEntry}
+    maxLength={maxLength}
   />
 );
 

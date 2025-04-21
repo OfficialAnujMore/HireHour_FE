@@ -21,7 +21,6 @@ export const globalStyle = StyleSheet.create({
     paddingVertical: Spacing.small,
     paddingHorizontal: Spacing.small,
     backgroundColor: COLORS.white,
-    // justifyContent: 'center',
   },
   heading: {
     fontSize: FontSize.extraLarge,
