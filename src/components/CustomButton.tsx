@@ -19,7 +19,7 @@ type CustomButtonProps = {
   textStyle?: TextStyle;
   disabled?: boolean;
   animationType?: 'scale' | 'opacity';
-  icon: string;
+  icon?: string;
 };
 
 const CustomButton: React.FC<CustomButtonProps> = ({
