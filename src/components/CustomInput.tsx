@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   TextInput,
   Text,
@@ -9,10 +9,10 @@ import {
   Keyboard,
   TouchableOpacity,
 } from 'react-native';
-import {FontSize, Screen, Spacing} from '../utils/dimension';
+import { FontSize, Screen, Spacing } from '../utils/dimension';
 import CustomText from './CustomText';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {COLORS} from '../utils/globalConstants/color';
+import { COLORS } from '../utils/globalConstants/color';
 
 type CustomInputProps = TextInputProps & {
   label?: string;
@@ -33,16 +33,9 @@ type CustomInputProps = TextInputProps & {
 
 const formatPhoneNumber = (value: string) => {
   const cleanedValue = value.replace(/\D/g, '');
-  if (cleanedValue.length < 4) {
-    return cleanedValue;
-  }
-  if (cleanedValue.length < 7) {
-    return `(${cleanedValue.slice(0, 3)})-${cleanedValue.slice(3)}`;
-  }
-  return `(${cleanedValue.slice(0, 3)})-${cleanedValue.slice(
-    3,
-    6,
-  )}-${cleanedValue.slice(6, 10)}`;
+  if (cleanedValue.length < 4) return cleanedValue;
+  if (cleanedValue.length < 7) return `(${cleanedValue.slice(0, 3)})-${cleanedValue.slice(3)}`;
+  return `(${cleanedValue.slice(0, 3)})-${cleanedValue.slice(3, 6)}-${cleanedValue.slice(6, 10)}`;
 };
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -67,23 +60,19 @@ const CustomInput: React.FC<CustomInputProps> = ({
     if (!disabled) setIsFocused(false);
   }, [disabled]);
 
-  const handleChangeText = useCallback(
-    (text: string) => {
-      if (!disabled) {
-        let formattedText =
-          keyboardType === 'phone-pad' ? formatPhoneNumber(text) : text;
-        if (maxLength !== undefined) {
-          formattedText = formattedText.slice(0, maxLength);
-        }
-        onValueChange(formattedText);
-      }
+  const handleChangeText = useMemo(
+    () => (text: string) => {
+      if (disabled) return;
+
+      let formattedText =
+        keyboardType === 'phone-pad' ? formatPhoneNumber(text) : text;
+      if (maxLength) formattedText = formattedText.slice(0, maxLength);
+      onValueChange(formattedText);
     },
-    [disabled, keyboardType, maxLength, onValueChange],
+    [disabled, keyboardType, maxLength, onValueChange]
   );
 
-  const dismissKeyboard = () => {
-    Keyboard.dismiss();
-  };
+  const dismissKeyboard = () => Keyboard.dismiss();
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
@@ -94,11 +83,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
             style={[
               styles.input,
               {
-                borderColor: errorMessage
-                  ? COLORS.error
-                  : isFocused
-                  ? COLORS.black
-                  : COLORS.gray,
+                borderColor: errorMessage ? COLORS.error : isFocused ? COLORS.black : COLORS.gray,
                 backgroundColor: disabled ? COLORS.lightGrey : COLORS.white,
               },
             ]}
@@ -107,7 +92,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
             onChangeText={handleChangeText}
             value={value || ''}
             keyboardType={keyboardType}
-            secureTextEntry={!isPasswordVisible}
+            secureTextEntry={secureTextEntry && !isPasswordVisible} // Fix for toggling secureTextEntry
             editable={!disabled}
             maxLength={maxLength}
             multiline={true}
@@ -115,9 +100,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
           />
           {secureTextEntry && !disabled && (
             <TouchableOpacity
-              onPress={() => {
-                setIsPasswordVisible(prev => !prev);
-              }}
+              onPress={() => setIsPasswordVisible(prev => !prev)}
               style={styles.iconContainer}>
               <Icon
                 name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
@@ -127,7 +110,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
             </TouchableOpacity>
           )}
         </View>
-        {maxLength !== undefined && (
+        {maxLength && (
           <Text style={styles.charCount}>{`${value.length}/${maxLength}`}</Text>
         )}
         {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}

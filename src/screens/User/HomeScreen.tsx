@@ -16,8 +16,8 @@ import {WORD_DIR} from '../../utils/local/en';
 import {MAX_SCHEDULE_DISPLAY} from '../../utils/constants';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {ApiResponse} from '../../services/apiClient';
-import { COLORS } from '../../utils/globalConstants/color';
-import { globalStyle } from '../../utils/globalStyle';
+import {COLORS} from '../../utils/globalConstants/color';
+import {globalStyle} from '../../utils/globalStyle';
 import messaging from '@react-native-firebase/messaging';
 import {Platform} from 'react-native';
 import {
@@ -28,8 +28,8 @@ import {
   PermissionStatus,
 } from 'react-native-permissions';
 import PushNotification from 'react-native-push-notification';
-import { upsertFCMToken } from '../../services/userService';
-import { login } from '../../redux/authSlice';
+import {upsertFCMToken} from '../../services/userService';
+import {login} from '../../redux/authSlice';
 
 const HomeScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
@@ -79,28 +79,28 @@ const HomeScreen = ({navigation}: any) => {
 
   const getFCMToken = async () => {
     const fcmToken = await messaging().getToken();
-    
-    
+
     if (fcmToken) {
       const res = await upsertFCMToken({
         userId: user?.id,
-        fcmToken:fcmToken
-      })
+        fcmToken: fcmToken,
+      });
       dispatch(login({user: res.data}));
     }
   };
-  
+
   const askNotificationPermission = async (): Promise<PermissionStatus> => {
-    let permission: typeof PERMISSIONS[keyof typeof PERMISSIONS] | null = null;
-  
+    let permission: (typeof PERMISSIONS)[keyof typeof PERMISSIONS] | null =
+      null;
+
     if (Platform.OS === 'ios') {
       const authStatus = await messaging().requestPermission();
       const enabled =
         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-  
+
       if (enabled) {
-        // 
+        //
         getFCMToken(); // Call it after permission is granted
         return RESULTS.GRANTED;
       } else {
@@ -110,35 +110,31 @@ const HomeScreen = ({navigation}: any) => {
     } else if (Platform.OS === 'android' && Platform.Version >= 33) {
       permission = 'android.permission.POST_NOTIFICATIONS';
     }
-  
+
     if (!permission) {
-      // 
+      //
       getFCMToken(); // Call it for Android if no specific permission is required
       return RESULTS.GRANTED;
     }
-  
+
     const result = await check(permission);
-  
+
     if (result === RESULTS.GRANTED) {
-      
       getFCMToken(); // Call it after permission check
       return result;
     }
-  
+
     const newStatus = await request(permission);
-  
+
     if (newStatus === RESULTS.GRANTED) {
-      
       getFCMToken(); // Call it after permission granted
     } else {
       console.warn('Notification permission denied or blocked');
     }
-  
+
     return newStatus;
   };
 
-  
-  
   const createNotificationChannel = () => {
     if (Platform.OS === 'android' && Platform.Version >= 26) {
       PushNotification.createChannel(
@@ -150,11 +146,10 @@ const HomeScreen = ({navigation}: any) => {
           importance: 4, // Importance level (4 is high importance)
           vibrate: true, // Vibration for notifications
         },
-        (created:any) => console.log(`Create channel returned ${created}`)
+        (created: any) => console.log(`Create channel returned ${created}`),
       );
     }
   };
-
 
   useEffect(() => {
     // Request user permission for notifications (iOS only)
@@ -172,13 +167,11 @@ const HomeScreen = ({navigation}: any) => {
           message: remoteMessage.notification.body,
         });
       } else {
-        
       }
     });
-  
+
     return unsubscribe;
   }, []);
-  
 
   return (
     <View style={globalStyle.globalContainer}>

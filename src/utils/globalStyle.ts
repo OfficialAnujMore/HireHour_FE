@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 import {COLORS} from './globalConstants/color';
-import {Spacing} from './dimension';
+import {FontSize, Spacing} from './dimension';
 
 export const globalStyle = StyleSheet.create({
   sectionContainer: {
@@ -22,5 +22,44 @@ export const globalStyle = StyleSheet.create({
     paddingHorizontal: Spacing.small,
     backgroundColor: COLORS.white,
     // justifyContent: 'center',
+  },
+  heading: {
+    fontSize: FontSize.extraLarge,
+    color: COLORS.black,
+    fontWeight: '500',
+    alignSelf: 'center',
+    marginTop: 20,
+  },
+  subHeading: {
+    fontSize: FontSize.medium,
+    color: COLORS.gray, // Set a different color or style for this text
+    fontWeight: '400',
+    alignSelf: 'center',
+    textAlign: 'center',
+    flexWrap: 'wrap', // Allows text to wrap within the container
+  },
+  actionLink: {
+    marginLeft: 4,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    textDecorationLine: 'none',
+  },
+  card: {
+    width: '100%',
+    backgroundColor: COLORS.white,
+    borderRadius: 20,
+    padding: Spacing.large,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 6},
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 6,
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: Spacing.medium,
   },
 });
