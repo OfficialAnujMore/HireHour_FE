@@ -1,67 +1,79 @@
 export const WORD_DIR = {
   welcomeText: 'Welcome to Harmoniq',
   welcomeSubText:
-    'Discover amazing artists and book live performances that will make your event truly memorable.',
+    'Discover talented artists and book unforgettable live performances for your next event.',
+
   loginHeading: 'Welcome Back',
-  loginSubHeading: 'Enter your details below',
-  registerHeading: 'Get started for free',
-  registerSubHeading: 'Register now to find your favourite artist',
-  firstName: 'First name',
-  lastName: 'Last name',
+  loginSubHeading: 'Please enter your details to continue.',
+
+  registerHeading: 'Get Started for Free',
+  registerSubHeading: 'Sign up to find and book your favorite artists.',
+
+  firstName: 'First Name',
+  lastName: 'Last Name',
   username: 'Username',
   email: 'Email',
   password: 'Password',
   confirmPassword: 'Confirm Password',
+
   forgotPassword: 'Forgot your password?',
   login: 'Login',
   register: 'Register',
-  registerUser: 'User registration successful',
+
+  registerUser: 'User registration successful!',
   verificationFailed: 'Verification failed. Please try again.',
+
   haveAnAccount: 'Already have an account?',
   dontHaveAnAccount: "Don't have an account?",
-  emailOTP: 'Enter email OTP',
-  phoneOTP: 'Enter phone OTP',
+
+  emailOTP: 'Enter the OTP sent to your email',
+  phoneOTP: 'Enter the OTP sent to your phone',
   verifyOTP: 'Verify OTP',
-  upcomingEvents: 'Upcoming events',
+
+  upcomingEvents: 'Upcoming Events',
   serviceDetails: 'Service Details',
-  serviceProviderEnrollment:"Become a Service Provider",
-  title: 'Title',
-  description: 'Description',
+  serviceProviderEnrollment: 'Become a Service Provider',
+
+  title: 'Service Title',
+  description: 'Service Description',
   pricing: 'Pricing',
-  selectDate: 'Select Date',
-  selectTimeSlots: 'Select Time Slots',
+  selectDate: 'Select a Date',
+  selectTimeSlots: 'Select Available Time Slots',
+
   next: 'Next',
   createService: 'Create Service',
-  whyEnroll:'Why become a service provider?',
+  whyEnroll: 'Why Become a Service Provider?',
 
   userNotFound: 'User not found',
   submit: 'Submit',
 
-  paymentSummary: 'Payment summary',
-
+  paymentSummary: 'Payment Summary',
   amount: 'Amount',
   tax: 'Tax',
   total: 'Total Payment',
   continue: 'Continue',
-  choosePayment: 'Choose Payment Method',
+  choosePayment: 'Choose a Payment Method',
   secureTransaction: 'All transactions are secure and encrypted.',
 
-  emptyCartHeading: 'Your cart is empty!',
-  emptyCartSubHeading: 'Choose a service and proceed to checkout',
-  goHome: 'Go To Home',
-  noService: 'Oops! Not service found',
-  noSchedule: 'There are no dates been scheduled by the service provider',
-  noUpcomingEvents: 'Opps! No Upcoming events',
-  scheduleEvent: 'Schedule and event to view upcoming events',
+  emptyCartHeading: 'Your Cart is Empty!',
+  emptyCartSubHeading: 'Browse services and add them to your cart to continue.',
+  goHome: 'Go to Home',
 
-  notificationPreference: 'Notification preference',
+  noService: 'Oops! No services found.',
+  noSchedule: 'This service provider has not scheduled any dates yet.',
+  noUpcomingEvents: 'Oops! No upcoming events.',
+  scheduleEvent: 'Schedule an event to see it here.',
+
+  notificationPreference: 'Notification Preferences',
   enableMobilePushNotifications: 'Enable Mobile Push Notifications',
-  enableEmailPushNotifications: 'Enable Email Push Notifications',
-  mobileNotification: 'Mobile Notification',
-  emailNotification: 'Email Notification',
+  enableEmailPushNotifications: 'Enable Email Notifications',
+  mobileNotification: 'Mobile Notifications',
+  emailNotification: 'Email Notifications',
+
   selectInterests: "Let's select your interests.",
-  selectTwoOrMore: 'Please select two or more to proceed.',
+  selectTwoOrMore: 'Please select at least two interests to continue.',
   saveSettings: 'Save Settings',
-  settingsUpdated: 'Settings updated!',
-  tnc:"Terms and Conditions"
+  settingsUpdated: 'Your settings have been updated!',
+
+  tnc: 'Terms and Conditions',
 };

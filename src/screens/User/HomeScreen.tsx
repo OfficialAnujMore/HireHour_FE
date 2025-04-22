@@ -179,7 +179,7 @@ const HomeScreen = ({navigation}: any) => {
         label={`${getGreeting()}, ${user?.firstName}`}
         style={styles.greetingText}
       />
-      <CustomSearchBar  placeholder={PLACEHOLDER_DIR.PLACEHOLDER_SEARCH} onSearch={handleSearch} />
+      <CustomSearchBar  placeholder={PLACEHOLDER_DIR.PLACEHOLDER_SEARCH} onChange={handleSearch} />
 
       {filteredData?.length > 0 ? (
         <FlatList

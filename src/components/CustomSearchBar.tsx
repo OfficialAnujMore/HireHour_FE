@@ -65,14 +65,14 @@ const CustomSearchBar: React.FC<SearchInputProps> = ({
             color={COLORS.gray}
             style={styles.searchIcon}
           />
-          <Animated.Text style={labelStyle}>{placeholder}</Animated.Text>
+          {/* <Animated.Text style={labelStyle}>{placeholder}</Animated.Text> */}
           <TextInput
             value={value}
             onChangeText={onChange}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             style={styles.input}
-            placeholder=""
+            placeholder={placeholder}
           />
           <TouchableOpacity onPress={onFilterPress}>
             <Icon
