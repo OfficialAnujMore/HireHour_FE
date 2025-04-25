@@ -1,18 +1,15 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, ScrollView, View, Platform, Alert} from 'react-native';
-import {FontSize, Spacing} from '../../utils/dimension';
+import React, {useState} from 'react';
+import {StyleSheet, ScrollView, Platform, Alert} from 'react-native';
+import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import CustomText from '../../components/CustomText';
-import CustomInput from '../../components/CustomInput';
 import {WORD_DIR} from '../../utils/local/en';
 import {COLORS} from '../../utils/globalConstants/color';
 import CustomButton from '../../components/CustomButton';
-import {RootState} from 'redux/store';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import CustomDropdown from '../../components/CustomDropdown';
 import {CATEGORY} from '../../utils/constants';
 import {useNavigation} from '@react-navigation/native';
 import {
-  Asset,
   ImagePickerResponse,
   launchImageLibrary,
 } from 'react-native-image-picker';
@@ -20,6 +17,9 @@ import CustomCarousel from '../../components/CustomCarousel';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import {globalStyle} from '../../utils/globalStyle';
+import renderInput from '../../utils/renderInputUtil';
+import InteractiveButton from '../../components/ExpandableUploadButton';
+import ExpandableUploadButton from '../../components/ExpandableUploadButton';
 
 const CreateService = (props: any) => {
   const initialServiceDetails = props.route.params || {};
@@ -61,11 +61,15 @@ const CreateService = (props: any) => {
       valid = false;
     }
     if (!serviceDetails.pricing) {
-      newErrors.pricing = 'Charges per hour is required';
+      newErrors.pricing = 'Pricing is required';
       valid = false;
     }
     if (serviceDetails.servicePreview.length === 0) {
-      newErrors.servicePreview = 'Please select at least one image';
+      dispatch(
+        showSnackbar({
+          message: 'Please select at least one image',
+        }),
+      );
       valid = false;
     }
 
@@ -123,81 +127,58 @@ const CreateService = (props: any) => {
           return;
         }
         if (response.assets && response.assets.length > 0) {
-          setServiceDetails(prev => ({...prev, servicePreview: response.assets}));
+          setServiceDetails(prev => ({
+            ...prev,
+            servicePreview: response.assets,
+          }));
         }
       },
     );
   };
 
-  const renderInput = (
-    label: string,
-    value: string,
-    placeholder: string,
-    field: keyof typeof serviceDetails,
-    errorMessage: string,
-    maxLength?: number,
-    keyboardType?: 'default' | 'email-address' | 'phone-pad',
-    secureTextEntry?: boolean,
-  ) => (
-    <CustomInput
-      label={label}
-      value={value}
-      placeholder={placeholder}
-      onValueChange={value =>
-        setServiceDetails(prev => ({...prev, [field]: value}))
-      }
-      keyboardType={keyboardType}
-      secureTextEntry={secureTextEntry}
-      errorMessage={errorMessage}
-      maxLength={maxLength}
-    />
-  );
+  const handleValueChange = (field: any, value: string): void => {
+    setServiceDetails(prev => ({...prev, [field]: value}));
+  };
 
   return (
     <ScrollView style={globalStyle.globalContainer}>
       <CustomText label={WORD_DIR.serviceDetails} style={styles.heading} />
-      <View style={styles.imagePickerContainer}>
-        {serviceDetails.servicePreview.length > 0 && (
-          <CustomCarousel data={serviceDetails.servicePreview} />
-        )}
-      </View>
-      <View style={styles.actionContainer}>
-        <CustomText
-          label={
-            errors.servicePreview
-              ? errors.servicePreview
-              : 'Click here for select image for service'
-          }
-          action={handleImagePicker}
-          style={errors.servicePreview && {color: COLORS.error}}
-        />
-      </View>
-      {renderInput(
-        WORD_DIR.title,
-        serviceDetails.title,
-        WORD_DIR.title,
-        'title',
-        errors.title,
-        30,
-      )}
-      {renderInput(
-        WORD_DIR.description,
-        serviceDetails.description,
-        WORD_DIR.description,
-        'description',
-        errors.description,
-        50,
-      )}
-      {renderInput(
-        WORD_DIR.pricing,
-        serviceDetails.pricing,
-        WORD_DIR.pricing,
-        'pricing',
-        errors.pricing,
-        3,
-        'phone-pad'
+      {serviceDetails.servicePreview.length > 0 && (
+        <CustomCarousel data={serviceDetails.servicePreview} />
       )}
 
+      <ExpandableUploadButton
+        icon="cloud-upload-outline"
+        label="Upload Photos"
+        onTrigger={handleImagePicker}
+      />
+      {renderInput({
+        value: serviceDetails.title,
+        placeholder: WORD_DIR.title,
+        field: 'title',
+        maxLength: 30,
+        errors,
+        handleValueChange,
+      })}
+
+      {renderInput({
+        value: serviceDetails.description,
+        placeholder: WORD_DIR.description,
+        field: 'description',
+        maxLength: 50,
+        errors,
+        handleValueChange,
+      })}
+
+      {renderInput({
+        value: serviceDetails.pricing,
+        placeholder: WORD_DIR.pricing,
+        field: 'pricing',
+        maxLength: 3,
+        errors,
+        handleValueChange,
+        keyboardType: 'phone-pad',
+      })}
       <CustomDropdown
         label="Select an Option"
         options={CATEGORY}
@@ -232,9 +213,6 @@ const styles = StyleSheet.create({
     fontSize: FontSize.large,
     fontWeight: 'bold',
     marginVertical: Spacing.small,
-  },
-  imagePickerContainer: {
-    marginVertical: Spacing.medium,
   },
   actionContainer: {
     flexDirection: 'row',

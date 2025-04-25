@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useEffect} from 'react';
-import {View, FlatList, StyleSheet, Image} from 'react-native';
+import {View, FlatList, StyleSheet, Image, RefreshControl} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import CustomSearchBar from '../../components/CustomSearchBar';
@@ -16,8 +16,8 @@ import {WORD_DIR} from '../../utils/local/en';
 import {MAX_SCHEDULE_DISPLAY} from '../../utils/constants';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {ApiResponse} from '../../services/apiClient';
-import { COLORS } from '../../utils/globalConstants/color';
-import { globalStyle } from '../../utils/globalStyle';
+import {COLORS} from '../../utils/globalConstants/color';
+import {globalStyle} from '../../utils/globalStyle';
 import messaging from '@react-native-firebase/messaging';
 import {Platform} from 'react-native';
 import {
@@ -28,8 +28,9 @@ import {
   PermissionStatus,
 } from 'react-native-permissions';
 import PushNotification from 'react-native-push-notification';
-import { upsertFCMToken } from '../../services/userService';
-import { login } from '../../redux/authSlice';
+import {upsertFCMToken} from '../../services/userService';
+import {login} from '../../redux/authSlice';
+import { PLACEHOLDER_DIR } from '../../utils/local/placeholder';
 
 const HomeScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
@@ -37,6 +38,7 @@ const HomeScreen = ({navigation}: any) => {
 
   const [data, setData] = useState<User[]>([]);
   const [filteredData, setFilteredData] = useState<User[]>([]);
+  const [isRefreshing, setIsRefreshing] = useState(false); // State to handle refreshing
 
   const fetchServiceProviders = useCallback(async (): Promise<void> => {
     const categories = ['Photography', 'Guitar', 'Art', 'Music', 'Sports'];
@@ -79,28 +81,27 @@ const HomeScreen = ({navigation}: any) => {
 
   const getFCMToken = async () => {
     const fcmToken = await messaging().getToken();
-    
-    
+
     if (fcmToken) {
       const res = await upsertFCMToken({
         userId: user?.id,
-        fcmToken:fcmToken
-      })
+        fcmToken: fcmToken,
+      });
       dispatch(login({user: res.data}));
     }
   };
-  
+
   const askNotificationPermission = async (): Promise<PermissionStatus> => {
-    let permission: typeof PERMISSIONS[keyof typeof PERMISSIONS] | null = null;
-  
+    let permission: (typeof PERMISSIONS)[keyof typeof PERMISSIONS] | null =
+      null;
+
     if (Platform.OS === 'ios') {
       const authStatus = await messaging().requestPermission();
       const enabled =
         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-  
+
       if (enabled) {
-        // 
         getFCMToken(); // Call it after permission is granted
         return RESULTS.GRANTED;
       } else {
@@ -110,35 +111,30 @@ const HomeScreen = ({navigation}: any) => {
     } else if (Platform.OS === 'android' && Platform.Version >= 33) {
       permission = 'android.permission.POST_NOTIFICATIONS';
     }
-  
+
     if (!permission) {
-      // 
       getFCMToken(); // Call it for Android if no specific permission is required
       return RESULTS.GRANTED;
     }
-  
+
     const result = await check(permission);
-  
+
     if (result === RESULTS.GRANTED) {
-      
       getFCMToken(); // Call it after permission check
       return result;
     }
-  
+
     const newStatus = await request(permission);
-  
+
     if (newStatus === RESULTS.GRANTED) {
-      
       getFCMToken(); // Call it after permission granted
     } else {
       console.warn('Notification permission denied or blocked');
     }
-  
+
     return newStatus;
   };
 
-  
-  
   const createNotificationChannel = () => {
     if (Platform.OS === 'android' && Platform.Version >= 26) {
       PushNotification.createChannel(
@@ -150,20 +146,13 @@ const HomeScreen = ({navigation}: any) => {
           importance: 4, // Importance level (4 is high importance)
           vibrate: true, // Vibration for notifications
         },
-        (created:any) => console.log(`Create channel returned ${created}`)
+        (created: any) => console.log(`Create channel returned ${created}`),
       );
     }
   };
 
-
   useEffect(() => {
-    // Request user permission for notifications (iOS only)
-    // if (Platform.OS === 'ios') {
-    //   messaging().requestPermission();
-    // }
-    // Create notification channel for Android
     createNotificationChannel();
-    // Foreground message handler
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       if (remoteMessage.notification) {
         PushNotification.localNotification({
@@ -171,22 +160,26 @@ const HomeScreen = ({navigation}: any) => {
           title: remoteMessage.notification.title,
           message: remoteMessage.notification.body,
         });
-      } else {
-        
       }
     });
-  
+
     return unsubscribe;
   }, []);
-  
+
+  // Refresh handler function
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchServiceProviders();
+    setIsRefreshing(false);
+  };
 
   return (
     <View style={globalStyle.globalContainer}>
-      <CustomSearchBar onSearch={handleSearch} />
       <CustomText
         label={`${getGreeting()}, ${user?.firstName}`}
         style={styles.greetingText}
       />
+      <CustomSearchBar  placeholder={PLACEHOLDER_DIR.PLACEHOLDER_SEARCH} onChange={handleSearch} />
 
       {filteredData?.length > 0 ? (
         <FlatList
@@ -202,6 +195,14 @@ const HomeScreen = ({navigation}: any) => {
             />
           )}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh} // Bind the refresh function
+              colors={[COLORS.primary]}
+              progressBackgroundColor={COLORS.white}
+            />
+          }
         />
       ) : (
         <FallBack imageSrc={dataNotFound} heading={WORD_DIR.noService} />

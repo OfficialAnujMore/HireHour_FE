@@ -170,27 +170,27 @@ const EditProfileScreen: React.FC = () => {
       </View>
 
       <CustomInput
-        label={WORD_DIR.name}
+        // label={WORD_DIR.name}
         value={user.name}
         onValueChange={text => handleInputChange('name', text)}
         placeholder="Enter name"
         errorMessage={errors.name}
       />
       <CustomInput
-        label="Username"
+        // label="Username"
         value={userdetails.username}
         placeholder="Enter username"
         disabled={true}
       />
       <CustomInput
-        label="Email"
+        // label="Email"
         value={userdetails.email}
         placeholder="Enter email"
         keyboardType="email-address"
         disabled={true}
       />
       <CustomInput
-        label="Phone Number"
+        // label="Phone Number"
         value={user.phone}
         onValueChange={text => handleInputChange('phone', text)}
         placeholder="Enter phone number"

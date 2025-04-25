@@ -107,7 +107,11 @@ const RootNavigator = () => {
       {isLoading ? (
         <SplashScreen onFinish={handleSplashFinish} />
       ) : (
-        <Stack.Navigator initialRouteName={isAuthenticated ? 'Tabs' : 'Login'}>
+        <Stack.Navigator
+          initialRouteName={isAuthenticated ? 'Tabs' : 'Login'}
+          screenOptions={{
+            headerShown: false,
+          }}>
           {isAuthenticated ? (
             <>
               <Stack.Screen
@@ -115,7 +119,7 @@ const RootNavigator = () => {
                 component={AuthenticatedTabs}
                 options={{headerShown: false}}
               />
-              <Stack.Screen name="Home" component={HomeScreen} />
+              {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
               <Stack.Screen
                 name="Service Details"
                 component={ServiceDetailsScreen}

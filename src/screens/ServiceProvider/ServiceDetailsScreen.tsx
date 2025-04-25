@@ -1,70 +1,50 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../redux/store';
+import React, { useState } from 'react';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 import CustomText from '../../components/CustomText';
-import {FontSize, Spacing} from '../../utils/dimension';
-import {COLORS} from '../../utils/globalConstants/color';
+import { FontSize, Spacing, Screen } from '../../utils/dimension';
+import { COLORS } from '../../utils/globalConstants/color';
 import CustomCarouselSlider from '../../components/CustomCarousel';
-import {useNavigation} from '@react-navigation/native';
-import {CustomRatingInfo} from '../../components/CustomRatingInfo';
+import { useNavigation } from '@react-navigation/native';
+import { CustomRatingInfo } from '../../components/CustomRatingInfo';
 import CustomButton from '../../components/CustomButton';
-import {addToCart} from '../../redux/cartSlice';
-import {ServiceDetails} from 'interfaces';
-import {ScheduleDetails} from '../../components/CustomServiceCard';
-import {globalStyle} from '../../utils/globalStyle';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Import the pencil icon
-import {deleteServiceById} from '../../services/serviceProviderService';
-import {showSnackbar} from '../../redux/snackbarSlice';
-import {FallBack} from '../../components/FallBack';
-import {WORD_DIR} from '../../utils/local/en';
-import dataNotFound from '../../assets/error-in-calendar.png';
+import { addToCart } from '../../redux/cartSlice';
+import { ServiceDetails } from 'interfaces';
+import { ScheduleDetails } from '../../components/CustomServiceCard';
+import { globalStyle } from '../../utils/globalStyle';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { deleteServiceById } from '../../services/serviceProviderService';
+import { showSnackbar } from '../../redux/snackbarSlice';
+import { FallBack } from '../../components/FallBack';
+import { WORD_DIR } from '../../utils/local/en';
+import * as Animatable from 'react-native-animatable';
+
 const ServiceDetailsScreen = (props: ServiceDetails) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
   const item = props.route.params;
-
   const user = useSelector((state: RootState) => state.auth.user);
-  // 
 
-  const [selectedServices, setSelectedServices] = useState<ServiceDetails[]>(
-    [],
-  );
+  const [selectedServices, setSelectedServices] = useState<ServiceDetails[]>([]);
 
   const handleSelectService = (service: ServiceDetails) => {
     setSelectedServices(prevState => {
       const isServiceSelected = prevState.some(s => s.id === service.id);
-
       if (isServiceSelected) {
-        return prevState
-          .filter(s => s.id !== service.id)
-          .map(s => ({
-            ...s,
-            isAvailable: true,
-          }));
+        return prevState.filter(s => s.id !== service.id);
       } else {
-        return [
-          ...prevState,
-          {
-            ...service,
-            isAvailable: false,
-          },
-        ];
+        return [...prevState, service];
       }
     });
   };
 
-  const handlePress = async () => {
-    const updatedItems = {
-      ...item,
-      schedule: selectedServices,
-    };
+  const handlePress = () => {
+    const updatedItems = { ...item, schedule: selectedServices };
     dispatch(addToCart(updatedItems));
-    navigation.navigate('Tabs', {screen: 'Cart'});
+    navigation.navigate('Tabs', { screen: 'Cart' });
   };
 
-  // Navigate to the Edit Service Screen
   const handleEditService = () => {
     navigation.navigate('Create Service', item);
   };
@@ -74,34 +54,17 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
     if (response.success) {
       navigation.goBack();
     }
-
-    dispatch(
-      showSnackbar({
-        message: response.message,
-        success: response.success,
-      }),
-    );
+    dispatch(showSnackbar({ message: response.message, success: response.success }));
   };
-  
-  
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () =>
         item.userId === user?.id ? (
-          <>
-            <Icon
-              name="edit"
-              size={25}
-              color={COLORS.primary}
-              onPress={handleEditService} // Navigate to edit screen
-            />
-            <Icon
-              name="delete"
-              size={25}
-              color={COLORS.error}
-              onPress={handleDeleteService} // Handle delete action
-            />
-          </>
+          <View style={styles.iconContainer}>
+            <Icon name="edit" size={25} color={COLORS.primary} onPress={handleEditService} />
+            <Icon name="delete" size={25} color={COLORS.error} onPress={handleDeleteService} />
+          </View>
         ) : null,
     });
   }, [navigation, item, user]);
@@ -109,30 +72,41 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
   return (
     <View style={globalStyle.globalContainer}>
       <ScrollView>
-        <CustomCarouselSlider data={item.servicePreview} />
+        <Animatable.View animation="fadeIn" duration={600}>
+          <CustomCarouselSlider data={item.servicePreview} />
+        </Animatable.View>
+
         <View style={styles.headerContainer}>
-          <CustomText label={item.title} />
+          <CustomText label={item.title} style={styles.title} />
           <CustomRatingInfo rating={item.ratings} />
         </View>
+
         <View style={styles.headerContainer}>
-          <CustomText label={item.category} />
-          <CustomText label={`$ ${item.pricing}`} />
+          <CustomText label={item.category} style={styles.category} />
+          <CustomText label={`$ ${item.pricing}`} style={styles.price} />
         </View>
-        <CustomText label={item.description} />
+
+        <CustomText label={WORD_DIR.description} style={styles.sectionTitle} />
+        <CustomText label={item.description} style={styles.description} />
 
         {item.schedule.length > 0 ? (
-          <ScheduleDetails
-            schedule={item.schedule}
-            onServiceSelect={handleSelectService}
-            selectedServices={selectedServices}
-            maxDisplay={item.schedule.length}
-          />
+          <Animatable.View animation="fadeInUp" duration={600}>
+            <ScheduleDetails
+              schedule={item.schedule}
+              onServiceSelect={handleSelectService}
+              selectedServices={selectedServices}
+              maxDisplay={item.schedule.length}
+            />
+          </Animatable.View>
         ) : (
           <FallBack heading={WORD_DIR.noSchedule} />
         )}
       </ScrollView>
+
       {item.schedule.length > 0 && item.userId !== user?.id && (
-        <CustomButton label={'Add to cart'} onPress={handlePress} />
+        <Animatable.View animation="fadeInUp" duration={800}>
+          <CustomButton label={'Add to cart'} onPress={handlePress} />
+        </Animatable.View>
       )}
     </View>
   );
@@ -142,14 +116,35 @@ const styles = StyleSheet.create({
   headerContainer: {
     marginBottom: Spacing.small,
     flexDirection: 'row',
-    alignItems: 'center', // Align items horizontally
-    justifyContent: 'space-between', // Space between title and edit icon
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-
-  editIconContainer: {
+  iconContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    paddingVertical: Spacing.medium,
+    gap: Spacing.medium,
+  },
+  title: {
+    fontSize: FontSize.large,
+    fontWeight: 'bold',
+    color: COLORS.black,
+  },
+  category: {
+    fontSize: FontSize.medium,
+    color: COLORS.gray,
+  },
+  price: {
+    fontSize: FontSize.medium,
+    color: COLORS.primary,
+  },
+  sectionTitle: {
+    fontSize: FontSize.medium,
+    fontWeight: 'bold',
+    marginTop: Spacing.medium,
+    marginBottom: Spacing.small,
+  },
+  description: {
+    fontSize: FontSize.small,
+    color: COLORS.gray,
   },
 });
 

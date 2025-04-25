@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -7,8 +7,9 @@ import {
   Pressable,
   TouchableOpacity,
   Linking,
+  Animated,
 } from 'react-native';
-import {Screen, Spacing} from '../../utils/dimension';
+import {FontSize, Spacing} from '../../utils/dimension';
 import {COLORS} from '../../utils/globalConstants/color';
 import CustomButton from '../../components/CustomButton';
 import {WORD_DIR} from '../../utils/local/en';
@@ -19,7 +20,19 @@ import {showSnackbar} from '../../redux/snackbarSlice';
 import CustomText from '../../components/CustomText';
 import {useNavigation} from '@react-navigation/native';
 import {login} from '../../redux/authSlice';
-import { globalStyle } from '../../utils/globalStyle';
+import {globalStyle} from '../../utils/globalStyle';
+import Icon from 'react-native-vector-icons/Ionicons';
+
+const bulletPoints = [
+  'Reach new clients through our platform',
+  'Grow your visibility and business network',
+  'Set your own availability and pricing',
+  'Get paid securely and on time',
+  'Build your brand as a professional artist',
+  'Receive real-time booking notifications',
+  'Access exclusive events and client opportunities',
+  'Get support from our dedicated service team',
+];
 
 const EnrollAsServiceProvider: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -30,9 +43,26 @@ const EnrollAsServiceProvider: React.FC = () => {
   );
   const [checked, setChecked] = useState(false);
 
+  const animatedValues = useRef(
+    bulletPoints.map(() => new Animated.Value(-200)),
+  ).current;
+
+  useEffect(() => {
+    const animations = bulletPoints.map((_, i) =>
+      Animated.timing(animatedValues[i], {
+        toValue: 0,
+        duration: 400,
+        delay: i * 100,
+        useNativeDriver: true,
+      }),
+    );
+    Animated.stagger(100, animations).start();
+  }, []);
+
   const openTerms = () => {
     Linking.openURL('https://yourwebsite.com/terms-and-conditions');
   };
+
   const handleEnrollment = async () => {
     try {
       const response = await updateUserRole({
@@ -42,7 +72,6 @@ const EnrollAsServiceProvider: React.FC = () => {
 
       if (response?.data) {
         dispatch(login({user: response.data}));
-
         dispatch(
           showSnackbar({
             message: 'Successfully enrolled as a service provider',
@@ -63,35 +92,69 @@ const EnrollAsServiceProvider: React.FC = () => {
 
   return (
     <View style={globalStyle.globalContainer}>
-      <CustomText label={`Hello ${user?.firstName}`} />
-      <CustomText label={`Do you wish to be enrolled as a service provider?`} />
-      <View style={styles.toggleContainer}>
-        <Text style={styles.toggleLabel}>Enroll a Service Provider</Text>
-        <Switch
-          value={isServiceProviderEnrolled}
-          onValueChange={value => setIsServiceProviderEnrolled(value)}
-          trackColor={{true: COLORS.black, false: COLORS.gray}}
-          thumbColor={isServiceProviderEnrolled ? COLORS.black : COLORS.white}
+      <CustomText
+        label={`Welcome, ${user?.firstName}`}
+        style={globalStyle.heading}
+      />
+      <View style={styles.infoBox}>
+        <CustomText
+          label={WORD_DIR.whyEnroll}
+          style={styles.infoTitle}
         />
+        {bulletPoints.map((point, index) => (
+          <Animated.View
+            key={index}
+            style={[
+              styles.bulletPoint,
+              {transform: [{translateX: animatedValues[index]}]},
+            ]}>
+            <Icon
+              name="checkmark-circle-outline"
+              size={20}
+              color={COLORS.primary}
+            />
+            <CustomText
+              label={point}
+              style={styles.bulletText}
+              numberOfLines={2}
+            />
+          </Animated.View>
+        ))}
+
+        <View style={styles.toggleContainer}>
+          <CustomText
+            label={WORD_DIR.serviceProviderEnrollment}
+            style={styles.toggleLabel}
+          />
+          <Switch
+            value={isServiceProviderEnrolled}
+            onValueChange={value => setIsServiceProviderEnrolled(value)}
+            trackColor={{true: COLORS.primary, false: COLORS.primary}}
+            thumbColor={isServiceProviderEnrolled ? COLORS.white : COLORS.gray}
+          />
+        </View>
+
+        <View style={styles.boxContainer}>
+          <Pressable
+            onPress={() => setChecked(!checked)}
+            style={styles.checkboxContainer}>
+            <View style={[styles.checkbox, checked && styles.checked]} />
+          </Pressable>
+          <View style={globalStyle.footer}>
+            <CustomText label={'I agree to the'} />
+            <CustomText
+              label={WORD_DIR.tnc}
+              style={globalStyle.actionLink}
+              action={openTerms}
+            />
+          </View>
+        </View>
       </View>
 
-      <View style={styles.boxContainer}>
-        <Pressable
-          onPress={() => setChecked(!checked)}
-          style={styles.checkboxContainer}>
-          <View style={[styles.checkbox, checked && styles.checked]} />
-        </Pressable>
-        <Text style={styles.text}>
-          I agree to the{' '}
-          <TouchableOpacity onPress={openTerms}>
-            <Text style={styles.link}>Terms and Conditions</Text>
-          </TouchableOpacity>
-        </Text>
-      </View>
       <CustomButton
         onPress={handleEnrollment}
         label={WORD_DIR.submit}
-        disabled={!checked}
+        disabled={!(isServiceProviderEnrolled && checked)}
       />
     </View>
   );
@@ -109,11 +172,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: COLORS.black,
   },
-
   boxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 10,
   },
   checkboxContainer: {
     width: 24,
@@ -125,18 +186,31 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   checkbox: {
-    width: 12,
-    height: 12,
+    width: 10,
+    height: 10,
   },
   checked: {
     backgroundColor: '#000',
   },
-  text: {
-    fontSize: 14,
+  infoBox: {
+    padding: Spacing.medium,
+    borderRadius: 12,
   },
-  link: {
-    color: 'blue',
-    textDecorationLine: 'underline',
+  infoTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: Spacing.small,
+    color: COLORS.black,
+  },
+  bulletPoint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: Spacing.small,
+  },
+  bulletText: {
+    fontSize: FontSize.small + 2,
+    marginLeft: 10,
+    color: COLORS.gray,
   },
 });
 

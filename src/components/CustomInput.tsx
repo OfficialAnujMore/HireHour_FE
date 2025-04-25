@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useState, useCallback, useMemo} from 'react';
 import {
   TextInput,
   Text,
@@ -33,12 +33,9 @@ type CustomInputProps = TextInputProps & {
 
 const formatPhoneNumber = (value: string) => {
   const cleanedValue = value.replace(/\D/g, '');
-  if (cleanedValue.length < 4) {
-    return cleanedValue;
-  }
-  if (cleanedValue.length < 7) {
+  if (cleanedValue.length < 4) return cleanedValue;
+  if (cleanedValue.length < 7)
     return `(${cleanedValue.slice(0, 3)})-${cleanedValue.slice(3)}`;
-  }
   return `(${cleanedValue.slice(0, 3)})-${cleanedValue.slice(
     3,
     6,
@@ -67,28 +64,23 @@ const CustomInput: React.FC<CustomInputProps> = ({
     if (!disabled) setIsFocused(false);
   }, [disabled]);
 
-  const handleChangeText = useCallback(
-    (text: string) => {
-      if (!disabled) {
-        let formattedText =
-          keyboardType === 'phone-pad' ? formatPhoneNumber(text) : text;
-        if (maxLength !== undefined) {
-          formattedText = formattedText.slice(0, maxLength);
-        }
-        onValueChange(formattedText);
-      }
+  const handleChangeText = useMemo(
+    () => (text: string) => {
+      if (disabled) return;
+
+      let formattedText =
+        keyboardType === 'phone-pad' ? formatPhoneNumber(text) : text;
+      if (maxLength) formattedText = formattedText.slice(0, maxLength);
+      onValueChange(formattedText);
     },
     [disabled, keyboardType, maxLength, onValueChange],
   );
 
-  const dismissKeyboard = () => {
-    Keyboard.dismiss();
-  };
+  const dismissKeyboard = () => Keyboard.dismiss();
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
-        {label && <CustomText label={label} />}
         <View style={styles.inputContainer}>
           <TextInput
             style={[
@@ -107,7 +99,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
             onChangeText={handleChangeText}
             value={value || ''}
             keyboardType={keyboardType}
-            secureTextEntry={!isPasswordVisible}
+            secureTextEntry={secureTextEntry && !isPasswordVisible} // Fix for toggling secureTextEntry
             editable={!disabled}
             maxLength={maxLength}
             multiline={true}
@@ -115,9 +107,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
           />
           {secureTextEntry && !disabled && (
             <TouchableOpacity
-              onPress={() => {
-                setIsPasswordVisible(prev => !prev);
-              }}
+              onPress={() => setIsPasswordVisible(prev => !prev)}
               style={styles.iconContainer}>
               <Icon
                 name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
@@ -127,10 +117,23 @@ const CustomInput: React.FC<CustomInputProps> = ({
             </TouchableOpacity>
           )}
         </View>
-        {maxLength !== undefined && (
-          <Text style={styles.charCount}>{`${value.length}/${maxLength}`}</Text>
-        )}
-        {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+        <View
+          style={[
+            styles.bottomContainer,
+            errorMessage
+              ? {justifyContent: 'space-between'}
+              : {justifyContent: 'flex-end'},
+          ]}>
+          {errorMessage && (
+            <CustomText label={errorMessage} style={styles.errorText} />
+          )}
+          {maxLength && (
+            <CustomText
+              label={`${value.length}/${maxLength}`}
+              style={styles.charCount}
+            />
+          )}
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -138,12 +141,11 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: Spacing.small,
+    // marginBottom: Spacing.small,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    position: 'relative',
   },
   input: {
     flex: 1,
@@ -157,16 +159,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 10,
   },
+  bottomContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 5,
+  },
   charCount: {
-    alignSelf: 'flex-end',
     color: COLORS.gray,
     fontSize: FontSize.small,
-    marginTop: 5,
   },
   errorText: {
     color: COLORS.error,
     fontSize: 12,
-    marginTop: 5,
   },
 });
 

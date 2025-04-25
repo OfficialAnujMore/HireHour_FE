@@ -1,9 +1,10 @@
-export const PLACEHOLDER_DIR  ={
-    PLACEHOLDER_FIRSTNAME:"Enter your firstname",
-    PLACEHOLDER_LASTNAME:"Enter your lastname",
-    PLACEHOLDER_EMAIL:"Enter your email",
-    PLACEHOLDER_USERNAME:"Enter your username",
-    PLACEHOLDER_PASSWORD:"Enter your password",
-    PLACEHOLDER_CONFIRM_PASSWORD:"Please confirm your password",
-    PLACEHOLDER_PHONE_NUMBER:"Enter your phone number",
-}
+export const PLACEHOLDER_DIR = {
+  PLACEHOLDER_FIRSTNAME: 'First name',
+  PLACEHOLDER_LASTNAME: 'Last name',
+  PLACEHOLDER_EMAIL: 'Email address',
+  PLACEHOLDER_USERNAME: 'Username',
+  PLACEHOLDER_PASSWORD: 'Password',
+  PLACEHOLDER_CONFIRM_PASSWORD: 'Confirm password',
+  PLACEHOLDER_PHONE_NUMBER: 'Phone number',
+  PLACEHOLDER_SEARCH: 'Search artists, genres, or services...',
+};
