@@ -39,6 +39,7 @@ export const GET_SERVICE_PROVIDERS = '/getServiceProviders';
 export const DELETE_SERVICE = '/deleteService';
 export const BOOK_SERVICE = '/bookService';
 export const UPCOMING_EVENTS = '/upcomingEvents';
+export const HOLD_SLOTS = '/holdSlots';
 
 // TRANSACTION ROUTES
 export const GET_USER_TRANSACTION = '/getUserTransaction';

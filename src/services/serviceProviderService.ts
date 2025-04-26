@@ -11,6 +11,7 @@ import {
   DELETE_SERVICE,
   GET_BOOKED_SERVICES,
   HANDLE_SLOT_APPROVAL,
+  HOLD_SLOTS,
 } from './routes';
 
 export const getServiceProviders = async (
@@ -124,5 +125,19 @@ export const deleteServiceById = async (
     );
   } catch (error) {
     return handleError(error, 'deleteServiceById'); // Corrected error message
+  }
+};
+
+
+export const holdSlot = async (
+  data: unknown,
+): Promise<ApiResponse<ServiceDetails[]> | ErrorResponse> => {
+  try {
+    return await post<ServiceDetails[]>(
+      `${V1_SERVICE_BASE_ROUTE}${HOLD_SLOTS}`,
+      {schedule: data},
+    );
+  } catch (error) {
+    return handleError(error, 'getUpcomingEvents'); // Return the error handled by handleError function
   }
 };

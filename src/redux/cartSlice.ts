@@ -18,12 +18,33 @@ const cartSlice = createSlice({
 
       if (existingItemIndex !== -1) {
         // Update existing item
-        state.items[existingItemIndex] = action.payload;
+        const existingItem = state.items[existingItemIndex];
+
+        // Maintain and update schedules
+        if (existingItem.schedule && action.payload.schedule) {
+          // Merge schedules by adding new ones without removing old ones
+          action.payload.schedule.forEach(newSchedule => {
+            const existingScheduleIndex = existingItem.schedule.findIndex(
+              schedule => schedule.id === newSchedule.id, // assuming each schedule has a unique 'id'
+            );
+
+            console.log(existingScheduleIndex, newSchedule);
+            if (existingScheduleIndex === -1) {
+              // Add new schedule only if it doesn't exist already
+              existingItem.schedule.push(newSchedule);
+            } else {
+              // Update the existing schedule if it matches the ID
+              existingItem.schedule[existingScheduleIndex] = newSchedule;
+            }
+          });
+        } else if (action.payload.schedule) {
+          // If no schedules exist, directly assign the new schedule
+          existingItem.schedule = action.payload.schedule;
+        }
       } else {
         // Add new item to cart
         state.items.push(action.payload);
       }
-      
     },
 
     // Remove a specific schedule from the cart based on serviceId and scheduleId
@@ -46,8 +67,6 @@ const cartSlice = createSlice({
       state.items = state.items.filter(
         item => item.serviceId !== action.payload,
       );
-      
-      
     },
 
     // Clear all items in the cart

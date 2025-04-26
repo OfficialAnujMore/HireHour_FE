@@ -1,24 +1,31 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+import React, {useEffect, useState} from 'react';
+import {View, StyleSheet, ScrollView, TextInput} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
 import CustomText from '../../components/CustomText';
-import { FontSize, Spacing, Screen } from '../../utils/dimension';
-import { COLORS } from '../../utils/globalConstants/color';
+import {FontSize, Spacing} from '../../utils/dimension';
+import {COLORS} from '../../utils/globalConstants/color';
 import CustomCarouselSlider from '../../components/CustomCarousel';
-import { useNavigation } from '@react-navigation/native';
-import { CustomRatingInfo } from '../../components/CustomRatingInfo';
+import {useNavigation} from '@react-navigation/native';
+import {CustomRatingInfo} from '../../components/CustomRatingInfo';
 import CustomButton from '../../components/CustomButton';
-import { addToCart } from '../../redux/cartSlice';
-import { ServiceDetails } from 'interfaces';
-import { ScheduleDetails } from '../../components/CustomServiceCard';
-import { globalStyle } from '../../utils/globalStyle';
+import {addToCart} from '../../redux/cartSlice';
+import {ServiceDetails} from 'interfaces';
+import {ScheduleDetails} from '../../components/CustomServiceCard';
+import {globalStyle} from '../../utils/globalStyle';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { deleteServiceById } from '../../services/serviceProviderService';
-import { showSnackbar } from '../../redux/snackbarSlice';
-import { FallBack } from '../../components/FallBack';
-import { WORD_DIR } from '../../utils/local/en';
+import {
+  deleteServiceById,
+  holdSlot,
+} from '../../services/serviceProviderService';
+import {showSnackbar} from '../../redux/snackbarSlice';
+import {FallBack} from '../../components/FallBack';
+import {WORD_DIR} from '../../utils/local/en';
 import * as Animatable from 'react-native-animatable';
+import CustomDropdown from '../../components/CustomDropdown';
+import {VENUE} from '../../utils/constants';
+import CustomInput from '../../components/CustomInput';
+import {URL_REGEX} from '../../utils/regex';
 
 const ServiceDetailsScreen = (props: ServiceDetails) => {
   const navigation = useNavigation();
@@ -26,52 +33,110 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
   const item = props.route.params;
   const user = useSelector((state: RootState) => state.auth.user);
 
-  const [selectedServices, setSelectedServices] = useState<ServiceDetails[]>([]);
+  const [selectedServices, setSelectedServices] = useState<ServiceDetails[]>(
+    [],
+  );
+  const [venue, setVenue] = useState<string>('');
+  const [meetingUrl, setMeetingUrl] = useState<string>('');
+  const [addressInfo, setAddressInfo] = useState({
+    address: '',
+    city: '',
+    postalCode: '',
+    state: '',
+    country: '',
+  });
 
   const handleSelectService = (service: ServiceDetails) => {
     setSelectedServices(prevState => {
       const isServiceSelected = prevState.some(s => s.id === service.id);
-      if (isServiceSelected) {
-        return prevState.filter(s => s.id !== service.id);
-      } else {
-        return [...prevState, service];
-      }
+      return isServiceSelected
+        ? prevState.filter(s => s.id !== service.id)
+        : [...prevState, service];
     });
   };
 
-  const handlePress = () => {
-    const updatedItems = { ...item, schedule: selectedServices };
-    dispatch(addToCart(updatedItems));
-    navigation.navigate('Tabs', { screen: 'Cart' });
+  const validateInputs = () => {
+    // No slot selected? => Invalid
+    if (selectedServices.length === 0) {
+      return false;
+    }
+
+    // Venue not selected yet? => Invalid
+    if (!venue) {
+      return false;
+    }
+
+    // Online mode => meeting URL must be valid
+    if (venue === VENUE.online) {
+      return URL_REGEX.test(meetingUrl.trim());
+    }
+
+    // Offline mode => address fields must be filled
+    if (venue === VENUE.offline) {
+      return Object.values(addressInfo).every(field => field.trim() !== '');
+    }
+
+    return false; // default
   };
 
-  const handleEditService = () => {
-    navigation.navigate('Create Service', item);
+  const handleProceed = async () => {
+    if (!validateInputs()) {
+      dispatch(
+        showSnackbar({message: 'Please fill valid details', success: false}),
+      );
+      return;
+    }
+
+    const updatedItems = {
+      ...item,
+      schedule: selectedServices,
+      venue: venue,
+      meetingUrl: meetingUrl,
+      addressInfo: addressInfo,
+    };
+
+    const response = await holdSlot(selectedServices);
+    if (response) {
+      dispatch(addToCart(updatedItems));
+      navigation.navigate('Tabs', {screen: 'Cart'});
+    }
   };
+
+  const handleEditService = () => navigation.navigate('Create Service', item);
 
   const handleDeleteService = async () => {
     const response = await deleteServiceById(item.serviceId, user?.fcmToken);
-    if (response.success) {
-      navigation.goBack();
-    }
-    dispatch(showSnackbar({ message: response.message, success: response.success }));
+    if (response.success) navigation.goBack();
+    dispatch(
+      showSnackbar({message: response.message, success: response.success}),
+    );
   };
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () =>
-        item.userId === user?.id ? (
+        item.userId === user?.id && (
           <View style={styles.iconContainer}>
-            <Icon name="edit" size={25} color={COLORS.primary} onPress={handleEditService} />
-            <Icon name="delete" size={25} color={COLORS.error} onPress={handleDeleteService} />
+            <Icon
+              name="edit"
+              size={25}
+              color={COLORS.primary}
+              onPress={handleEditService}
+            />
+            <Icon
+              name="delete"
+              size={25}
+              color={COLORS.error}
+              onPress={handleDeleteService}
+            />
           </View>
-        ) : null,
+        ),
     });
   }, [navigation, item, user]);
 
   return (
     <View style={globalStyle.globalContainer}>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <Animatable.View animation="fadeIn" duration={600}>
           <CustomCarouselSlider data={item.servicePreview} />
         </Animatable.View>
@@ -97,20 +162,106 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
               selectedServices={selectedServices}
               maxDisplay={item.schedule.length}
             />
+            {/* VENUE Details Section */}
+            {item.userId !== user?.id && (
+              <>
+                <CustomText
+                  label="Booking Details"
+                  style={styles.sectionTitle}
+                />
+
+                <CustomDropdown
+                  label="Venue"
+                  options={VENUE}
+                  value={venue}
+                  onValueChange={value => {
+                    setVenue(value);
+                    setMeetingUrl('');
+                    setAddressInfo({
+                      address: '',
+                      city: '',
+                      postalCode: '',
+                      state: '',
+                      country: '',
+                    });
+                  }}
+                  placeholder="Select Venue"
+                />
+
+                {venue === VENUE.online && (
+                  <CustomInput
+                    label="Meeting URL"
+                    placeholder="Enter Meeting URL"
+                    value={meetingUrl}
+                    onValueChange={setMeetingUrl}
+                    keyboardType="url"
+                  />
+                )}
+
+                {venue === VENUE.offline && (
+                  <>
+                    <CustomInput
+                      label="Address"
+                      placeholder="Enter Address"
+                      value={addressInfo.address}
+                      onValueChange={text =>
+                        setAddressInfo({...addressInfo, address: text})
+                      }
+                    />
+                    <CustomInput
+                      label="City"
+                      placeholder="Enter City"
+                      value={addressInfo.city}
+                      onValueChange={text =>
+                        setAddressInfo({...addressInfo, city: text})
+                      }
+                    />
+                    <CustomInput
+                      label="Postal Code"
+                      placeholder="Enter Postal Code"
+                      value={addressInfo.postalCode}
+                      onValueChange={text =>
+                        setAddressInfo({...addressInfo, postalCode: text})
+                      }
+                      keyboardType="numeric"
+                    />
+                    <CustomInput
+                      label="State"
+                      placeholder="Enter State"
+                      value={addressInfo.state}
+                      onValueChange={text =>
+                        setAddressInfo({...addressInfo, state: text})
+                      }
+                    />
+                    <CustomInput
+                      label="Country"
+                      placeholder="Enter Country"
+                      value={addressInfo.country}
+                      onValueChange={text =>
+                        setAddressInfo({...addressInfo, country: text})
+                      }
+                    />
+                  </>
+                )}
+
+                <CustomButton
+                  label="Confirm Booking"
+                  onPress={handleProceed}
+                  disabled={!validateInputs()}
+                  style={{marginTop: Spacing.medium}}
+                />
+              </>
+            )}
           </Animatable.View>
         ) : (
           <FallBack heading={WORD_DIR.noSchedule} />
         )}
       </ScrollView>
-
-      {item.schedule.length > 0 && item.userId !== user?.id && (
-        <Animatable.View animation="fadeInUp" duration={800}>
-          <CustomButton label={'Add to cart'} onPress={handlePress} />
-        </Animatable.View>
-      )}
     </View>
   );
 };
+
+export default ServiceDetailsScreen;
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -139,13 +290,27 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: FontSize.medium,
     fontWeight: 'bold',
-    marginTop: Spacing.medium,
-    marginBottom: Spacing.small,
+    marginVertical: Spacing.medium,
+    color: COLORS.primary,
   },
   description: {
     fontSize: FontSize.small,
     color: COLORS.gray,
+    marginBottom: Spacing.medium,
+  },
+
+  additionalDetailsCard: {
+    backgroundColor: COLORS.gray,
+    padding: Spacing.medium,
+    borderRadius: 12,
+    marginTop: Spacing.medium,
+  },
+  input: {
+    backgroundColor: COLORS.white,
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: Spacing.small,
+    borderWidth: 1,
+    borderColor: COLORS.gray,
   },
 });
-
-export default ServiceDetailsScreen;
