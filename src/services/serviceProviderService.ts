@@ -9,6 +9,8 @@ import {
   UPCOMING_EVENTS,
   V1_SERVICE_BASE_ROUTE,
   DELETE_SERVICE,
+  GET_BOOKED_SERVICES,
+  HANDLE_SLOT_APPROVAL,
 } from './routes';
 
 export const getServiceProviders = async (
@@ -57,11 +59,36 @@ export const getUserServices = async (
   }
 };
 
+export const getMyBookedServices = async (data: {
+  id: string;
+  isAvailable: boolean;
+}): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
+  try {
+    return await post<ServiceDetails>(
+      `${V1_SERVICE_BASE_ROUTE}${GET_BOOKED_SERVICES}`,
+      data,
+    );
+  } catch (error) {
+    return handleError(error, 'getMyBookedServices'); // Return the error handled by handleError function
+  }
+};
+
+
+export const handleSlotApproval = async (data: any): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
+  try {
+    return await post<ServiceDetails>(
+      `${V1_SERVICE_BASE_ROUTE}${HANDLE_SLOT_APPROVAL}`,
+      data,
+    );
+  } catch (error) {
+    return handleError(error, 'handleSlotApproval'); // Return the error handled by handleError function
+  }
+};
+
 export const bookService = async (
   data: unknown,
 ): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
   try {
-    
     return await post<ServiceDetails>(
       `${V1_SERVICE_BASE_ROUTE}${BOOK_SERVICE}`,
       data,
@@ -86,17 +113,16 @@ export const getUpcomingEvents = async (
 
 export const deleteServiceById = async (
   serviceId: string,
-  fcmToken:string|undefined
+  fcmToken: string | undefined,
 ): Promise<ApiResponse<ServiceDetails[]> | ErrorResponse> => {
   try {
     return await del<ServiceDetails[]>(
       `${V1_SERVICE_BASE_ROUTE}${DELETE_SERVICE}`,
       {
-        params: {serviceId: serviceId, fcmToken:fcmToken},
+        params: {serviceId: serviceId, fcmToken: fcmToken},
       },
     );
   } catch (error) {
     return handleError(error, 'deleteServiceById'); // Corrected error message
   }
 };
-

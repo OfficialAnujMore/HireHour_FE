@@ -15,6 +15,7 @@ import {MAX_SCHEDULE_DISPLAY} from '../utils/constants';
 interface CustomServiceCardsProps {
   item: CustomCardsProps;
   handlePress: (id: string) => void;
+  setApprovedSlot: () => void;
 }
 
 // Component for rendering schedule details
@@ -29,6 +30,8 @@ export const ScheduleDetails: React.FC<{
     serviceId: string | undefined,
     scheduleId: string,
   ) => void;
+  setApprovedSlot?: (data:any) => void;
+  actionedSlots:Set<string>;
 }> = ({
   schedule,
   maxDisplay,
@@ -36,6 +39,8 @@ export const ScheduleDetails: React.FC<{
   onServiceSelect,
   selectedServices,
   handleRemoveScheduledDate,
+  setApprovedSlot,
+  actionedSlots,
 }) => {
   const [showAll, setShowAll] = useState(false);
 
@@ -61,6 +66,33 @@ export const ScheduleDetails: React.FC<{
             ]}
             label={scheduleItem.date}
           />
+          {setApprovedSlot && !actionedSlots?.has(scheduleItem.id) && (
+            <View style={{flexDirection: 'row', gap: 10}}>
+              <TouchableOpacity
+                onPress={() =>
+                  setApprovedSlot({
+                    ...scheduleItem,
+                    isApproved: true,
+                  })
+                }>
+                <Icon
+                  name="check"
+                  size={FontSize.medium}
+                  color={COLORS.success}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+              onPress={() => setApprovedSlot(scheduleItem)}
+              >
+                <Icon
+                  name="close"
+                  size={FontSize.medium}
+                  color={COLORS.error}
+                />
+              </TouchableOpacity>
+            </View>
+          )}
+
           {handleRemoveScheduledDate && (
             <TouchableOpacity
               onPress={() => {
@@ -88,10 +120,11 @@ export const ScheduleDetails: React.FC<{
 
 const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
   item,
-  maxDisplay,
   handleRemoveService,
   handleRemoveScheduledDate,
   handlePress,
+  setApprovedSlot,
+  actionedSlots,
 }) => {
   const navigation = useNavigation();
   const [visibleSchedules, setVisibleSchedules] = useState<
@@ -168,6 +201,8 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
           handleRemoveScheduledDate={handleRemoveScheduledDate}
           onServiceSelect={() => {}}
           selectedServices={[]}
+          setApprovedSlot={setApprovedSlot}
+          actionedSlots  = {new Set(actionedSlots)}
         />
       )}
     </TouchableOpacity>

@@ -37,18 +37,7 @@ export const CartScreen = () => {
   }, [cartItems]);
 
   const handlePaymentSelect = async (method: string): Promise<void> => {
-    console.log(method);
-
     const schedule = cartItems.flatMap(service => service.schedule);
-
-    console.log(JSON.stringify({
-      userId: user?.id,
-      schedule: schedule,
-      paymentId: 'abc',
-      transactionType: method,
-      status: 'pending',
-      amount: '20',
-    }));
     
     const response: ApiResponse<ServiceDetails> | ErrorResponse =
       await bookService({

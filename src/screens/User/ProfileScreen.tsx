@@ -17,7 +17,7 @@ import CustomText from '../../components/CustomText';
 import {WORD_DIR} from '../../utils/local/en';
 import {MenuItemProps} from 'interfaces';
 import {logout} from '../../redux/authSlice';
-import { globalStyle } from '../../utils/globalStyle';
+import {globalStyle} from '../../utils/globalStyle';
 
 const ProfileScreen: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -39,16 +39,15 @@ const ProfileScreen: React.FC = () => {
       {
         label: 'Transaction History',
         icon: 'receipt-outline',
-        routeName:'Transaction History',
+        routeName: 'Transaction History',
       },
 
       {
         label: 'Settings',
         icon: 'settings-outline',
-        routeName:'Settings',
-        // callback: () => navigation.navigate('Settings'),
+        routeName: 'Settings',
       },
-      
+
       {label: 'Privacy Policy', icon: 'lock-closed-outline'},
       {
         label: 'Log out',
@@ -61,13 +60,18 @@ const ProfileScreen: React.FC = () => {
       items.splice(2, 0, {
         label: 'Enroll As Service Provider',
         icon: 'person-add',
-        routeName:'Enrollment',
+        routeName: 'Enrollment',
       });
     } else {
       items.splice(2, 0, {
         label: 'My Services',
         icon: 'briefcase-outline',
-        routeName:'MyService',
+        routeName: 'MyService',
+      });
+      items.splice(3, 0, {
+        label: 'Booked Service',
+        icon: 'briefcase-outline',
+        routeName: 'BookedServices',
       });
     }
 
@@ -109,7 +113,11 @@ const ProfileScreen: React.FC = () => {
           key={index}
           label={item.label}
           icon={item.icon}
-          callback={ item.routeName ? ()=> navigation.navigate(item.routeName) : item.callback}
+          callback={
+            item.routeName
+              ? () => navigation.navigate(item.routeName)
+              : item.callback
+          }
         />
       ))}
     </ScrollView>
