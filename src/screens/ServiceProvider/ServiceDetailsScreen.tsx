@@ -26,6 +26,7 @@ import CustomDropdown from '../../components/CustomDropdown';
 import {VENUE} from '../../utils/constants';
 import CustomInput from '../../components/CustomInput';
 import {URL_REGEX} from '../../utils/regex';
+import CustomAvatar from '../../components/CustomAvatar';
 
 const ServiceDetailsScreen = (props: ServiceDetails) => {
   const navigation = useNavigation();
@@ -149,6 +150,31 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
         <View style={styles.headerContainer}>
           <CustomText label={item.category} style={styles.category} />
           <CustomText label={`$ ${item.pricing}`} style={styles.price} />
+        </View>
+
+        <CustomText
+          label={WORD_DIR.artistDetails}
+          style={styles.sectionTitle}
+        />
+        <View style={styles.profileView}>
+          <CustomAvatar name={item.name} imageUrl={item.avatarUri} />
+          <View style={styles.profileDetails}>
+            <CustomText label={`${item.name}`} style={styles.description} />
+            <CustomText
+              label={`${item.email}`}
+              style={styles.description}
+              action={() => {
+                console.log('contact email');
+              }}
+            />
+            <CustomText
+              label={`${item.phoneNumber}`}
+              style={styles.description}
+              action={() => {
+                console.log('contact phone number');
+              }}
+            />
+          </View>
         </View>
 
         <CustomText label={WORD_DIR.description} style={styles.sectionTitle} />
@@ -294,7 +320,7 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
   },
   description: {
-    fontSize: FontSize.small,
+    fontSize: FontSize.small + 2,
     color: COLORS.gray,
     marginBottom: Spacing.medium,
   },
@@ -312,5 +338,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.small,
     borderWidth: 1,
     borderColor: COLORS.gray,
+  },
+  profileView: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  profileDetails: {
+    flex: 1,
+    marginLeft: Spacing.small,
   },
 });

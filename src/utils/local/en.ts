@@ -40,6 +40,8 @@ export const WORD_DIR = {
   selectDate: 'Select a Date',
   selectTimeSlots: 'Select Available Time Slots',
 
+  artistDetails: 'Artist details',
+
   next: 'Next',
   createService: 'Create Service',
   whyEnroll: 'Why Become a Service Provider?',

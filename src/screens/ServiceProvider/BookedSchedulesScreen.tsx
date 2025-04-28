@@ -1,7 +1,6 @@
 import React, {useEffect, useState, useCallback} from 'react';
 import {
   View,
-  Text,
   FlatList,
   Image,
   TouchableOpacity,
@@ -18,6 +17,9 @@ import {ServiceDetails, User} from 'interfaces';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {globalStyle} from '../../utils/globalStyle';
 import {FallBack} from '../../components/FallBack';
+import CustomText from '../../components/CustomText'; // <-- Import your CustomText component
+import {FontSize, Screen, Spacing} from '../../utils/dimension';
+import {COLORS} from '../../utils/globalConstants/color';
 
 interface Schedule {
   id: string;
@@ -37,7 +39,6 @@ const BookedSchedulesScreen = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const dispatch = useDispatch();
 
-  // Fetch service data when the component mounts
   const fetchService = useCallback(async () => {
     setLoading(true);
     try {
@@ -59,7 +60,6 @@ const BookedSchedulesScreen = () => {
     fetchService();
   }, [fetchService]);
 
-  // Handle approve/rejection actions
   const onApproveOrRejection = async (item: Schedule, isApproved: boolean) => {
     const data: Schedule = {...item, isApproved};
 
@@ -70,8 +70,12 @@ const BookedSchedulesScreen = () => {
           message: isApproved
             ? 'Slot approved successfully'
             : 'Slot rejected successfully',
-          success: true,
+          success: isApproved,
         }),
+      );
+      // Remove the approved or rejected card from the list
+      setBookedSchedules(prev =>
+        prev.filter(schedule => schedule.id !== item.id),
       );
     } else {
       dispatch(
@@ -83,7 +87,6 @@ const BookedSchedulesScreen = () => {
     }
   };
 
-  // Memoize rendering of schedule cards to optimize performance
   const renderScheduleCard = useCallback(
     ({item}: {item: Schedule}) => {
       const {services, bookedUser, date} = item;
@@ -97,29 +100,37 @@ const BookedSchedulesScreen = () => {
             style={styles.image}
           />
           <View style={styles.content}>
-            <Text style={styles.title}>{services.title}</Text>
-            <Text style={styles.description}>{services.description}</Text>
-            <Text style={styles.date}>Scheduled Date: {date}</Text>
+            <CustomText
+              label={services.title}
+              style={styles.title}
+              numberOfLines={2}
+            />
+            <CustomText
+              label={services.description}
+              style={styles.description}
+              numberOfLines={2}
+            />
+            <CustomText label={`Scheduled Date: ${date}`} style={styles.date} />
 
             <View style={styles.userInfo}>
-              <Text style={styles.userTitle}>Booked By:</Text>
-              <Text>
-                {bookedUser.firstName} {bookedUser.lastName}
-              </Text>
-              <Text>{bookedUser.email}</Text>
-              <Text>{bookedUser.phoneNumber}</Text>
+              <CustomText label="Booked By:" style={styles.userTitle} />
+              <CustomText
+                label={`${bookedUser.firstName} ${bookedUser.lastName}`}
+              />
+              <CustomText label={bookedUser.email} />
+              <CustomText label={bookedUser.phoneNumber} />
             </View>
 
             <View style={styles.actions}>
               <TouchableOpacity
-                style={[styles.button, {backgroundColor: 'green'}]}
+                style={[styles.button, {backgroundColor: COLORS.success}]}
                 onPress={() => onApproveOrRejection(item, true)}>
-                <Text style={styles.buttonText}>Approve</Text>
+                <CustomText label="Approve" style={styles.buttonText} />
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.button, {backgroundColor: 'red'}]}
+                style={[styles.button, {backgroundColor: COLORS.error}]}
                 onPress={() => onApproveOrRejection(item, false)}>
-                <Text style={styles.buttonText}>Reject</Text>
+                <CustomText label="Reject" style={styles.buttonText} />
               </TouchableOpacity>
             </View>
           </View>
@@ -160,7 +171,7 @@ export default BookedSchedulesScreen;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: Spacing.small,
   },
   loaderContainer: {
     flex: 1,
@@ -169,25 +180,25 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#fff',
-    marginBottom: 16,
-    borderRadius: 12,
+    marginBottom: Spacing.small,
+    borderRadius: Spacing.small,
     overflow: 'hidden',
     elevation: 4,
   },
   image: {
     width: '100%',
-    height: 160,
+    height: Screen.height / 4,
   },
   content: {
-    padding: 12,
+    padding: Spacing.small,
   },
   title: {
-    fontSize: 18,
+    fontSize: FontSize.small + 2,
     fontWeight: 'bold',
     marginBottom: 4,
   },
   description: {
-    marginBottom: 8,
+    marginBottom: Spacing.small,
     color: '#555',
   },
   date: {

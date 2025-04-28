@@ -18,6 +18,7 @@ import {WORD_DIR} from '../../utils/local/en';
 import {MenuItemProps} from 'interfaces';
 import {logout} from '../../redux/authSlice';
 import {globalStyle} from '../../utils/globalStyle';
+import CustomAvatar from '../../components/CustomAvatar';
 
 const ProfileScreen: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -32,7 +33,15 @@ const ProfileScreen: React.FC = () => {
     );
   }
 
-  const {name, email, phoneNumber, avatarUri, isServiceProvider} = user;
+  const {
+    firstName,
+    lastName,
+    email,
+    phoneNumber,
+    avatarUri,
+    isServiceProvider,
+  } = user;
+  console.log(user);
 
   const menuItems = useMemo(() => {
     const items = [
@@ -88,7 +97,7 @@ const ProfileScreen: React.FC = () => {
       </TouchableOpacity>
 
       <View style={styles.profileContainer}>
-        {avatarUri ? (
+        {/* {avatarUri ? (
           <Image
             source={{uri: avatarUri}}
             style={styles.avatar}
@@ -102,8 +111,12 @@ const ProfileScreen: React.FC = () => {
               color={COLORS.gray}
             />
           </View>
-        )}
-        <CustomText style={[styles.textStyle, styles.name]} label={name} />
+        )} */}
+        <CustomAvatar name={`${firstName} ${lastName}`} imageUrl={avatarUri} />
+        <CustomText
+          style={[styles.textStyle, styles.name]}
+          label={`${firstName} ${lastName}`}
+        />
         <CustomText style={styles.textStyle} label={email} />
         <CustomText style={styles.textStyle} label={phoneNumber} />
       </View>

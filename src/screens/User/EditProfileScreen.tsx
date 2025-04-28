@@ -19,7 +19,8 @@ import {WORD_DIR} from '../../utils/local/en';
 import {useDispatch, useSelector} from 'react-redux';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {RootState} from '../../redux/store';
-import { globalStyle } from '../../utils/globalStyle';
+import {globalStyle} from '../../utils/globalStyle';
+import CustomAvatar from '../../components/CustomAvatar';
 
 const EditProfileScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -164,6 +165,7 @@ const EditProfileScreen: React.FC = () => {
           }
           style={styles.profileImage}
         />
+        <CustomAvatar name={user.name} imageUrl={user.profileImage} />
         <TouchableOpacity style={styles.editIcon} onPress={handleImagePicker}>
           <Icon name="pencil" size={18} color={COLORS.white} />
         </TouchableOpacity>
