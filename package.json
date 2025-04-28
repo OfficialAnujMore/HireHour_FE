@@ -8,7 +8,9 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
-    "androidResetCache": "react-native start --reset-cache"
+    "androidResetCache": "react-native start --reset-cache",
+    "pixel7": "react-native run-android --device=emulator-5554",
+    "pixel8": "react-native run-android --device=emulator-5556"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.1.0",
@@ -44,6 +46,7 @@
     "react-native-safe-area-context": "^5.0.0",
     "react-native-screens": "^4.4.0",
     "react-native-snap-carousel": "^3.9.1",
+    "react-native-uuid": "^2.0.3",
     "react-native-vector-icons": "^10.2.0",
     "react-navigation": "^5.0.0",
     "react-redux": "^9.2.0",

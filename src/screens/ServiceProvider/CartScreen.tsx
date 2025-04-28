@@ -36,18 +36,45 @@ export const CartScreen = () => {
     setAmount(amt);
   }, [cartItems]);
 
-  const handlePaymentSelect = async (method: string): Promise<void> => {
-    const schedule = cartItems.flatMap(service => service.schedule);    
-    
+  const [paymentDetails, setPaymentDetails] = useState({
+    amount: 0.0,
+    tax: 0.0,
+    totalAmount: 0.0,
+  });
+  const calculateTotalAmount = (amount: number, taxRate: number) => {
+    const tax = amount * (taxRate / 100);
+    const totalAmount = amount + tax;
+
+    setPaymentDetails(prevDetails => ({
+      ...prevDetails,
+      amount,
+      tax,
+      totalAmount,
+    }));
+  };
+  useEffect(() => {
+    calculateTotalAmount(Number(amount), 20);
+  }, [amount]);
+
+  const handlePaymentSelect = async ({
+    transactionType,
+    paymentId,
+  }): Promise<void> => {
+    const updatedPaymentDetails = {
+      ...paymentDetails,
+      transactionType,
+      paymentId,
+      paymentStatus: 'pending',
+    };
+
+    const data = {
+      userId: user?.id,
+      cartItems: cartItems,
+      paymentDetails: updatedPaymentDetails,
+    };
+
     const response: ApiResponse<ServiceDetails> | ErrorResponse =
-      await bookService({
-        userId: user?.id,
-        schedule: schedule,
-        paymentId: 'abc',
-        transactionType: method,
-        status: 'pending',
-        amount: '20',
-      });
+      await bookService(data);
 
     if (response.success) {
       dispatch(
@@ -101,14 +128,14 @@ export const CartScreen = () => {
                 />
               );
             })}
-            <CustomPaymentSummary amount={amount} />
+            <CustomPaymentSummary paymentDetails={paymentDetails} />
           </View>
           <CustomButton label={'Proceed to checkout'} onPress={handlePress} />
         </ScrollView>
       )}
 
       <PaymentModal
-        amount={amount}
+        paymentDetails={paymentDetails}
         isVisible={modalVisible}
         onClose={() => setModalVisible(false)}
         onPaymentSelect={handlePaymentSelect}
