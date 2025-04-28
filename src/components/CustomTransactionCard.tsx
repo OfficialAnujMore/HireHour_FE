@@ -7,14 +7,32 @@ import CustomText from './CustomText';
 
 interface CustomTransactionCardProps {
   item: {
-    serviceId: string;
-    transactionType: string;
-    title: string;
-    description: string;
-    totalAmt: string;
-    status: string;
+    id: string;
+    userId: string;
     paymentId: string;
-    transactionDateTime: string;
+    transactionType: string;
+    paymentStatus: string;
+    totalAmount: string;
+    tax: string;
+    createdAt: string;
+    updatedAt: string;
+    transactionItems: {
+      id: string;
+      transactionId: string;
+      serviceId: string;
+      serviceTitle: string;
+      servicePrice: string;
+      serviceProviderId: string;
+      venue: string;
+      meetingUrl: string;
+      address: string;
+      city: string;
+      postalCode: string;
+      state: string;
+      country: string;
+      createdAt: string;
+      updatedAt: string;
+    }[];
   };
   handlePress: (id: string) => void;
 }
@@ -57,9 +75,22 @@ const CustomTransactionCard: React.FC<CustomTransactionCardProps> = ({
   item,
   handlePress,
 }) => {
+
+
   const formatted = formatTransactionDateTime(item.createdAt);
   const transactionIcon = getTransactionIcon(item.transactionType);
-  const statusColor = getStatusColor(item.status);
+  const statusColor = getStatusColor(item.paymentStatus);
+
+  const getDisplayTitle = () => {
+    if (!item.transactionItems || item.transactionItems.length === 0) {
+      return '-';
+    }
+    const firstTitle = item.transactionItems[0].serviceTitle || 'Service';
+    if (item.transactionItems.length > 1) {
+      return `${firstTitle} +${item.transactionItems.length - 1}`;
+    }
+    return firstTitle;
+  };
 
   return (
     <TouchableOpacity
@@ -71,12 +102,15 @@ const CustomTransactionCard: React.FC<CustomTransactionCardProps> = ({
 
         <View style={styles.orderDetails}>
           <View style={styles.row}>
-            <CustomText style={styles.orderTitle} label={item.service?.title} />
-            <CustomText style={styles.orderTitle} label={`$${item.amount}`} />
+            <CustomText style={styles.orderTitle} label={getDisplayTitle()} />
+            <CustomText
+              style={styles.orderTitle}
+              label={`$${item.totalAmount}`}
+            />
           </View>
 
           <View style={styles.row}>
-            <CustomText style={styles.orderMeta} label={item.service?.description} />
+            <CustomText style={styles.orderMeta} label="Transaction ID:" />
             <View
               style={[
                 styles.statusContainer,
@@ -84,18 +118,20 @@ const CustomTransactionCard: React.FC<CustomTransactionCardProps> = ({
               ]}>
               <CustomText
                 style={[styles.orderMeta, {color: statusColor}]}
-                label={item.status.toUpperCase()}
+                label={item.paymentStatus?.toUpperCase()}
               />
             </View>
           </View>
 
           <View style={styles.row}>
-            <CustomText style={styles.orderMeta} label="Transaction ID" />
-            <CustomText style={styles.orderMeta} label={formatted.date} />
+            <CustomText
+              style={styles.orderMeta}
+              label={item.paymentId || '---NA---'}
+            />
           </View>
 
           <View style={styles.row}>
-            <CustomText style={styles.orderMeta} label={item.paymentId} />
+            <CustomText style={styles.orderMeta} label={formatted.date} />
             <CustomText style={styles.orderMeta} label={formatted.time} />
           </View>
         </View>
@@ -135,7 +171,7 @@ const styles = StyleSheet.create({
     color: COLORS.black,
   },
   orderMeta: {
-    fontSize: FontSize.small,
+    fontSize: FontSize.small+2,
     color: COLORS.gray,
   },
   statusContainer: {

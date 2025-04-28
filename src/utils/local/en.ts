@@ -76,4 +76,7 @@ export const WORD_DIR = {
   settingsUpdated: 'Your settings have been updated!',
 
   tnc: 'Terms and Conditions',
+  noTransaction: 'No new transactions!',
+  noTransactionSubHeading:'Please book a service to view transactions'
+
 };

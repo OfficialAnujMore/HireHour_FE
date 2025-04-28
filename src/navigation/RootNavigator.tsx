@@ -28,6 +28,8 @@ import CreateSchedule from '../screens/ServiceProvider/CreateSchedule';
 import CreateService from '../screens/ServiceProvider/CreateService';
 import {CartScreen} from '../screens/ServiceProvider/CartScreen';
 import {TransactionHistory} from '../screens/ServiceProvider/TransactionHistory';
+// import BookedServices from '../screens/ServiceProvider/BookedSchedulesScreen';
+import BookedSchedulesScreen from '../screens/ServiceProvider/BookedSchedulesScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -131,6 +133,8 @@ const RootNavigator = () => {
                 component={EnrollAsServiceProvider}
               />
               <Stack.Screen name="MyService" component={MyServices} />
+              <Stack.Screen name="BookedServices" component={BookedSchedulesScreen} />
+
               <Stack.Screen name="ViewService" component={ViewServiceScreen} />
 
               <Stack.Screen name="Create Service" component={CreateService} />

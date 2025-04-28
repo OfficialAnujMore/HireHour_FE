@@ -10,26 +10,7 @@ interface PaymentModalProps {
   amount: Number;
 }
 
-const CustomPaymentSummary: React.FC<PaymentModalProps> = ({amount}) => {
-  const [paymentDetails, setPaymentDetails] = useState({
-    amount: 0.0,
-    tax: 0.0,
-    totalAmount: 0.0,
-  });
-  const calculateTotalAmount = (amount: number, taxRate: number) => {
-    const tax = amount * (taxRate / 100);
-    const totalAmount = amount + tax;
-
-    setPaymentDetails(prevDetails => ({
-      ...prevDetails,
-      amount,
-      tax,
-      totalAmount,
-    }));
-  };
-  useEffect(() => {
-    calculateTotalAmount(Number(amount), 20);
-  }, [amount]);
+const CustomPaymentSummary: React.FC<PaymentModalProps> = ({paymentDetails}) => { 
 
   return (
     <View style={globalStyle.sectionContainer}>

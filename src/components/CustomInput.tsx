@@ -25,7 +25,8 @@ type CustomInputProps = TextInputProps & {
     | 'numeric'
     | 'phone-pad'
     | 'decimal-pad'
-    | 'ascii-capable';
+    | 'ascii-capable'
+    | 'url';
   secureTextEntry?: boolean;
   disabled?: boolean;
   maxLength?: number;

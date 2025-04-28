@@ -33,10 +33,13 @@ export const DELETE_ALL_USERS = '/deleteAllUsers';
 // SERVICE ROUTES
 export const UPSERT_SERVICE = '/upsertService';
 export const GET_USER_SERVICES = '/getUserServices';
+export const GET_BOOKED_SERVICES = '/getBookedService'
+export const HANDLE_SLOT_APPROVAL= '/approveSlots'
 export const GET_SERVICE_PROVIDERS = '/getServiceProviders';
 export const DELETE_SERVICE = '/deleteService';
 export const BOOK_SERVICE = '/bookService';
 export const UPCOMING_EVENTS = '/upcomingEvents';
+export const HOLD_SLOTS = '/holdSlots';
 
 // TRANSACTION ROUTES
 export const GET_USER_TRANSACTION = '/getUserTransaction';
