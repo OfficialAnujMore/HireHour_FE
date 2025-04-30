@@ -48,6 +48,14 @@ export const ScheduleDetails: React.FC<{
   const dispatch = useDispatch();
   const isSelected = (service: ServiceDetails) =>
     selectedServices?.some(s => s.id === service.id);
+  const toUSDateFormat = (isoDate: string) => {
+    const date = new Date(isoDate);
+    // console.log({date});
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
 
   return (
     <View style={styles.scheduleContainer}>
@@ -64,7 +72,7 @@ export const ScheduleDetails: React.FC<{
               styles.scheduleTitle,
               isSelected(scheduleItem) && styles.selectedTextColor,
             ]}
-            label={scheduleItem.date}
+            label={toUSDateFormat(scheduleItem.date)}
           />
           {setApprovedSlot && !actionedSlots?.has(scheduleItem.id) && (
             <View style={{flexDirection: 'row', gap: 10}}>

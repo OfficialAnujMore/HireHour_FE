@@ -191,9 +191,9 @@ const CreateService = (props: any) => {
 
       <CustomButton
         onPress={() => {
-          if (validateFields()) {
+          // if (validateFields()) {
             navigation.navigate('Create Schedule', serviceDetails);
-          }
+          // }
         }}
         label={WORD_DIR.next}
       />
