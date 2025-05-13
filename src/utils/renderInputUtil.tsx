@@ -5,12 +5,13 @@ import {Errors} from 'interfaces'; // adjust based on the location of your types
 type RenderInputProps = {
   value: string;
   placeholder: string;
-  handleValueChange: (field: string, value: string) => void;
+  handleValueChange?: (field: string, value: string) => void;
   field?: string;
   errors?: Errors;
   keyboardType?: 'default' | 'email-address' | 'phone-pad';
   secureTextEntry?: boolean;
   maxLength?: number;
+  disabled?: boolean;
 };
 
 const renderInput = ({
@@ -22,15 +23,18 @@ const renderInput = ({
   keyboardType = 'default',
   secureTextEntry,
   maxLength,
+  disabled = false,
 }: RenderInputProps) => (
   <CustomInput
+    label={placeholder}
     value={value}
     placeholder={placeholder}
     onValueChange={newValue => handleValueChange(field, newValue)}
-    errorMessage={errors[field]}
+    errorMessage={errors[field]??''}
     keyboardType={keyboardType}
     secureTextEntry={secureTextEntry}
     maxLength={maxLength}
+    disabled={disabled}
   />
 );
 

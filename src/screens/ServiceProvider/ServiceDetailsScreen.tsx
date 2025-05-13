@@ -23,10 +23,11 @@ import {FallBack} from '../../components/FallBack';
 import {WORD_DIR} from '../../utils/local/en';
 import * as Animatable from 'react-native-animatable';
 import CustomDropdown from '../../components/CustomDropdown';
-import {VENUE} from '../../utils/constants';
+import {MAX_FIELD_CHAR_COUNT, US_STATES, VENUE} from '../../utils/constants';
 import CustomInput from '../../components/CustomInput';
 import {URL_REGEX} from '../../utils/regex';
 import CustomAvatar from '../../components/CustomAvatar';
+import renderInput from '../../utils/renderInputUtil';
 
 const ServiceDetailsScreen = (props: ServiceDetails) => {
   const navigation = useNavigation();
@@ -44,7 +45,7 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
     city: '',
     postalCode: '',
     state: '',
-    country: '',
+    country: 'US',
   });
 
   const handleSelectService = (service: ServiceDetails) => {
@@ -208,7 +209,7 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
                       city: '',
                       postalCode: '',
                       state: '',
-                      country: '',
+                      country: 'US',
                     });
                   }}
                   placeholder="Select Venue"
@@ -249,23 +250,23 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
                       onValueChange={text =>
                         setAddressInfo({...addressInfo, postalCode: text})
                       }
+                      maxLength={MAX_FIELD_CHAR_COUNT.postalCode}
                       keyboardType="numeric"
                     />
-                    <CustomInput
+                    <CustomDropdown
                       label="State"
-                      placeholder="Enter State"
+                      options={US_STATES}
                       value={addressInfo.state}
-                      onValueChange={text =>
-                        setAddressInfo({...addressInfo, state: text})
+                      onValueChange={value =>
+                        setAddressInfo({...addressInfo, state: value})
                       }
+                      placeholder="Select an option"
                     />
                     <CustomInput
                       label="Country"
                       placeholder="Enter Country"
                       value={addressInfo.country}
-                      onValueChange={text =>
-                        setAddressInfo({...addressInfo, country: text})
-                      }
+                      disabled={true}
                     />
                   </>
                 )}

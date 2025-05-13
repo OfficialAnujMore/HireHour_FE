@@ -7,7 +7,7 @@ import {COLORS} from '../../utils/globalConstants/color';
 import CustomButton from '../../components/CustomButton';
 import {useDispatch} from 'react-redux';
 import CustomDropdown from '../../components/CustomDropdown';
-import {CATEGORY} from '../../utils/constants';
+import {CATEGORY, MAX_FIELD_CHAR_COUNT} from '../../utils/constants';
 import {useNavigation} from '@react-navigation/native';
 import {
   ImagePickerResponse,
@@ -156,7 +156,7 @@ const CreateService = (props: any) => {
         value: serviceDetails.title,
         placeholder: WORD_DIR.title,
         field: 'title',
-        maxLength: 30,
+        maxLength: MAX_FIELD_CHAR_COUNT.serviceTitle,
         errors,
         handleValueChange,
       })}
@@ -165,7 +165,7 @@ const CreateService = (props: any) => {
         value: serviceDetails.description,
         placeholder: WORD_DIR.description,
         field: 'description',
-        maxLength: 50,
+        maxLength: MAX_FIELD_CHAR_COUNT.serviceDescription,
         errors,
         handleValueChange,
       })}
@@ -180,20 +180,19 @@ const CreateService = (props: any) => {
         keyboardType: 'phone-pad',
       })}
       <CustomDropdown
-        label="Select an Option"
+        label="Select a Category"
         options={CATEGORY}
         value={serviceDetails.category}
         onValueChange={value =>
           setServiceDetails(prev => ({...prev, category: value}))
         }
-        placeholder="Select an option"
       />
 
       <CustomButton
         onPress={() => {
-          // if (validateFields()) {
+          if (validateFields()) {
             navigation.navigate('Create Schedule', serviceDetails);
-          // }
+          }
         }}
         label={WORD_DIR.next}
       />

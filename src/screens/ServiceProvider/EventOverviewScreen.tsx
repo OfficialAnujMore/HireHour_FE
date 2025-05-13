@@ -88,7 +88,7 @@ const EventOverviewScreen = ({route}) => {
 
   const renderScheduleCard = useCallback(
     ({item}: {item: Schedule}) => {
-      const {services, bookedUser, date} = item;
+      const {services, bookedUser, date} = item;      
       const showActions = type === 'Booked';
       const formatedDate = formatDateUS(date);
 
