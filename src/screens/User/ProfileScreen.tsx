@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import {Screen, Spacing, FontSize} from '../../utils/dimension';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {COLORS} from '../../utils/globalConstants/color';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '../../redux/store';
@@ -47,20 +47,20 @@ const ProfileScreen: React.FC = () => {
     const items = [
       {
         label: 'Transaction History',
-        icon: 'receipt-outline',
+        icon: 'receipt',
         routeName: 'Transaction History',
       },
 
       {
         label: 'Settings',
-        icon: 'settings-outline',
+        icon: 'settings',
         routeName: 'Settings',
       },
 
-      {label: 'Privacy Policy', icon: 'lock-closed-outline'},
+      {label: 'Privacy Policy', icon: 'policy'},
       {
         label: 'Log out',
-        icon: 'power-outline',
+        icon: 'power-settings-new',
         callback: () => dispatch(logout()),
       },
     ];
@@ -74,13 +74,23 @@ const ProfileScreen: React.FC = () => {
     } else {
       items.splice(2, 0, {
         label: 'My Services',
-        icon: 'briefcase-outline',
+        icon: 'event',
         routeName: 'MyService',
       });
       items.splice(3, 0, {
-        label: 'Booked Service',
-        icon: 'briefcase-outline',
-        routeName: 'BookedServices',
+        label: 'Booked events',
+        icon: 'event-note',
+        routeName: 'BookedEvents',
+      });
+      items.splice(4, 0, {
+        label: 'Upcoming events',
+        icon: 'event-available',
+        routeName: 'UpcomingEvents',
+      });
+      items.splice(5, 0, {
+        label: 'Past events',
+        icon: 'event-repeat',
+        routeName: 'PastEvents',
       });
     }
 
@@ -93,25 +103,10 @@ const ProfileScreen: React.FC = () => {
         style={styles.editItemContainer}
         onPress={() => navigation.navigate('EditProfile')}
         accessibilityLabel="Edit Profile">
-        <Icon name="pencil" size={FontSize.large} color={COLORS.black} />
+        <Icon name="edit" size={FontSize.large} color={COLORS.black} />
       </TouchableOpacity>
 
       <View style={styles.profileContainer}>
-        {/* {avatarUri ? (
-          <Image
-            source={{uri: avatarUri}}
-            style={styles.avatar}
-            accessibilityLabel="User Avatar"
-          />
-        ) : (
-          <View style={[styles.avatar, styles.iconFallback]}>
-            <Icon
-              name="person-outline"
-              size={FontSize.extraLarge * 1.5}
-              color={COLORS.gray}
-            />
-          </View>
-        )} */}
         <CustomAvatar name={`${firstName} ${lastName}`} imageUrl={avatarUri} />
         <CustomText
           style={[styles.textStyle, styles.name]}

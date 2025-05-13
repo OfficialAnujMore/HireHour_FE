@@ -14,13 +14,13 @@ import {RootState} from 'redux/store';
 import {useFocusEffect} from '@react-navigation/native';
 import {WORD_DIR} from '../utils/local/en';
 import {FallBack} from '../components/FallBack';
-import CustomServiceCards from '../components/CustomServiceCard';
 import dataNotFound from '../assets/error-in-calendar.png';
 import {globalStyle} from '../utils/globalStyle';
 import {ApiResponse} from 'services/apiClient';
 import {ErrorResponse, ServiceDetails} from 'interfaces';
 import {showSnackbar} from '../redux/snackbarSlice';
 import {FontSize, Screen, Spacing} from '../utils/dimension';
+import { formatDateUS } from '../utils/globalFunctions';
 
 const UpcomingEvents = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -30,7 +30,6 @@ const UpcomingEvents = () => {
   const apiCall = async (): Promise<void> => {
     const response: ApiResponse<ServiceDetails[]> | ErrorResponse =
       await getUpcomingEvents({userId: user?.id});
-
     if (response.success && response.data) {
       setData(response.data);
     } else {
@@ -50,15 +49,12 @@ const UpcomingEvents = () => {
   );
 
   const renderScheduleCard = useCallback(({item}: {item: ServiceDetails}) => {
+    console.log(item);
+    
     const {services, date} = item;
     const {user, servicePreview} = services;
 
-    const formattedDate = new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-
+    const formattedDate = formatDateUS(date)
     return (
       <View style={styles.card}>
         <Image
@@ -84,7 +80,7 @@ const UpcomingEvents = () => {
           />
 
           <View style={styles.userInfo}>
-            <CustomText label="Booked By:" style={styles.userTitle} />
+            <CustomText label="Artist details:" style={styles.userTitle} />
             <CustomText
               label={`${user?.firstName ?? ''} ${user?.lastName ?? ''}`}
             />

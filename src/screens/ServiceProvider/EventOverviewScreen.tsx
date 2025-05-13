@@ -17,9 +17,10 @@ import {ServiceDetails, User} from 'interfaces';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {globalStyle} from '../../utils/globalStyle';
 import {FallBack} from '../../components/FallBack';
-import CustomText from '../../components/CustomText'; // <-- Import your CustomText component
+import CustomText from '../../components/CustomText';
 import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import {COLORS} from '../../utils/globalConstants/color';
+import { formatDateUS } from '../../utils/globalFunctions';
 
 interface Schedule {
   id: string;
@@ -33,7 +34,8 @@ interface Schedule {
   services: ServiceDetails;
 }
 
-const BookedSchedulesScreen = () => {
+const EventOverviewScreen = ({route}) => {
+  const {type} = route.params;
   const user = useSelector((state: RootState) => state.auth.user);
   const [bookedSchedules, setBookedSchedules] = useState<Schedule[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -43,18 +45,19 @@ const BookedSchedulesScreen = () => {
     setLoading(true);
     try {
       const response = await getMyBookedServices({
-        id: user?.id,
-        isAvailable: false,
+        id: user.id,
+        type,
       });
-      if (response.success && response.data) {
-        setBookedSchedules(response.data);
-      }
+
+      console.log(response);
+
+      setBookedSchedules(response.data);
     } catch (error) {
       console.error('Error fetching booked services:', error);
     } finally {
       setLoading(false);
     }
-  }, [user?.id]);
+  }, [user?.id, type]);
 
   useEffect(() => {
     fetchService();
@@ -62,8 +65,8 @@ const BookedSchedulesScreen = () => {
 
   const onApproveOrRejection = async (item: Schedule, isApproved: boolean) => {
     const data: Schedule = {...item, isApproved};
-
     const response = await handleSlotApproval(data);
+
     if (response.success) {
       dispatch(
         showSnackbar({
@@ -73,16 +76,12 @@ const BookedSchedulesScreen = () => {
           success: isApproved,
         }),
       );
-      // Remove the approved or rejected card from the list
       setBookedSchedules(prev =>
         prev.filter(schedule => schedule.id !== item.id),
       );
     } else {
       dispatch(
-        showSnackbar({
-          message: 'Failed to update slot',
-          success: false,
-        }),
+        showSnackbar({message: 'Failed to update slot', success: false}),
       );
     }
   };
@@ -90,13 +89,13 @@ const BookedSchedulesScreen = () => {
   const renderScheduleCard = useCallback(
     ({item}: {item: Schedule}) => {
       const {services, bookedUser, date} = item;
+      const showActions = type === 'Booked';
+      const formatedDate = formatDateUS(date);
 
       return (
         <View style={styles.card}>
           <Image
-            source={{
-              uri: services.servicePreview?.[0]?.uri || '',
-            }}
+            source={{uri: services.servicePreview?.[0]?.uri || ''}}
             style={styles.image}
           />
           <View style={styles.content}>
@@ -110,7 +109,7 @@ const BookedSchedulesScreen = () => {
               style={styles.description}
               numberOfLines={2}
             />
-            <CustomText label={`Scheduled Date: ${date}`} style={styles.date} />
+            <CustomText label={`Scheduled Date: ${formatedDate}`} style={styles.date} />
 
             <View style={styles.userInfo}>
               <CustomText label="Booked By:" style={styles.userTitle} />
@@ -121,23 +120,25 @@ const BookedSchedulesScreen = () => {
               <CustomText label={bookedUser.phoneNumber} />
             </View>
 
-            <View style={styles.actions}>
-              <TouchableOpacity
-                style={[styles.button, {backgroundColor: COLORS.success}]}
-                onPress={() => onApproveOrRejection(item, true)}>
-                <CustomText label="Approve" style={styles.buttonText} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, {backgroundColor: COLORS.error}]}
-                onPress={() => onApproveOrRejection(item, false)}>
-                <CustomText label="Reject" style={styles.buttonText} />
-              </TouchableOpacity>
-            </View>
+            {showActions && (
+              <View style={styles.actions}>
+                <TouchableOpacity
+                  style={[styles.button, {backgroundColor: COLORS.success}]}
+                  onPress={() => onApproveOrRejection(item, true)}>
+                  <CustomText label="Approve" style={styles.buttonText} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, {backgroundColor: COLORS.error}]}
+                  onPress={() => onApproveOrRejection(item, false)}>
+                  <CustomText label="Reject" style={styles.buttonText} />
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         </View>
       );
     },
-    [onApproveOrRejection],
+    [type, onApproveOrRejection],
   );
 
   if (loading) {
@@ -150,6 +151,11 @@ const BookedSchedulesScreen = () => {
 
   return (
     <View style={globalStyle.globalContainer}>
+       <CustomText
+              label={`${type} Events`}
+              style={styles.title}
+              numberOfLines={2}
+            />
       {bookedSchedules.length > 0 ? (
         <FlatList
           data={bookedSchedules}
@@ -160,24 +166,18 @@ const BookedSchedulesScreen = () => {
       ) : (
         <FallBack
           imageSrc={require('../../assets/error-in-calendar.png')}
-          heading="Kindly create a service first before continuing!"
+          heading="No schedules found for this category."
         />
       )}
     </View>
   );
 };
 
-export default BookedSchedulesScreen;
+export default EventOverviewScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    padding: Spacing.small,
-  },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  container: {padding: Spacing.small},
+  loaderContainer: {flex: 1, justifyContent: 'center', alignItems: 'center'},
   card: {
     backgroundColor: '#fff',
     marginBottom: Spacing.small,
@@ -185,37 +185,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     elevation: 4,
   },
-  image: {
-    width: '100%',
-    height: Screen.height / 4,
-  },
-  content: {
-    padding: Spacing.small,
-  },
-  title: {
-    fontSize: FontSize.small + 2,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  description: {
-    marginBottom: Spacing.small,
-    color: '#555',
-  },
-  date: {
-    marginBottom: 8,
-    fontStyle: 'italic',
-  },
-  userInfo: {
-    marginBottom: 12,
-  },
-  userTitle: {
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  actions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
+  image: {width: '100%', height: Screen.height / 4},
+  content: {padding: Spacing.small},
+  title: {fontSize: FontSize.small + 2, fontWeight: 'bold', marginBottom: 4},
+  description: {marginBottom: Spacing.small, color: '#555'},
+  date: {marginBottom: 8, fontStyle: 'italic'},
+  userInfo: {marginBottom: 12},
+  userTitle: {fontWeight: 'bold', marginBottom: 4},
+  actions: {flexDirection: 'row', justifyContent: 'space-between'},
   button: {
     flex: 1,
     padding: 10,
@@ -223,8 +200,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     alignItems: 'center',
   },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
+  buttonText: {color: '#fff', fontWeight: 'bold'},
 });

@@ -5,8 +5,8 @@ export const CATEGORY = {
 };
 
 export const VENUE = {
-  offline: 'Offline',
   online: 'Online',
+  offline: 'Offline',
 };
 
 export const USER_DETAILS = {
