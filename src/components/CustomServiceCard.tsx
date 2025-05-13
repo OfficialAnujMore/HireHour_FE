@@ -180,7 +180,7 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
             <CustomText
               style={styles.orderMeta}
               label={item.description}
-              numberOfLines={2}
+              numberOfLines={4}
             />
           </View>
         </View>

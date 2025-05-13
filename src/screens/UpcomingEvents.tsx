@@ -72,7 +72,7 @@ const UpcomingEvents = () => {
           <CustomText
             label={services?.description || 'No Description'}
             style={styles.description}
-            numberOfLines={2}
+            numberOfLines={4}
           />
           <CustomText
             label={`Scheduled Date: ${formattedDate}`}

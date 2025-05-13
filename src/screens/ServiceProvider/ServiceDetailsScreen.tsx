@@ -160,7 +160,7 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
         <View style={styles.profileView}>
           <CustomAvatar name={item.name} imageUrl={item.avatarUri} />
           <View style={styles.profileDetails}>
-            <CustomText label={`${item.name}`} style={styles.description} />
+            <CustomText label={`${item.name}`} style={styles.description} numberOfLines={4} />
             <CustomText
               label={`${item.email}`}
               style={styles.description}
@@ -179,7 +179,7 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
         </View>
 
         <CustomText label={WORD_DIR.description} style={styles.sectionTitle} />
-        <CustomText label={item.description} style={styles.description} />
+        <CustomText label={item.description} style={styles.description}  numberOfLines={4} />
 
         {item.schedule.length > 0 ? (
           <Animatable.View animation="fadeInUp" duration={600}>

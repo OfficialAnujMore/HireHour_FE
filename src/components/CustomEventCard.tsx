@@ -30,7 +30,7 @@ const CustomEventCard: React.FC<CustomCardsProps> = ({ item,handlePress }) => {
           <CustomText label={item.title} style={styles.textStyle} />
           <CustomRatingInfo rating={'5.0'} />
         </View>
-        <CustomText label={item.description} style={styles.textStyle} />
+        <CustomText label={item.description} style={styles.textStyle} numberOfLines={4} />
         <CustomText label={`${item.date} ${item.month}` } style={styles.textStyle} />
         <CustomText label={item.time} style={styles.textStyle} />
       </View>

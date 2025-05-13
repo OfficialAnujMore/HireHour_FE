@@ -107,7 +107,7 @@ const EventOverviewScreen = ({route}) => {
             <CustomText
               label={services.description}
               style={styles.description}
-              numberOfLines={2}
+              numberOfLines={4}
             />
             <CustomText label={`Scheduled Date: ${formatedDate}`} style={styles.date} />
 
