@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -8,16 +8,17 @@ import {WORD_DIR} from '../utils/local/en';
 import {FontSize, Spacing} from '../utils/dimension';
 import {COLORS} from '../utils/globalConstants/color';
 import CustomText from '../components/CustomText';
+import uuid from 'react-native-uuid';
 
 interface PaymentModalProps {
-  amount: Number;
+  paymentDetails: any;
   isVisible: boolean;
   onClose: () => void;
   onPaymentSelect: (method: string) => void;
 }
 
 const PaymentModal: React.FC<PaymentModalProps> = ({
-  amount,
+  paymentDetails,
   isVisible,
   onClose,
   onPaymentSelect,
@@ -26,9 +27,16 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
   const paymentOptions = [
     {id: 'cash', label: 'Record a Cash Payment', icon: 'money'},
-    {id: 'debit_card', label: 'Debit Card', icon: 'credit-card'},
+    {id: 'card', label: 'Debit Card', icon: 'credit-card'},
     {id: 'paypal', label: 'PayPal', icon: 'paypal'},
   ];
+  const [paymentId, setPaymentId] = useState('');
+
+  useEffect(() => {
+    if (selectedPayment == paymentOptions[0].id) {
+      setPaymentId(uuid.v4());
+    }
+  }, [selectedPayment]);
 
   return (
     <Modal
@@ -38,7 +46,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
       animationIn="slideInUp"
       animationOut="slideOutDown">
       <View style={styles.container}>
-        <CustomPaymentSummary amount={amount} />
+        <CustomPaymentSummary paymentDetails={paymentDetails} />
 
         {/* Payment Methods Section */}
         <CustomText style={styles.title} label={WORD_DIR.choosePayment} />
@@ -65,7 +73,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         />
 
         <CustomButton
-          onPress={() => selectedPayment && onPaymentSelect(selectedPayment)}
+          onPress={() =>
+            selectedPayment &&
+            onPaymentSelect({
+              transactionType: selectedPayment,
+              paymentId: paymentId,
+            })
+          }
           disabled={!selectedPayment}
           label={WORD_DIR.continue}
         />

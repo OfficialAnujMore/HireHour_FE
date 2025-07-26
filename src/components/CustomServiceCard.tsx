@@ -15,6 +15,7 @@ import {MAX_SCHEDULE_DISPLAY} from '../utils/constants';
 interface CustomServiceCardsProps {
   item: CustomCardsProps;
   handlePress: (id: string) => void;
+  setApprovedSlot: () => void;
 }
 
 // Component for rendering schedule details
@@ -29,6 +30,8 @@ export const ScheduleDetails: React.FC<{
     serviceId: string | undefined,
     scheduleId: string,
   ) => void;
+  setApprovedSlot?: (data: any) => void;
+  actionedSlots: Set<string>;
 }> = ({
   schedule,
   maxDisplay,
@@ -36,6 +39,8 @@ export const ScheduleDetails: React.FC<{
   onServiceSelect,
   selectedServices,
   handleRemoveScheduledDate,
+  setApprovedSlot,
+  actionedSlots,
 }) => {
   const [showAll, setShowAll] = useState(false);
 
@@ -43,6 +48,14 @@ export const ScheduleDetails: React.FC<{
   const dispatch = useDispatch();
   const isSelected = (service: ServiceDetails) =>
     selectedServices?.some(s => s.id === service.id);
+  const toUSDateFormat = (isoDate: string) => {
+    const date = new Date(isoDate);
+    // console.log({date});
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
 
   return (
     <View style={styles.scheduleContainer}>
@@ -59,8 +72,33 @@ export const ScheduleDetails: React.FC<{
               styles.scheduleTitle,
               isSelected(scheduleItem) && styles.selectedTextColor,
             ]}
-            label={scheduleItem.date}
+            label={toUSDateFormat(scheduleItem.date)}
           />
+          {setApprovedSlot && !actionedSlots?.has(scheduleItem.id) && (
+            <View style={{flexDirection: 'row', gap: 10}}>
+              <TouchableOpacity
+                onPress={() =>
+                  setApprovedSlot({
+                    ...scheduleItem,
+                    isApproved: true,
+                  })
+                }>
+                <Icon
+                  name="check"
+                  size={FontSize.medium}
+                  color={COLORS.success}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setApprovedSlot(scheduleItem)}>
+                <Icon
+                  name="close"
+                  size={FontSize.medium}
+                  color={COLORS.error}
+                />
+              </TouchableOpacity>
+            </View>
+          )}
+
           {handleRemoveScheduledDate && (
             <TouchableOpacity
               onPress={() => {
@@ -88,15 +126,17 @@ export const ScheduleDetails: React.FC<{
 
 const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
   item,
-  maxDisplay,
   handleRemoveService,
   handleRemoveScheduledDate,
   handlePress,
+  setApprovedSlot,
+  actionedSlots,
 }) => {
   const navigation = useNavigation();
   const [visibleSchedules, setVisibleSchedules] = useState<
     Record<string, boolean>
   >({});
+  console.log('serviceItem', item);
 
   // Toggle schedule visibility based on serviceId
   const toggleScheduleVisibility = (serviceId: string) => {
@@ -130,12 +170,17 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
             />
             <CustomText
               style={styles.orderMeta}
+              label={`Artist: ${item.name}`}
+              numberOfLines={2}
+            />
+            <CustomText
+              style={styles.orderMeta}
               label={` ${item.ratings} ★ | $ ${item.pricing}`}
             />
             <CustomText
               style={styles.orderMeta}
               label={item.description}
-              numberOfLines={2}
+              numberOfLines={4}
             />
           </View>
         </View>
@@ -168,6 +213,8 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
           handleRemoveScheduledDate={handleRemoveScheduledDate}
           onServiceSelect={() => {}}
           selectedServices={[]}
+          setApprovedSlot={setApprovedSlot}
+          actionedSlots={new Set(actionedSlots)}
         />
       )}
     </TouchableOpacity>

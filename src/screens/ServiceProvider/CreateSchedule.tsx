@@ -24,49 +24,66 @@ import {API_RESPONSE} from '../../utils/local/apiResponse';
 import {globalStyle} from '../../utils/globalStyle';
 
 interface SelectedDates {
-  [key: string]: {selected: boolean};
+  [key: string]: {selected: boolean; isAvailable: boolean};
 }
 
 interface DayObject {
   dateString: string;
 }
 
+// Utility to convert date string to ISO string
+const toStartOfDayISOString = (dateStr: string) => {
+  const date = new Date(dateStr);
+  date.setUTCHours(0, 0, 0, 0);
+  return date.toISOString();
+};
+
+// Utility to convert ISO string to US date format (MM/DD/YYYY)
+const toUSDateFormat = (isoDate: string) => {
+  const date = new Date(isoDate);
+  // console.log({date});
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()+1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${month}/${day}/${year}`;
+};
+
 const CreateSchedule = (props: any) => {
-  const serviceDetails = props.route.params; // Data from CreateService
+  const serviceDetails = props.route.params;
   const navigation = useNavigation();
   const [selectedDates, setSelectedDates] = useState<SelectedDates>({});
-
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
   const today = new Date().toISOString().split('T')[0];
+  // let sortedDates: ArrayLike<any> | null | undefined=[]
 
-  // Initialize selected dates from serviceDetails.schedule when the component mounts
+  // Initialize selected dates
   useEffect(() => {
     if (serviceDetails.schedule) {
       const initialSelectedDates: SelectedDates = {};
-
-      // Ensure each date string is set correctly and doesn't become [object Object]
-      serviceDetails.schedule.forEach((date: string) => {
-        console.log(date);
-
-        initialSelectedDates[date.date] = {selected: true, isAvailable: true};
+      serviceDetails.schedule.forEach((dateObj: {date: string}) => {
+        const iso = toStartOfDayISOString(dateObj.date);
+        initialSelectedDates[iso] = {selected: true, isAvailable: true};
       });
-
       setSelectedDates(initialSelectedDates);
     }
   }, [serviceDetails.schedule]);
 
+  // Handle selecting/unselecting dates
   const handleDayPress = (day: DayObject) => {
-    const date = day.dateString;
+    const isoDate = toStartOfDayISOString(day.dateString);
+    // console.log(day, isoDate);
 
     setSelectedDates(prev => {
-      if (prev[date]) {
-        const updated = {...prev};
-        delete updated[date];
-        return updated;
+      const updated = {...prev};
+      // If the date is already selected, remove it
+      if (updated[isoDate]) {
+        delete updated[isoDate];
       } else {
-        return {...prev, [date]: {selected: true, isAvailable: true}};
+        // If the date is not selected, add it
+        updated[isoDate] = {selected: true, isAvailable: true};
       }
+      return updated;
     });
   };
 
@@ -95,10 +112,10 @@ const CreateSchedule = (props: any) => {
       servicePreview: serviceDetails.servicePreview,
       selectedDates: selectedDates,
     };
-    console.log('Upsert data \n ', JSON.stringify(data));
 
     const response: ApiResponse<ServiceDetails> | ErrorResponse =
       await addService(data);
+
     if (response.success) {
       dispatch(
         showSnackbar({
@@ -118,17 +135,25 @@ const CreateSchedule = (props: any) => {
       );
     }
   };
-
   const sortedDates = Object.keys(selectedDates).sort((a, b) =>
     b > a ? 1 : -1,
   );
+
 
   return (
     <View style={globalStyle.globalContainer}>
       <View style={styles.calendarContainer}>
         <Calendar
           onDayPress={handleDayPress}
-          markedDates={selectedDates}
+          markedDates={Object.keys(selectedDates).reduce((acc, date) => {
+            const dayKey = date.split('T')[0]; // Mark using 'YYYY-MM-DD'
+            acc[dayKey] = {
+              selected: true,
+              marked: true,
+              selectedColor: COLORS.primary,
+            };
+            return acc;
+          }, {} as {[key: string]: any})}
           markingType={'multi-dot'}
           theme={{
             selectedDayBackgroundColor: COLORS.primary,
@@ -149,7 +174,7 @@ const CreateSchedule = (props: any) => {
           keyExtractor={item => item}
           renderItem={({item}) => (
             <View style={styles.dateItem}>
-              <Text style={styles.dateText}>{item}</Text>
+              <Text style={styles.dateText}>{toUSDateFormat(item)}</Text>
               <TouchableOpacity
                 style={styles.removeIcon}
                 onPress={() => handleDayPress({dateString: item})}>

@@ -10,14 +10,16 @@ import {
 } from 'react-native';
 import {FontSize, Spacing} from '../utils/dimension';
 import {COLORS} from '../utils/globalConstants/color';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 type CustomButtonProps = {
-  label: string;
+  label?: string;
   onPress: (event: GestureResponderEvent) => void;
   style?: ViewStyle;
   textStyle?: TextStyle;
   disabled?: boolean;
   animationType?: 'scale' | 'opacity';
+  icon?: string;
 };
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -27,6 +29,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   textStyle,
   disabled = false,
   animationType = 'scale',
+  icon,
 }) => {
   const animationValue = useRef(new Animated.Value(1)).current;
 
@@ -59,14 +62,17 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       onPressOut={handlePressOut}
       activeOpacity={0.7}
       disabled={disabled}>
-      <Text
-        style={[
-          styles.label,
-          textStyle,
-          disabled ? styles.disabledLabel : styles.activeLabel,
-        ]}>
-        {label}
-      </Text>
+      {icon && <Icon name={icon} size={FontSize.extraLarge} color={COLORS.white} />}
+      {label && (
+        <Text
+          style={[
+            styles.label,
+            textStyle,
+            disabled ? styles.disabledLabel : styles.activeLabel,
+          ]}>
+          {label}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 };
@@ -76,14 +82,14 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.medium - 4,
     borderRadius: Spacing.small,
     borderWidth: 0.5,
-    borderColor:COLORS.white,
+    borderColor: COLORS.white,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: COLORS.primary,
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
-    marginVertical:Spacing.medium,
+    marginVertical: Spacing.medium,
     backgroundColor: COLORS.primary,
   },
   activeButton: {

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, {useState, useCallback, useMemo} from 'react';
 import {
   TextInput,
   Text,
@@ -9,23 +9,24 @@ import {
   Keyboard,
   TouchableOpacity,
 } from 'react-native';
-import { FontSize, Screen, Spacing } from '../utils/dimension';
+import {FontSize, Screen, Spacing} from '../utils/dimension';
 import CustomText from './CustomText';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { COLORS } from '../utils/globalConstants/color';
+import {COLORS} from '../utils/globalConstants/color';
 
 type CustomInputProps = TextInputProps & {
   label?: string;
   errorMessage?: string;
   value: string;
-  onValueChange: (value: string) => void;
+  onValueChange?: (value: string) => void;
   keyboardType?:
     | 'default'
     | 'email-address'
     | 'numeric'
     | 'phone-pad'
     | 'decimal-pad'
-    | 'ascii-capable';
+    | 'ascii-capable'
+    | 'url';
   secureTextEntry?: boolean;
   disabled?: boolean;
   maxLength?: number;
@@ -33,15 +34,12 @@ type CustomInputProps = TextInputProps & {
 
 const formatPhoneNumber = (value: string) => {
   const cleanedValue = value.replace(/\D/g, '');
-  if (cleanedValue.length < 4) {
-    return cleanedValue;
-  }
-  if (cleanedValue.length < 7) {
+  if (cleanedValue.length < 4) return cleanedValue;
+  if (cleanedValue.length < 7)
     return `(${cleanedValue.slice(0, 3)})-${cleanedValue.slice(3)}`;
-  }
   return `(${cleanedValue.slice(0, 3)})-${cleanedValue.slice(
     3,
-    6
+    6,
   )}-${cleanedValue.slice(6, 10)}`;
 };
 
@@ -57,7 +55,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
   ...textInputProps
 }) => {
   const [isFocused, setIsFocused] = useState(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(!secureTextEntry);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleFocus = useCallback(() => {
     if (!disabled) setIsFocused(true);
@@ -67,32 +65,24 @@ const CustomInput: React.FC<CustomInputProps> = ({
     if (!disabled) setIsFocused(false);
   }, [disabled]);
 
-  const handleChangeText = useCallback(
-    (text: string) => {
-      if (!disabled) {
-        let formattedText =
-          keyboardType === 'phone-pad' ? formatPhoneNumber(text) : text;
-        if (maxLength !== undefined) {
-          formattedText = formattedText.slice(0, maxLength);
-        }
-        onValueChange(formattedText);
-      }
+  const handleChangeText = useMemo(
+    () => (text: string) => {
+      if (disabled) return;
+
+      let formattedText =
+        keyboardType === 'phone-pad' ? formatPhoneNumber(text) : text;
+      if (maxLength) formattedText = formattedText.slice(0, maxLength);
+      onValueChange(formattedText);
     },
-    [disabled, keyboardType, maxLength, onValueChange]
+    [disabled, keyboardType, maxLength, onValueChange],
   );
 
-  const togglePasswordVisibility = useCallback(() => {
-    if (!disabled) setIsPasswordVisible((prev) => !prev);
-  }, [disabled]);
-
-  const dismissKeyboard = () => {
-    Keyboard.dismiss();
-  };
+  const dismissKeyboard = () => Keyboard.dismiss();
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
-        {label && <CustomText label={label} />}
+        <CustomText label={label} />
         <View style={styles.inputContainer}>
           <TextInput
             style={[
@@ -109,20 +99,18 @@ const CustomInput: React.FC<CustomInputProps> = ({
             onFocus={handleFocus}
             onBlur={handleBlur}
             onChangeText={handleChangeText}
-            value={value}
+            value={value || ''}
             keyboardType={keyboardType}
-            secureTextEntry={!isPasswordVisible && secureTextEntry}
+            secureTextEntry={secureTextEntry && !isPasswordVisible} // Fix for toggling secureTextEntry
             editable={!disabled}
             maxLength={maxLength}
-            multiline={true} // Enables multi-line text wrapping
-            // textAlignVertical="top" 
+            multiline={true}
             {...textInputProps}
           />
           {secureTextEntry && !disabled && (
             <TouchableOpacity
-              onPress={togglePasswordVisibility}
-              style={styles.iconContainer}
-            >
+              onPress={() => setIsPasswordVisible(prev => !prev)}
+              style={styles.iconContainer}>
               <Icon
                 name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
                 size={20}
@@ -131,10 +119,23 @@ const CustomInput: React.FC<CustomInputProps> = ({
             </TouchableOpacity>
           )}
         </View>
-        {maxLength !== undefined && (
-          <Text style={styles.charCount}>{`${value.length}/${maxLength}`}</Text>
-        )}
-        {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+        <View
+          style={[
+            styles.bottomContainer,
+            errorMessage
+              ? {justifyContent: 'space-between'}
+              : {justifyContent: 'flex-end'},
+          ]}>
+          {errorMessage && (
+            <CustomText label={errorMessage} style={styles.errorText} />
+          )}
+          {maxLength && (
+            <CustomText
+              label={`${value.length}/${maxLength}`}
+              style={styles.charCount}
+            />
+          )}
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -142,12 +143,11 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: Spacing.small,
+    // marginBottom: Spacing.small,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    position: 'relative',
   },
   input: {
     flex: 1,
@@ -161,16 +161,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 10,
   },
+  bottomContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 5,
+  },
   charCount: {
-    alignSelf: 'flex-end',
     color: COLORS.gray,
     fontSize: FontSize.small,
-    marginTop: 5,
   },
   errorText: {
     color: COLORS.error,
     fontSize: 12,
-    marginTop: 5,
   },
 });
 

@@ -1,21 +1,29 @@
 import React, {useState} from 'react';
-import {View, Image, ScrollView, StyleSheet} from 'react-native';
+import {
+  View,
+  Image,
+  ScrollView,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {showSnackbar} from '../../redux/snackbarSlice';
-import logo from '../../assets/logo.jpeg';
+import logo from '../../assets/logo.png';
 import {EMAIL_REGEX} from '../../utils/regex';
 import {verifyUsernameAndEmail} from '../../services/authService';
-import CustomInput from '../../components/CustomInput';
-import {WORD_DIR} from '../../utils/local/en';
-import {PLACEHOLDER_DIR} from '../../utils/local/placeholder';
 import CustomButton from '../../components/CustomButton';
 import CustomText from '../../components/CustomText';
 import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import {COLORS} from '../../utils/globalConstants/color';
 import {USER_DETAILS} from '../../utils/constants';
+import {WORD_DIR} from '../../utils/local/en';
+import {PLACEHOLDER_DIR} from '../../utils/local/placeholder';
 import {ErrorResponse, RootStackParamList, User} from 'interfaces';
 import {ApiResponse} from 'services/apiClient';
+import {globalStyle} from '../../utils/globalStyle';
+import renderInput from '../../utils/renderInputUtil'; // Import the global renderInput function
 
 // Validation patterns
 const PASSWORD_PATTERN = /^.{6,}$/;
@@ -51,15 +59,12 @@ const RegistrationScreen = () => {
   const [errors, setErrors] = useState(initialErrorState);
 
   const handleValueChange = (field: keyof typeof user, value: string) => {
-    //
-
-    setUser(prevState => ({...prevState, [field]: value}));
+    setUser(prev => ({...prev, [field]: value}));
     validateField(field, value);
   };
 
   const validateField = (field: keyof typeof user, value: string) => {
     let error = '';
-
     switch (field) {
       case 'email':
         if (!value || !EMAIL_REGEX.test(value)) {
@@ -81,7 +86,6 @@ const RegistrationScreen = () => {
         }
         break;
     }
-
     setErrors(prevErrors => ({...prevErrors, [field]: error}));
   };
 
@@ -93,156 +97,144 @@ const RegistrationScreen = () => {
 
   const verifyEmail = async () => {
     const {confirmPassword, ...payload} = user;
-
     try {
-      // Attempt to verify username and email
       const response: ApiResponse<User> | ErrorResponse =
         await verifyUsernameAndEmail(payload);
-
       if (response?.data) {
-        // Navigate to OTP verification screen if verification is successful
         navigation.navigate('VerifyOTP', payload);
       } else {
-        // Handle case where no data is returned
-        dispatch(
-          showSnackbar({
-            message: WORD_DIR.verificationFailed,
-          }),
-        );
+        dispatch(showSnackbar({message: WORD_DIR.verificationFailed}));
       }
     } catch (error: any) {
-      // Handle error case, show appropriate error message in snackbar
-      dispatch(
-        showSnackbar({
-          message: error.message,
-        }),
-      );
+      dispatch(showSnackbar({message: error.message}));
     }
   };
 
-  const renderInput = (
-    label: string,
-    value: string,
-    placeholder: string,
-    field: keyof typeof user,
-    keyboardType?: 'default' | 'email-address' | 'phone-pad',
-    secureTextEntry?: boolean,
-  ) => (
-    <CustomInput
-      label={label}
-      value={value}
-      placeholder={placeholder}
-      onValueChange={value => handleValueChange(field, value)}
-      errorMessage={errors[field]}
-      keyboardType={keyboardType}
-      secureTextEntry={secureTextEntry}
-    />
-  );
-
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-      showsHorizontalScrollIndicator={false}>
-      <View style={styles.imgContainer}>
-        <Image style={styles.logo} source={logo} />
-      </View>
-
-      <View style={styles.formContainer}>
-        {renderInput(
-          WORD_DIR.firstName,
-          user.firstName,
-          PLACEHOLDER_DIR.PLACEHOLDER_FIRSTNAME,
-          'firstName',
-        )}
-        {renderInput(
-          WORD_DIR.lastName,
-          user.lastName,
-          PLACEHOLDER_DIR.PLACEHOLDER_LASTNAME,
-          'lastName',
-        )}
-
-        {renderInput(
-          WORD_DIR.username,
-          user.username,
-          PLACEHOLDER_DIR.PLACEHOLDER_USERNAME,
-          'username',
-        )}
-        {renderInput(
-          WORD_DIR.email,
-          user.email,
-          PLACEHOLDER_DIR.PLACEHOLDER_EMAIL,
-          'email',
-          'email-address',
-        )}
-        {renderInput(
-          'Phone Number',
-          user.phoneNumber,
-          PLACEHOLDER_DIR.PLACEHOLDER_PHONE_NUMBER,
-          'phoneNumber',
-          'phone-pad',
-        )}
-        {renderInput(
-          WORD_DIR.password,
-          user.password,
-          PLACEHOLDER_DIR.PLACEHOLDER_PASSWORD,
-          'password',
-          undefined,
-          true,
-        )}
-        {renderInput(
-          WORD_DIR.confirmPassword,
-          user.confirmPassword,
-          PLACEHOLDER_DIR.PLACEHOLDER_CONFIRM_PASSWORD,
-          'confirmPassword',
-          undefined,
-          true,
-        )}
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <CustomButton
-          label={WORD_DIR.register}
-          onPress={verifyEmail}
-          textStyle={{fontSize: FontSize.large}}
-          disabled={!isFormValid}
-        />
-        <View style={styles.actionContainer}>
-          <CustomText label={WORD_DIR.haveAnAccount} />
-          <CustomText
-            label={WORD_DIR.login}
-            action={() => navigation.goBack()}
-          />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={{flex: 1}}>
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <Image source={logo} style={styles.logo} />
+        <View style={styles.card}>
+          <View>
+            <CustomText
+              style={globalStyle.heading}
+              label={WORD_DIR.registerHeading}
+            />
+            <CustomText
+              style={globalStyle.subHeading}
+              label={WORD_DIR.registerSubHeading}
+            />
+            {renderInput({
+              label: WORD_DIR.firstName,
+              value: user.firstName,
+              placeholder: PLACEHOLDER_DIR.PLACEHOLDER_FIRSTNAME,
+              field: 'firstName',
+              errors,
+              handleValueChange,
+            })}
+            {renderInput({
+              label: WORD_DIR.lastName,
+              value: user.lastName,
+              placeholder: PLACEHOLDER_DIR.PLACEHOLDER_LASTNAME,
+              field: 'lastName',
+              errors,
+              handleValueChange,
+            })}
+            {renderInput({
+              label: WORD_DIR.username,
+              value: user.username,
+              placeholder: PLACEHOLDER_DIR.PLACEHOLDER_USERNAME,
+              field: 'username',
+              errors,
+              handleValueChange,
+            })}
+            {renderInput({
+              label: WORD_DIR.email,
+              value: user.email,
+              placeholder: PLACEHOLDER_DIR.PLACEHOLDER_EMAIL,
+              field: 'email',
+              keyboardType: 'email-address',
+              errors,
+              handleValueChange,
+            })}
+            {renderInput({
+              label: 'Phone Number',
+              value: user.phoneNumber,
+              placeholder: PLACEHOLDER_DIR.PLACEHOLDER_PHONE_NUMBER,
+              field: 'phoneNumber',
+              keyboardType: 'phone-pad',
+              errors,
+              handleValueChange,
+            })}
+            {renderInput({
+              label: WORD_DIR.password,
+              value: user.password,
+              placeholder: PLACEHOLDER_DIR.PLACEHOLDER_PASSWORD,
+              field: 'password',
+              secureTextEntry: true,
+              errors,
+              handleValueChange,
+            })}
+            {renderInput({
+              label: WORD_DIR.confirmPassword,
+              value: user.confirmPassword,
+              placeholder: PLACEHOLDER_DIR.PLACEHOLDER_CONFIRM_PASSWORD,
+              field: 'confirmPassword',
+              secureTextEntry: true,
+              errors,
+              handleValueChange,
+            })}
+            <CustomButton
+              label={WORD_DIR.register}
+              onPress={verifyEmail}
+              disabled={!isFormValid}
+              textStyle={{fontSize: FontSize.large}}
+            />
+          </View>
+          <View style={styles.footer}>
+            <CustomText label={WORD_DIR.haveAnAccount} />
+            <CustomText
+              label={WORD_DIR.login}
+              style={globalStyle.actionLink}
+              action={() => navigation.goBack()}
+            />
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: Spacing.medium,
-    backgroundColor: COLORS.white,
+  scroll: {
     flexGrow: 1,
-  },
-  imgContainer: {
+    justifyContent: 'center',
     alignItems: 'center',
   },
   logo: {
-    resizeMode: 'contain',
     width: Screen.width,
     height: Screen.height * 0.3,
+    resizeMode: 'contain',
   },
-  formContainer: {
+  card: {
+    width: '100%',
+    backgroundColor: COLORS.white,
+    borderRadius: 20,
+    padding: Spacing.large,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 6},
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 6,
     flex: 1,
+    justifyContent: 'space-between',
   },
-  buttonContainer: {
-    flexDirection: 'column',
-  },
-  actionContainer: {
+  footer: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'center',
+    marginTop: Spacing.medium,
   },
 });
 

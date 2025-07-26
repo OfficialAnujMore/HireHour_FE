@@ -19,7 +19,8 @@ import {WORD_DIR} from '../../utils/local/en';
 import {useDispatch, useSelector} from 'react-redux';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {RootState} from '../../redux/store';
-import { globalStyle } from '../../utils/globalStyle';
+import {globalStyle} from '../../utils/globalStyle';
+import CustomAvatar from '../../components/CustomAvatar';
 
 const EditProfileScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -160,37 +161,38 @@ const EditProfileScreen: React.FC = () => {
           source={
             user.profileImage
               ? {uri: user.profileImage}
-              : require('../../assets/logo.jpeg')
+              : require('../../assets/logo.png')
           }
           style={styles.profileImage}
         />
+        <CustomAvatar name={user.name} imageUrl={user.profileImage} />
         <TouchableOpacity style={styles.editIcon} onPress={handleImagePicker}>
           <Icon name="pencil" size={18} color={COLORS.white} />
         </TouchableOpacity>
       </View>
 
       <CustomInput
-        label={WORD_DIR.name}
+        // label={WORD_DIR.name}
         value={user.name}
         onValueChange={text => handleInputChange('name', text)}
         placeholder="Enter name"
         errorMessage={errors.name}
       />
       <CustomInput
-        label="Username"
+        // label="Username"
         value={userdetails.username}
         placeholder="Enter username"
         disabled={true}
       />
       <CustomInput
-        label="Email"
+        // label="Email"
         value={userdetails.email}
         placeholder="Enter email"
         keyboardType="email-address"
         disabled={true}
       />
       <CustomInput
-        label="Phone Number"
+        // label="Phone Number"
         value={user.phone}
         onValueChange={text => handleInputChange('phone', text)}
         placeholder="Enter phone number"

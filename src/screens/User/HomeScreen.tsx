@@ -1,5 +1,5 @@
-import React, {useState, useCallback} from 'react';
-import {View, FlatList, StyleSheet, Image} from 'react-native';
+import React, {useState, useCallback, useEffect} from 'react';
+import {View, FlatList, StyleSheet, Image, RefreshControl} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import CustomSearchBar from '../../components/CustomSearchBar';
@@ -16,8 +16,21 @@ import {WORD_DIR} from '../../utils/local/en';
 import {MAX_SCHEDULE_DISPLAY} from '../../utils/constants';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {ApiResponse} from '../../services/apiClient';
-import { COLORS } from '../../utils/globalConstants/color';
-import { globalStyle } from '../../utils/globalStyle';
+import {COLORS} from '../../utils/globalConstants/color';
+import {globalStyle} from '../../utils/globalStyle';
+import messaging from '@react-native-firebase/messaging';
+import {Platform} from 'react-native';
+import {
+  check,
+  request,
+  PERMISSIONS,
+  RESULTS,
+  PermissionStatus,
+} from 'react-native-permissions';
+import PushNotification from 'react-native-push-notification';
+import {upsertFCMToken} from '../../services/userService';
+import {login} from '../../redux/authSlice';
+import { PLACEHOLDER_DIR } from '../../utils/local/placeholder';
 
 const HomeScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
@@ -25,6 +38,7 @@ const HomeScreen = ({navigation}: any) => {
 
   const [data, setData] = useState<User[]>([]);
   const [filteredData, setFilteredData] = useState<User[]>([]);
+  const [isRefreshing, setIsRefreshing] = useState(false); // State to handle refreshing
 
   const fetchServiceProviders = useCallback(async (): Promise<void> => {
     const categories = ['Photography', 'Guitar', 'Art', 'Music', 'Sports'];
@@ -41,6 +55,7 @@ const HomeScreen = ({navigation}: any) => {
         }),
       );
     }
+    askNotificationPermission();
   }, [user?.id]);
 
   // Use `useFocusEffect` to call the API whenever the screen is focused
@@ -64,13 +79,107 @@ const HomeScreen = ({navigation}: any) => {
     }
   };
 
+  const getFCMToken = async () => {
+    const fcmToken = await messaging().getToken();
+
+    if (fcmToken) {
+      const res = await upsertFCMToken({
+        userId: user?.id,
+        fcmToken: fcmToken,
+      });
+      dispatch(login({user: res.data}));
+    }
+  };
+
+  const askNotificationPermission = async (): Promise<PermissionStatus> => {
+    let permission: (typeof PERMISSIONS)[keyof typeof PERMISSIONS] | null =
+      null;
+
+    if (Platform.OS === 'ios') {
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+      if (enabled) {
+        getFCMToken(); // Call it after permission is granted
+        return RESULTS.GRANTED;
+      } else {
+        console.warn('iOS notification permission denied');
+        return RESULTS.DENIED;
+      }
+    } else if (Platform.OS === 'android' && Platform.Version >= 33) {
+      permission = 'android.permission.POST_NOTIFICATIONS';
+    }
+
+    if (!permission) {
+      getFCMToken(); // Call it for Android if no specific permission is required
+      return RESULTS.GRANTED;
+    }
+
+    const result = await check(permission);
+
+    if (result === RESULTS.GRANTED) {
+      getFCMToken(); // Call it after permission check
+      return result;
+    }
+
+    const newStatus = await request(permission);
+
+    if (newStatus === RESULTS.GRANTED) {
+      getFCMToken(); // Call it after permission granted
+    } else {
+      console.warn('Notification permission denied or blocked');
+    }
+
+    return newStatus;
+  };
+
+  const createNotificationChannel = () => {
+    if (Platform.OS === 'android' && Platform.Version >= 26) {
+      PushNotification.createChannel(
+        {
+          channelId: 'default-channel', // Channel ID (unique)
+          channelName: 'Default Channel', // Channel Name (can be anything)
+          channelDescription: 'A default channel for notifications', // Channel Description
+          soundName: 'default', // Sound for notifications
+          importance: 4, // Importance level (4 is high importance)
+          vibrate: true, // Vibration for notifications
+        },
+        (created: any) => console.log(`Create channel returned ${created}`),
+      );
+    }
+  };
+
+  useEffect(() => {
+    createNotificationChannel();
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      if (remoteMessage.notification) {
+        PushNotification.localNotification({
+          channelId: 'default-channel', // Use the channel ID here
+          title: remoteMessage.notification.title,
+          message: remoteMessage.notification.body,
+        });
+      }
+    });
+
+    return unsubscribe;
+  }, []);
+
+  // Refresh handler function
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchServiceProviders();
+    setIsRefreshing(false);
+  };
+
   return (
     <View style={globalStyle.globalContainer}>
-      <CustomSearchBar onSearch={handleSearch} />
       <CustomText
         label={`${getGreeting()}, ${user?.firstName}`}
         style={styles.greetingText}
       />
+      <CustomSearchBar  placeholder={PLACEHOLDER_DIR.PLACEHOLDER_SEARCH} onChange={handleSearch} />
 
       {filteredData?.length > 0 ? (
         <FlatList
@@ -86,6 +195,14 @@ const HomeScreen = ({navigation}: any) => {
             />
           )}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh} // Bind the refresh function
+              colors={[COLORS.primary]}
+              progressBackgroundColor={COLORS.white}
+            />
+          }
         />
       ) : (
         <FallBack imageSrc={dataNotFound} heading={WORD_DIR.noService} />

@@ -28,6 +28,7 @@ import CreateSchedule from '../screens/ServiceProvider/CreateSchedule';
 import CreateService from '../screens/ServiceProvider/CreateService';
 import {CartScreen} from '../screens/ServiceProvider/CartScreen';
 import {TransactionHistory} from '../screens/ServiceProvider/TransactionHistory';
+import EventOverviewScreen from '../screens/ServiceProvider/EventOverviewScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -107,7 +108,11 @@ const RootNavigator = () => {
       {isLoading ? (
         <SplashScreen onFinish={handleSplashFinish} />
       ) : (
-        <Stack.Navigator initialRouteName={isAuthenticated ? 'Tabs' : 'Login'}>
+        <Stack.Navigator
+          initialRouteName={isAuthenticated ? 'Tabs' : 'Login'}
+          screenOptions={{
+            headerShown: false,
+          }}>
           {isAuthenticated ? (
             <>
               <Stack.Screen
@@ -115,7 +120,7 @@ const RootNavigator = () => {
                 component={AuthenticatedTabs}
                 options={{headerShown: false}}
               />
-              <Stack.Screen name="Home" component={HomeScreen} />
+              {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
               <Stack.Screen
                 name="Service Details"
                 component={ServiceDetailsScreen}
@@ -127,6 +132,23 @@ const RootNavigator = () => {
                 component={EnrollAsServiceProvider}
               />
               <Stack.Screen name="MyService" component={MyServices} />
+
+              <Stack.Screen
+                name="BookedEvents"
+                component={EventOverviewScreen}
+                initialParams={{type: 'Booked'}}
+              />
+              <Stack.Screen
+                name="UpcomingEvents"
+                component={EventOverviewScreen}
+                initialParams={{type: 'Upcoming'}}
+              />
+              <Stack.Screen
+                name="PastEvents"
+                component={EventOverviewScreen}
+                initialParams={{type: 'Past'}}
+              />
+
               <Stack.Screen name="ViewService" component={ViewServiceScreen} />
 
               <Stack.Screen name="Create Service" component={CreateService} />

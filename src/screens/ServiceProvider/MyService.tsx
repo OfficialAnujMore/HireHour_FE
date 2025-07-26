@@ -1,7 +1,6 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import {View, StyleSheet, Image, Alert, FlatList} from 'react-native';
-import {FontSize, Screen, Spacing} from '../../utils/dimension';
-import CustomText from '../../components/CustomText';
+import React, {useState,  useCallback} from 'react';
+import {View, StyleSheet,  FlatList} from 'react-native';
+import {FontSize,  Spacing} from '../../utils/dimension';
 import {RootState} from 'redux/store';
 import {useSelector, useDispatch} from 'react-redux';
 import {getUserServices} from '../../services/serviceProviderService';
@@ -57,7 +56,7 @@ const MyServices = () => {
               <CustomServiceCards
                 item={item}
                 handlePress={() => {
-                  // navigation.navigate('ServiceDetails', item);
+                  navigation.navigate('ServiceDetails', item);
                 }}
               />
             )}
@@ -69,16 +68,6 @@ const MyServices = () => {
           imageSrc={require('../../assets/error-in-calendar.png')}
           heading="Kindly create a service first before continuing!"
         />
-        // <View style={styles.dataNotFound}>
-        //   <Image
-        //     source={require('../../assets/error-in-calendar.png')}
-        //     style={{width: Screen.width, height: Screen.height / 2}}
-        //   />
-        //   <CustomText
-        //     style={styles.noDataText}
-        //     label={'Kindly create a service first before continuing!'}
-        //   />
-        // </View>
       )}
     </View>
   );
