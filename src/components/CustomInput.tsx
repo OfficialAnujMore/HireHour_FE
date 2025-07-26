@@ -18,7 +18,7 @@ type CustomInputProps = TextInputProps & {
   label?: string;
   errorMessage?: string;
   value: string;
-  onValueChange: (value: string) => void;
+  onValueChange?: (value: string) => void;
   keyboardType?:
     | 'default'
     | 'email-address'
@@ -82,6 +82,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
+        <CustomText label={label} />
         <View style={styles.inputContainer}>
           <TextInput
             style={[

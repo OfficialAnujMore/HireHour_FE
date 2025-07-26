@@ -23,9 +23,11 @@ import {FallBack} from '../../components/FallBack';
 import {WORD_DIR} from '../../utils/local/en';
 import * as Animatable from 'react-native-animatable';
 import CustomDropdown from '../../components/CustomDropdown';
-import {VENUE} from '../../utils/constants';
+import {MAX_FIELD_CHAR_COUNT, US_STATES, VENUE} from '../../utils/constants';
 import CustomInput from '../../components/CustomInput';
 import {URL_REGEX} from '../../utils/regex';
+import CustomAvatar from '../../components/CustomAvatar';
+import renderInput from '../../utils/renderInputUtil';
 
 const ServiceDetailsScreen = (props: ServiceDetails) => {
   const navigation = useNavigation();
@@ -43,7 +45,7 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
     city: '',
     postalCode: '',
     state: '',
-    country: '',
+    country: 'US',
   });
 
   const handleSelectService = (service: ServiceDetails) => {
@@ -151,8 +153,33 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
           <CustomText label={`$ ${item.pricing}`} style={styles.price} />
         </View>
 
+        <CustomText
+          label={WORD_DIR.artistDetails}
+          style={styles.sectionTitle}
+        />
+        <View style={styles.profileView}>
+          <CustomAvatar name={item.name} imageUrl={item.avatarUri} />
+          <View style={styles.profileDetails}>
+            <CustomText label={`${item.name}`} style={styles.description} numberOfLines={4} />
+            <CustomText
+              label={`${item.email}`}
+              style={styles.description}
+              action={() => {
+                console.log('contact email');
+              }}
+            />
+            <CustomText
+              label={`${item.phoneNumber}`}
+              style={styles.description}
+              action={() => {
+                console.log('contact phone number');
+              }}
+            />
+          </View>
+        </View>
+
         <CustomText label={WORD_DIR.description} style={styles.sectionTitle} />
-        <CustomText label={item.description} style={styles.description} />
+        <CustomText label={item.description} style={styles.description}  numberOfLines={4} />
 
         {item.schedule.length > 0 ? (
           <Animatable.View animation="fadeInUp" duration={600}>
@@ -182,7 +209,7 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
                       city: '',
                       postalCode: '',
                       state: '',
-                      country: '',
+                      country: 'US',
                     });
                   }}
                   placeholder="Select Venue"
@@ -223,23 +250,23 @@ const ServiceDetailsScreen = (props: ServiceDetails) => {
                       onValueChange={text =>
                         setAddressInfo({...addressInfo, postalCode: text})
                       }
+                      maxLength={MAX_FIELD_CHAR_COUNT.postalCode}
                       keyboardType="numeric"
                     />
-                    <CustomInput
+                    <CustomDropdown
                       label="State"
-                      placeholder="Enter State"
+                      options={US_STATES}
                       value={addressInfo.state}
-                      onValueChange={text =>
-                        setAddressInfo({...addressInfo, state: text})
+                      onValueChange={value =>
+                        setAddressInfo({...addressInfo, state: value})
                       }
+                      placeholder="Select an option"
                     />
                     <CustomInput
                       label="Country"
                       placeholder="Enter Country"
                       value={addressInfo.country}
-                      onValueChange={text =>
-                        setAddressInfo({...addressInfo, country: text})
-                      }
+                      disabled={true}
                     />
                   </>
                 )}
@@ -294,7 +321,7 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
   },
   description: {
-    fontSize: FontSize.small,
+    fontSize: FontSize.small + 2,
     color: COLORS.gray,
     marginBottom: Spacing.medium,
   },
@@ -312,5 +339,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.small,
     borderWidth: 1,
     borderColor: COLORS.gray,
+  },
+  profileView: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  profileDetails: {
+    flex: 1,
+    marginLeft: Spacing.small,
   },
 });

@@ -102,7 +102,7 @@ const CustomTransactionCard: React.FC<CustomTransactionCardProps> = ({
 
         <View style={styles.orderDetails}>
           <View style={styles.row}>
-            <CustomText style={styles.orderTitle} label={getDisplayTitle()} />
+            <CustomText style={styles.orderTitle} label={getDisplayTitle()} numberOfLines={2} />
             <CustomText
               style={styles.orderTitle}
               label={`$${item.totalAmount}`}

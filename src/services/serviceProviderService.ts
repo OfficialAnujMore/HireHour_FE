@@ -62,7 +62,7 @@ export const getUserServices = async (
 
 export const getMyBookedServices = async (data: {
   id: string;
-  isAvailable: boolean;
+  type:string
 }): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
   try {
     return await post<ServiceDetails>(
@@ -74,8 +74,9 @@ export const getMyBookedServices = async (data: {
   }
 };
 
-
-export const handleSlotApproval = async (data: any): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
+export const handleSlotApproval = async (
+  data: any,
+): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
   try {
     return await post<ServiceDetails>(
       `${V1_SERVICE_BASE_ROUTE}${HANDLE_SLOT_APPROVAL}`,
@@ -127,7 +128,6 @@ export const deleteServiceById = async (
     return handleError(error, 'deleteServiceById'); // Corrected error message
   }
 };
-
 
 export const holdSlot = async (
   data: unknown,

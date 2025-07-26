@@ -30,8 +30,8 @@ export const ScheduleDetails: React.FC<{
     serviceId: string | undefined,
     scheduleId: string,
   ) => void;
-  setApprovedSlot?: (data:any) => void;
-  actionedSlots:Set<string>;
+  setApprovedSlot?: (data: any) => void;
+  actionedSlots: Set<string>;
 }> = ({
   schedule,
   maxDisplay,
@@ -48,6 +48,14 @@ export const ScheduleDetails: React.FC<{
   const dispatch = useDispatch();
   const isSelected = (service: ServiceDetails) =>
     selectedServices?.some(s => s.id === service.id);
+  const toUSDateFormat = (isoDate: string) => {
+    const date = new Date(isoDate);
+    // console.log({date});
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
 
   return (
     <View style={styles.scheduleContainer}>
@@ -64,7 +72,7 @@ export const ScheduleDetails: React.FC<{
               styles.scheduleTitle,
               isSelected(scheduleItem) && styles.selectedTextColor,
             ]}
-            label={scheduleItem.date}
+            label={toUSDateFormat(scheduleItem.date)}
           />
           {setApprovedSlot && !actionedSlots?.has(scheduleItem.id) && (
             <View style={{flexDirection: 'row', gap: 10}}>
@@ -81,9 +89,7 @@ export const ScheduleDetails: React.FC<{
                   color={COLORS.success}
                 />
               </TouchableOpacity>
-              <TouchableOpacity
-              onPress={() => setApprovedSlot(scheduleItem)}
-              >
+              <TouchableOpacity onPress={() => setApprovedSlot(scheduleItem)}>
                 <Icon
                   name="close"
                   size={FontSize.medium}
@@ -130,6 +136,7 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
   const [visibleSchedules, setVisibleSchedules] = useState<
     Record<string, boolean>
   >({});
+  console.log('serviceItem', item);
 
   // Toggle schedule visibility based on serviceId
   const toggleScheduleVisibility = (serviceId: string) => {
@@ -163,12 +170,17 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
             />
             <CustomText
               style={styles.orderMeta}
+              label={`Artist: ${item.name}`}
+              numberOfLines={2}
+            />
+            <CustomText
+              style={styles.orderMeta}
               label={` ${item.ratings} ★ | $ ${item.pricing}`}
             />
             <CustomText
               style={styles.orderMeta}
               label={item.description}
-              numberOfLines={2}
+              numberOfLines={4}
             />
           </View>
         </View>
@@ -202,7 +214,7 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
           onServiceSelect={() => {}}
           selectedServices={[]}
           setApprovedSlot={setApprovedSlot}
-          actionedSlots  = {new Set(actionedSlots)}
+          actionedSlots={new Set(actionedSlots)}
         />
       )}
     </TouchableOpacity>
