@@ -1,13 +1,12 @@
 export const COLORS = {
-
-    primary:'#007AFF',
-    secondary:'#f7f7f7',
+    primary: '#007AFF',
+    secondary: '#5856D6',
     black: '#000000',
-    white: '#ffffff',
-    gray: '#808080',
+    white: '#FFFFFF',
+    gray: '#8E8E93',
     lightGrey:'#D3D3D3',
-    error: '#dc3545',
-    success:"#28a745",
-    warning:'#ffc107'
-
-}
+    lightGray:'#D3D3D3',
+    error: '#FF3B30',
+    success: '#34C759',
+    warning: '#FF9500',
+};

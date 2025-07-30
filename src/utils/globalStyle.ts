@@ -3,6 +3,10 @@ import {COLORS} from './globalConstants/color';
 import {FontSize, Spacing} from './dimension';
 
 export const globalStyle = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.white,
+  },
   sectionContainer: {
     backgroundColor: COLORS.white,
     borderRadius: 5,
@@ -31,11 +35,11 @@ export const globalStyle = StyleSheet.create({
   },
   subHeading: {
     fontSize: FontSize.medium,
-    color: COLORS.gray, // Set a different color or style for this text
+    color: COLORS.gray,
     fontWeight: '400',
     alignSelf: 'center',
     textAlign: 'center',
-    flexWrap: 'wrap', // Allows text to wrap within the container
+    flexWrap: 'wrap',
   },
   actionLink: {
     marginLeft: 4,
@@ -48,7 +52,7 @@ export const globalStyle = StyleSheet.create({
     backgroundColor: COLORS.white,
     borderRadius: 20,
     padding: Spacing.large,
-    shadowColor: '#000',
+    shadowColor: COLORS.black,
     shadowOffset: {width: 0, height: 6},
     shadowOpacity: 0.1,
     shadowRadius: 10,

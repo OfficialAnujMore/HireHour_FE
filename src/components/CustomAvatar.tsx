@@ -18,9 +18,16 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({
   borderWidth = 2,
 }) => {
   const getInitials = (name: string) => {
+    // Handle empty, null, or undefined names
+    if (!name || typeof name !== 'string' || name.trim() === '') {
+      return '?';
+    }
+    
     const names = name.trim().split(' ');
-    if (names.length === 1) return names[0][0].toUpperCase();
-    return (names[0][0] + names[1][0]).toUpperCase();
+    if (names.length === 1) {
+      return names[0][0]?.toUpperCase() || '?';
+    }
+    return (names[0][0] + names[1][0])?.toUpperCase() || '?';
   };
 
   return (
@@ -38,7 +45,7 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({
               elevation: 5,
             },
             ios: {
-              shadowColor: '#000',
+              shadowColor: COLORS.black,
               shadowOffset: {width: 0, height: 2},
               shadowOpacity: 0.3,
               shadowRadius: 4,
@@ -77,7 +84,7 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({
 
 const styles = StyleSheet.create({
   avatarContainer: {
-    backgroundColor: '#ccc',
+    backgroundColor: COLORS.lightGray,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
@@ -88,7 +95,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   initialsText: {
-    color: 'white',
+    color: COLORS.white,
     fontWeight: 'bold',
   },
 });

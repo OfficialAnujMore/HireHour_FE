@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, {useRef, useState} from 'react';
 import {
   Animated,
   Text,
@@ -9,8 +9,8 @@ import {
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { COLORS } from '../utils/globalConstants/color';
-import { FontSize, Spacing } from '../utils/dimension';
+import {COLORS} from '../utils/globalConstants/color';
+import {FontSize, Spacing} from '../utils/dimension';
 
 interface Props {
   icon?: string;
@@ -32,8 +32,12 @@ const ExpandableUploadButton: React.FC<Props> = ({
   initiallyExpanded = false,
 }) => {
   const [expanded, setExpanded] = useState(initiallyExpanded);
-  const widthAnim = useRef(new Animated.Value(initiallyExpanded ? 180 : 60)).current;
-  const textOpacity = useRef(new Animated.Value(initiallyExpanded ? 1 : 0)).current;
+  const widthAnim = useRef(
+    new Animated.Value(initiallyExpanded ? 180 : 60),
+  ).current;
+  const textOpacity = useRef(
+    new Animated.Value(initiallyExpanded ? 1 : 0),
+  ).current;
 
   const expand = () => {
     Animated.sequence([
@@ -77,11 +81,7 @@ const ExpandableUploadButton: React.FC<Props> = ({
 
   return (
     <Animated.View
-      style={[
-        styles.container,
-        { width: widthAnim },
-        containerStyle,
-      ]}>
+      style={[styles.container, {width: widthAnim}, containerStyle]}>
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={handlePress}
@@ -89,7 +89,7 @@ const ExpandableUploadButton: React.FC<Props> = ({
         <Icon name={icon} size={22} color={COLORS.white} />
         <Animated.Text
           numberOfLines={1}
-          style={[styles.text, { opacity: textOpacity }, textStyle]}>
+          style={[styles.text, {opacity: textOpacity}, textStyle]}>
           {label}
         </Animated.Text>
       </TouchableOpacity>
@@ -104,13 +104,13 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     overflow: 'hidden',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: COLORS.black,
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 3,
-    alignSelf:'flex-end',
-    marginBottom:Spacing.small
+    alignSelf: 'flex-end',
+    marginBottom: Spacing.small,
   },
   button: {
     flexDirection: 'row',

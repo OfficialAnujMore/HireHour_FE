@@ -14,7 +14,7 @@ type CustomTextProps = {
   label: React.ReactNode;
   style?: StyleProp<TextStyle>;
   action?: () => void; // Optional action handler
-  numberOfLines?: number
+  numberOfLines?: number;
 };
 
 const CustomText: React.FC<CustomTextProps> = ({

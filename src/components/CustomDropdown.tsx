@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   Text,
   View,
@@ -11,8 +11,8 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CustomText from './CustomText';
-import { COLORS } from '../utils/globalConstants/color';
-import { FontSize, Screen, Spacing } from '../utils/dimension';
+import {COLORS} from '../utils/globalConstants/color';
+import {FontSize, Screen, Spacing} from '../utils/dimension';
 
 type DropdownOptions = Record<string, string>;
 
@@ -44,7 +44,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
   }));
 
   const toggleDropdown = useCallback(() => {
-    if (!disabled) setDropdownVisible((prev) => !prev);
+    if (!disabled) setDropdownVisible(prev => !prev);
   }, [disabled]);
 
   const dismissKeyboard = () => {
@@ -56,7 +56,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
       onValueChange(selectedValue); // Notify parent component
       setDropdownVisible(false); // Close the dropdown
     },
-    [onValueChange]
+    [onValueChange],
   );
 
   return (
@@ -76,18 +76,18 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
             },
           ]}
           onPress={toggleDropdown}
-          disabled={disabled}
-        >
+          disabled={disabled}>
           <Text
             style={[
               styles.dropdownText,
-              { color: value ? COLORS.black : COLORS.gray },
-            ]}
-          >
+              {color: value ? COLORS.black : COLORS.gray},
+            ]}>
             {value || placeholder}
           </Text>
           <Icon
-            name={isDropdownVisible ? 'chevron-up-outline' : 'chevron-down-outline'}
+            name={
+              isDropdownVisible ? 'chevron-up-outline' : 'chevron-down-outline'
+            }
             size={20}
             color={COLORS.gray}
           />
@@ -100,12 +100,11 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
               <View style={styles.dropdownList}>
                 <FlatList
                   data={transformedOptions}
-                  keyExtractor={(item) => item.value}
-                  renderItem={({ item }) => (
+                  keyExtractor={item => item.value}
+                  renderItem={({item}) => (
                     <TouchableOpacity
                       style={styles.dropdownItem}
-                      onPress={() => handleSelect(item.value)}
-                    >
+                      onPress={() => handleSelect(item.value)}>
                       <Text style={styles.dropdownItemText}>{item.label}</Text>
                     </TouchableOpacity>
                   )}
@@ -152,8 +151,8 @@ const styles = StyleSheet.create({
     maxHeight: '50%',
     borderRadius: Spacing.small,
     padding: Spacing.small,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: COLORS.black,
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,

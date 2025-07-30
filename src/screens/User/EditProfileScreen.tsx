@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   StyleSheet,
@@ -13,14 +13,15 @@ import CustomButton from '../../components/CustomButton';
 import CustomSnackbar from '../../components/CustomSnackbar';
 import {Screen, Spacing} from '../../utils/dimension';
 import {COLORS} from '../../utils/globalConstants/color';
+import {WORD_DIR} from '../../utils/local/en';
 import {launchImageLibrary} from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {WORD_DIR} from '../../utils/local/en';
 import {useDispatch, useSelector} from 'react-redux';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {RootState} from '../../redux/store';
 import {globalStyle} from '../../utils/globalStyle';
 import CustomAvatar from '../../components/CustomAvatar';
+import {getErrorMessage} from '../../utils/errorHandler';
 
 const EditProfileScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -34,6 +35,22 @@ const EditProfileScreen: React.FC = () => {
     isServiceProviderEnrolled: false,
   });
 
+  // Initialize user state with actual user data
+  useEffect(() => {
+    if (userdetails) {
+      setUser({
+        name: `${userdetails.firstName || ''} ${
+          userdetails.lastName || ''
+        }`.trim(),
+        username: userdetails.username || '',
+        email: userdetails.email || '',
+        phone: userdetails.phoneNumber || '',
+        profileImage: userdetails.avatarUri || null,
+        isServiceProviderEnrolled: Boolean(userdetails.isServiceProvider),
+      });
+    }
+  }, [userdetails]);
+
   const [errors, setErrors] = useState({
     name: '',
     username: '',
@@ -42,108 +59,116 @@ const EditProfileScreen: React.FC = () => {
     birth: '',
     gender: '',
   });
+  {
+    /* Disable edit icon for now */
+  }
+  // const handleImagePicker = async () => {
+  //   // Check for photo library permission
+  //   const permission = Platform.select({
+  //     ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
+  //     android: PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+  //   });
 
-  const handleImagePicker = async () => {
-    // Check for photo library permission
-    const permission = Platform.select({
-      ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
-      android: PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
-    });
+  //   if (!permission) return;
 
-    if (!permission) return;
+  //   // Check current permission status
+  //   const status = await check(permission);
 
-    // Check current permission status
-    const status = await check(permission);
+  //   if (status === RESULTS.GRANTED) {
+  //     // Permission granted, proceed with image picker
+  //     launchImageLibrary(
+  //       {
+  //         mediaType: 'photo',
+  //         maxWidth: 300,
+  //         maxHeight: 300,
+  //         quality: 0.5,
+  //       },
+  //       response => {
+  //         if (response.didCancel) {
+  //           dispatch(
+  //             showSnackbar({
+  //               message: getErrorMessage(null, WORD_DIR.imageSelectionCanceled),
+  //               success: true,
+  //             }),
+  //           );
+  //         } else if (response.errorMessage) {
+  //           dispatch(
+  //             showSnackbar({
+  //               message: getErrorMessage(
+  //                 response,
+  //                 'Image selection failed. Please try again.',
+  //               ),
+  //               success: false,
+  //             }),
+  //           );
+  //         } else {
+  //           const uri = response.assets?.[0]?.uri;
+  //           if (uri) setUser(prevState => ({...prevState, profileImage: uri}));
+  //         }
+  //       },
+  //     );
+  //   } else {
+  //     // Request permission if not granted
+  //     const requestStatus = await request(permission);
 
-    if (status === RESULTS.GRANTED) {
-      // Permission granted, proceed with image picker
-      launchImageLibrary(
-        {
-          mediaType: 'photo',
-          maxWidth: 300,
-          maxHeight: 300,
-          quality: 0.5,
-        },
-        response => {
-          if (response.didCancel) {
-            dispatch(
-              showSnackbar({
-                message: 'Image selection canceled.',
-                success: true,
-              }),
-            );
-          } else if (response.errorMessage) {
-            dispatch(
-              showSnackbar({
-                message: `Error: ${response.errorMessage}`,
-                success: false,
-              }),
-            );
-          } else {
-            const uri = response.assets?.[0]?.uri;
-            if (uri) setUser(prevState => ({...prevState, profileImage: uri}));
-          }
-        },
-      );
-    } else {
-      // Request permission if not granted
-      const requestStatus = await request(permission);
-
-      if (requestStatus === RESULTS.GRANTED) {
-        // Permission granted, proceed with image picker
-        launchImageLibrary(
-          {
-            mediaType: 'photo',
-            maxWidth: 300,
-            maxHeight: 300,
-            quality: 0.5,
-          },
-          response => {
-            if (response.didCancel) {
-              dispatch(
-                showSnackbar({
-                  message: 'Image selection canceled.',
-                  success: true,
-                }),
-              );
-            } else if (response.errorMessage) {
-              dispatch(
-                showSnackbar({
-                  message: `Error: ${response.errorMessage}`,
-                  success: true,
-                }),
-              );
-            } else {
-              const uri = response.assets?.[0]?.uri;
-              if (uri)
-                setUser(prevState => ({...prevState, profileImage: uri}));
-            }
-          },
-        );
-      } else {
-        dispatch(
-          showSnackbar({
-            message: 'Permission to access photos is required.',
-            success: true,
-          }),
-        );
-      }
-    }
-  };
+  //     if (requestStatus === RESULTS.GRANTED) {
+  //       // Permission granted, proceed with image picker
+  //       launchImageLibrary(
+  //         {
+  //           mediaType: 'photo',
+  //           maxWidth: 300,
+  //           maxHeight: 300,
+  //           quality: 0.5,
+  //         },
+  //         response => {
+  //           if (response.didCancel) {
+  //             dispatch(
+  //               showSnackbar({
+  //                 message: WORD_DIR.imageSelectionCanceled,
+  //                 success: true,
+  //               }),
+  //             );
+  //           } else if (response.errorMessage) {
+  //             dispatch(
+  //               showSnackbar({
+  //                 message: getErrorMessage(
+  //                   response,
+  //                   'Image selection failed. Please try again.',
+  //                 ),
+  //                 success: false,
+  //               }),
+  //             );
+  //           } else {
+  //             const uri = response.assets?.[0]?.uri;
+  //             if (uri)
+  //               setUser(prevState => ({...prevState, profileImage: uri}));
+  //           }
+  //         },
+  //       );
+  //     } else {
+  //       dispatch(
+  //         showSnackbar({
+  //           message: getErrorMessage(null, WORD_DIR.permissionRequired),
+  //           success: false,
+  //         }),
+  //       );
+  //     }
+  //   }
+  // };
 
   const handleSave = () => {
     if (!user.name.trim()) {
       dispatch(
         showSnackbar({
-          message: 'Name is required.',
-          success: true,
+          message: getErrorMessage(null, WORD_DIR.nameRequired),
+          success: false,
         }),
       );
       return;
     }
     dispatch(
       showSnackbar({
-        message: 'Profile saved successfully!',
+        message: getErrorMessage(null, WORD_DIR.profileSavedSuccess),
         success: true,
       }),
     );
@@ -157,37 +182,36 @@ const EditProfileScreen: React.FC = () => {
     <ScrollView style={globalStyle.globalContainer}>
       <CustomSnackbar />
       <View style={styles.imageWrapper}>
-        <Image
-          source={
-            user.profileImage
-              ? {uri: user.profileImage}
-              : require('../../assets/logo.png')
-          }
-          style={styles.profileImage}
+        <CustomAvatar
+          name={user.name}
+          imageUrl={user.profileImage || undefined}
+          size={120}
+          borderColor={COLORS.primary}
+          borderWidth={4}
         />
-        <CustomAvatar name={user.name} imageUrl={user.profileImage} />
-        <TouchableOpacity style={styles.editIcon} onPress={handleImagePicker}>
+        {/* Disable edit icon for now */}
+        {/* <TouchableOpacity style={styles.editIcon} onPress={handleImagePicker}>
           <Icon name="pencil" size={18} color={COLORS.white} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       <CustomInput
         // label={WORD_DIR.name}
         value={user.name}
         onValueChange={text => handleInputChange('name', text)}
-        placeholder="Enter name"
+        placeholder={WORD_DIR.enterName}
         errorMessage={errors.name}
       />
       <CustomInput
         // label="Username"
-        value={userdetails.username}
-        placeholder="Enter username"
+        value={userdetails?.username || ''}
+        placeholder={WORD_DIR.enterUsername}
         disabled={true}
       />
       <CustomInput
         // label="Email"
-        value={userdetails.email}
-        placeholder="Enter email"
+        value={userdetails?.email || ''}
+        placeholder={WORD_DIR.enterEmail}
         keyboardType="email-address"
         disabled={true}
       />
@@ -195,12 +219,17 @@ const EditProfileScreen: React.FC = () => {
         // label="Phone Number"
         value={user.phone}
         onValueChange={text => handleInputChange('phone', text)}
-        placeholder="Enter phone number"
+        placeholder={WORD_DIR.enterPhoneNumber}
         keyboardType="phone-pad"
         errorMessage={errors.phone}
       />
 
-      <CustomButton label="Save Profile" onPress={handleSave} />
+      <CustomButton
+        label={WORD_DIR.saveProfile}
+        onPress={handleSave}
+        showLoader={true}
+        loaderMessage="Saving profile..."
+      />
     </ScrollView>
   );
 };
@@ -215,6 +244,7 @@ const styles = StyleSheet.create({
   imageWrapper: {
     alignSelf: 'center',
     position: 'relative',
+    marginVertical: Spacing.large,
   },
   profileImage: {
     width: Screen.width / 4,
@@ -227,7 +257,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: -5,
-    backgroundColor: COLORS.gray,
+    backgroundColor: COLORS.primary,
     borderRadius: 15,
     padding: 5,
   },

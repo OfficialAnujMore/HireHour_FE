@@ -28,7 +28,7 @@ const cartSlice = createSlice({
               schedule => schedule.id === newSchedule.id, // assuming each schedule has a unique 'id'
             );
 
-            console.log(existingScheduleIndex, newSchedule);
+            // existingScheduleIndex, newSchedule
             if (existingScheduleIndex === -1) {
               // Add new schedule only if it doesn't exist already
               existingItem.schedule.push(newSchedule);

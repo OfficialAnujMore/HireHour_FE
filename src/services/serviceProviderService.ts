@@ -29,87 +29,87 @@ export const getServiceProviders = async (
         params: {id: userId, category: serializedCategories},
       },
     );
-  } catch (error) {
-    return handleError(error, 'getServiceProviders'); // Return the error handled by handleError function
+  } catch (error: unknown) {
+    return handleError(error, 'getServiceProviders');
   }
 };
 
 export const addService = async (
-  data: unknown,
+  data: Record<string, unknown>,
 ): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
   try {
     return await post<ServiceDetails>(
       `${V1_SERVICE_BASE_ROUTE}${UPSERT_SERVICE}`,
       data,
     );
-  } catch (error) {
-    return handleError(error, 'addService'); // Return the error handled by handleError function
+  } catch (error: unknown) {
+    return handleError(error, 'addService');
   }
 };
 
 export const getUserServices = async (
-  data: unknown,
-): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
+  data: Record<string, unknown>,
+): Promise<ApiResponse<ServiceDetails[]> | ErrorResponse> => {
   try {
-    return await post<ServiceDetails>(
+    return await post<ServiceDetails[]>(
       `${V1_SERVICE_BASE_ROUTE}${GET_USER_SERVICES}`,
       data,
     );
-  } catch (error) {
-    return handleError(error, 'getUserServices'); // Return the error handled by handleError function
+  } catch (error: unknown) {
+    return handleError(error, 'getUserServices');
   }
 };
 
 export const getMyBookedServices = async (data: {
   id: string;
-  type:string
-}): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
+  type: string;
+}): Promise<ApiResponse<any[]> | ErrorResponse> => {
   try {
-    return await post<ServiceDetails>(
+    return await post<any[]>(
       `${V1_SERVICE_BASE_ROUTE}${GET_BOOKED_SERVICES}`,
       data,
     );
-  } catch (error) {
-    return handleError(error, 'getMyBookedServices'); // Return the error handled by handleError function
+  } catch (error: unknown) {
+    return handleError(error, 'getMyBookedServices');
   }
 };
 
 export const handleSlotApproval = async (
-  data: any,
+  data: Record<string, unknown>,
 ): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
   try {
     return await post<ServiceDetails>(
       `${V1_SERVICE_BASE_ROUTE}${HANDLE_SLOT_APPROVAL}`,
       data,
     );
-  } catch (error) {
-    return handleError(error, 'handleSlotApproval'); // Return the error handled by handleError function
+  } catch (error: unknown) {
+    return handleError(error, 'handleSlotApproval');
   }
 };
 
 export const bookService = async (
-  data: unknown,
+  data: Record<string, unknown>,
 ): Promise<ApiResponse<ServiceDetails> | ErrorResponse> => {
   try {
     return await post<ServiceDetails>(
       `${V1_SERVICE_BASE_ROUTE}${BOOK_SERVICE}`,
       data,
     );
-  } catch (error) {
-    return handleError(error, 'bookService'); // Return the error handled by handleError function
+  } catch (error: unknown) {
+    return handleError(error, 'bookService');
   }
 };
 
 export const getUpcomingEvents = async (
-  data: unknown,
+  data: Record<string, unknown>,
 ): Promise<ApiResponse<ServiceDetails[]> | ErrorResponse> => {
   try {
     return await post<ServiceDetails[]>(
       `${V1_SERVICE_BASE_ROUTE}${UPCOMING_EVENTS}`,
       data,
     );
-  } catch (error) {
-    return handleError(error, 'getUpcomingEvents'); // Return the error handled by handleError function
+  } catch (error: unknown) {
+    return handleError(error, 'getUpcomingEvents');
   }
 };
 
@@ -124,20 +124,20 @@ export const deleteServiceById = async (
         params: {serviceId: serviceId, fcmToken: fcmToken},
       },
     );
-  } catch (error) {
-    return handleError(error, 'deleteServiceById'); // Corrected error message
+  } catch (error: unknown) {
+    return handleError(error, 'deleteServiceById');
   }
 };
 
 export const holdSlot = async (
-  data: unknown,
+  data: Record<string, unknown>,
 ): Promise<ApiResponse<ServiceDetails[]> | ErrorResponse> => {
   try {
     return await post<ServiceDetails[]>(
       `${V1_SERVICE_BASE_ROUTE}${HOLD_SLOTS}`,
       {schedule: data},
     );
-  } catch (error) {
-    return handleError(error, 'getUpcomingEvents'); // Return the error handled by handleError function
+  } catch (error: unknown) {
+    return handleError(error, 'holdSlot');
   }
 };

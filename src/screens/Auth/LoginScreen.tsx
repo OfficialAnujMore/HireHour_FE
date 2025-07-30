@@ -8,7 +8,9 @@ import {
   ScrollView,
 } from 'react-native';
 import {useDispatch} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from 'interfaces';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import logo from '../../assets/logo.png';
@@ -25,10 +27,12 @@ import {login} from '../../redux/authSlice';
 import {ApiResponse} from 'services/apiClient';
 import {globalStyle} from '../../utils/globalStyle';
 import renderInput from '../../utils/renderInputUtil';
+import {apiWithLoader} from '../../utils/apiWithLoader';
+import {getErrorMessage} from '../../utils/errorHandler';
 
 const LoginScreen: React.FC = () => {
   const dispatch = useDispatch();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const [user, setUser] = useState<AuthUser>({
     email: '',
@@ -37,18 +41,18 @@ const LoginScreen: React.FC = () => {
 
   const [errors, setErrors] = useState<Errors>({email: '', password: ''});
 
-  const handleValueChange = (field: keyof AuthUser, value: string): void => {
+  const handleValueChange = (field: string, value: string): void => {
     setUser(prev => ({...prev, [field]: value}));
-    validateField(field, value);
+    validateField(field as keyof AuthUser, value);
   };
 
   const validateField = useCallback(
     (field: keyof AuthUser, value: string): void => {
       let error = '';
       if (field === 'email') {
-        if (!value || !EMAIL_REGEX.test(value)) error = 'Invalid email format';
+        if (!value || !EMAIL_REGEX.test(value)) error = WORD_DIR.invalidEmailFormat;
       } else if (field === 'password') {
-        if (!value || value.length < 6) error = 'Minimum 6 characters required';
+        if (!value || value.length < 6) error = WORD_DIR.minimumCharactersRequired;
       }
       setErrors(prev => ({...prev, [field]: error}));
     },
@@ -60,12 +64,16 @@ const LoginScreen: React.FC = () => {
   }, [errors, user]);
 
   const handleLogin = async (): Promise<void> => {
-    const response: ApiResponse<User> | ErrorResponse = await loginUser(user);
+    const response: ApiResponse<User> | ErrorResponse = await apiWithLoader(
+      () => loginUser(user),
+      WORD_DIR.login
+    );
+    
     if (response.success && response.data) {
       await AsyncStorage.setItem('token', response.data.token);
       dispatch(login({user: response.data}));
     } else {
-      dispatch(showSnackbar({message: response.message}));
+      dispatch(showSnackbar({message: getErrorMessage(response, 'Login failed. Please try again.')}));
     }
   };
 
@@ -75,7 +83,7 @@ const LoginScreen: React.FC = () => {
       style={{flex: 1}}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <Image source={logo} style={styles.logo} />
-        <View style={globalStyle.card}>
+        <View style={styles.card}>
           <View>
             <CustomText
               style={globalStyle.heading}
@@ -119,6 +127,8 @@ const LoginScreen: React.FC = () => {
               label={WORD_DIR.login}
               onPress={handleLogin}
               disabled={!isFormValid()}
+              showLoader={true}
+              loaderMessage={WORD_DIR.login}
               textStyle={{fontSize: FontSize.large}}
             />
           </View>
@@ -152,7 +162,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     borderRadius: 20,
     padding: Spacing.large,
-    shadowColor: '#000',
+    shadowColor: COLORS.black,
     shadowOffset: {width: 0, height: 6},
     shadowOpacity: 0.1,
     shadowRadius: 10,

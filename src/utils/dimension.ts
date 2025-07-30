@@ -1,7 +1,12 @@
-import { Dimensions } from 'react-native';
+import {Dimensions} from 'react-native';
 
 // Get screen dimensions
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
+
+// Validate dimensions
+if (width <= 0 || height <= 0) {
+  console.warn('Invalid screen dimensions detected');
+}
 
 // Define scale factors (optional, for scaling purposes)
 const scale = width / 375; // 375 is the width of iPhone 6 (baseline)
@@ -19,7 +24,7 @@ export const Screen = {
 
 // Common dimensions like padding and margin can also be added here
 export const Spacing = {
-  small: moderateScale(8),  // Scales with screen width
+  small: moderateScale(8), // Scales with screen width
   medium: moderateScale(16),
   large: moderateScale(24),
   extraLarge: moderateScale(32),

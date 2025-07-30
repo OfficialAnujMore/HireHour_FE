@@ -4,13 +4,18 @@ import { COLORS } from '../utils/globalConstants/color';
 import { FontSize, Screen, Spacing } from '../utils/dimension';
 import CustomText from './CustomText';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from 'interfaces';
 import { CustomRatingInfo } from './CustomRatingInfo';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { CustomCardsProps } from 'interfaces';
 
+const CustomEventCard: React.FC<CustomCardsProps> = ({ item, handlePress }) => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-const CustomEventCard: React.FC<CustomCardsProps> = ({ item,handlePress }) => {
-  const navigation = useNavigation();
+  if (!item) {
+    return null;
+  }
 
   return (
     <TouchableOpacity style={styles.container} onPress={handlePress}>
@@ -21,18 +26,18 @@ const CustomEventCard: React.FC<CustomCardsProps> = ({ item,handlePress }) => {
           accessibilityLabel="User Avatar"
         />
       ) : (
-        <View style={[styles.image,styles.iconFallback]}>
+        <View style={[styles.image, styles.iconFallback]}>
           <Icon name="person-outline" size={FontSize.extraLarge * 1.5} color={COLORS.black} />
         </View>
       )}
       <View style={styles.content}>
         <View style={styles.header}>
-          <CustomText label={item.title} style={styles.textStyle} />
+          <CustomText label={item.title || ''} style={styles.textStyle} />
           <CustomRatingInfo rating={'5.0'} />
         </View>
-        <CustomText label={item.description} style={styles.textStyle} numberOfLines={4} />
-        <CustomText label={`${item.date} ${item.month}` } style={styles.textStyle} />
-        <CustomText label={item.time} style={styles.textStyle} />
+        <CustomText label={item.description || ''} style={styles.textStyle} numberOfLines={4} />
+        <CustomText label={`${item.date || ''} ${item.month || ''}`} style={styles.textStyle} />
+        <CustomText label={item.time || ''} style={styles.textStyle} />
       </View>
     </TouchableOpacity>
   );

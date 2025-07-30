@@ -8,16 +8,16 @@ import {
   VERIFY_EMAIL_AND_USERNAME,
   VERIFY_OTP,
 } from './routes';
-
+import { debugVerifyUsernameAndEmail } from '../utils/debugUtils';
+import { retryWithBackoff } from '../utils/networkUtils';
 
 export const loginUser = async (
   user: any,
 ): Promise<ApiResponse<User> | ErrorResponse> => {
   try {
     return await post<User>(`${V1_AUTH_BASE_ROUTE}${LOGIN_USER}`, user);
-  } catch (error : unknown) {
-
-    return handleError(error,'loginUser');
+  } catch (error: unknown) {
+    return handleError(error, 'loginUser');
   }
 };
 
@@ -26,7 +26,7 @@ export const registerUser = async (
 ): Promise<ApiResponse<User> | ErrorResponse> => {
   try {
     return await post<User>(`${V1_AUTH_BASE_ROUTE}${REGISTER_USER}`, user);
-  } catch (error) {
+  } catch (error: unknown) {
     return handleError(error, 'registerUser');
   }
 };
@@ -37,11 +37,18 @@ export const verifyUsernameAndEmail = async (data: {
   username: string;
 }): Promise<ApiResponse<User> | ErrorResponse> => {
   try {
-    return await post<User>(
-      `${V1_AUTH_BASE_ROUTE}${VERIFY_EMAIL_AND_USERNAME}`,
-      data,
-    );
-  } catch (error) {
+    // Use retry mechanism for network resilience
+    return await retryWithBackoff(async () => {
+      return await post<User>(
+        `${V1_AUTH_BASE_ROUTE}${VERIFY_EMAIL_AND_USERNAME}`,
+        data,
+      );
+    }, 2, 1000); // 2 retries with 1 second base delay
+  } catch (error: unknown) {
+    // Enhanced debugging for this specific endpoint
+    if (__DEV__) {
+      await debugVerifyUsernameAndEmail(error);
+    }
     return handleError(error, 'verifyUsernameAndEmail');
   }
 };
@@ -52,7 +59,7 @@ export const verifyOTP = async (data: {
 }): Promise<ApiResponse<OTPStatus> | ErrorResponse> => {
   try {
     return await post<OTPStatus>(`${V1_AUTH_BASE_ROUTE}${VERIFY_OTP}`, data);
-  } catch (error) {
+  } catch (error: unknown) {
     return handleError(error, 'verifyOTP');
   }
 };

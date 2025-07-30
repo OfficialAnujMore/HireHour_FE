@@ -11,8 +11,8 @@ import {
 } from 'react-native';
 import {FontSize, Spacing} from '../../utils/dimension';
 import {COLORS} from '../../utils/globalConstants/color';
-import CustomButton from '../../components/CustomButton';
 import {WORD_DIR} from '../../utils/local/en';
+import CustomButton from '../../components/CustomButton';
 import {updateUserRole} from '../../services/userService';
 import {RootState} from '../../redux/store';
 import {useDispatch, useSelector} from 'react-redux';
@@ -22,24 +22,26 @@ import {useNavigation} from '@react-navigation/native';
 import {login} from '../../redux/authSlice';
 import {globalStyle} from '../../utils/globalStyle';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {apiWithLoader} from '../../utils/apiWithLoader';
+import {getErrorMessage} from '../../utils/errorHandler';
 
 const bulletPoints = [
-  'Reach new clients through our platform',
-  'Grow your visibility and business network',
-  'Set your own availability and pricing',
-  'Get paid securely and on time',
-  'Build your brand as a professional artist',
-  'Receive real-time booking notifications',
-  'Access exclusive events and client opportunities',
-  'Get support from our dedicated service team',
+  WORD_DIR.reachNewClients,
+  WORD_DIR.growVisibility,
+  WORD_DIR.setOwnPricing,
+  WORD_DIR.getPaidSecurely,
+  WORD_DIR.buildBrand,
+  WORD_DIR.receiveNotifications,
+  WORD_DIR.accessExclusiveEvents,
+  WORD_DIR.getSupport,
 ];
 
 const EnrollAsServiceProvider: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const [isServiceProviderEnrolled, setIsServiceProviderEnrolled] = useState(
-    user?.isServiceProvider,
+  const [isServiceProviderEnrolled, setIsServiceProviderEnrolled] = useState<boolean>(
+    Boolean(user?.isServiceProvider),
   );
   const [checked, setChecked] = useState(false);
 
@@ -65,16 +67,19 @@ const EnrollAsServiceProvider: React.FC = () => {
 
   const handleEnrollment = async () => {
     try {
-      const response = await updateUserRole({
-        id: user?.id,
-        isEnrolled: isServiceProviderEnrolled,
-      });
+      const response = await apiWithLoader(
+        () => updateUserRole({
+          id: user?.id,
+          isEnrolled: isServiceProviderEnrolled,
+        }),
+        'Enrolling as service provider...'
+      );
 
       if (response?.data) {
         dispatch(login({user: response.data}));
         dispatch(
           showSnackbar({
-            message: 'Successfully enrolled as a service provider',
+            message: getErrorMessage(response, WORD_DIR.successfullyEnrolled),
             success: true,
           }),
         );
@@ -83,8 +88,8 @@ const EnrollAsServiceProvider: React.FC = () => {
     } catch (error: any) {
       dispatch(
         showSnackbar({
-          message: error,
-          success: true,
+          message: getErrorMessage(error, 'Enrollment failed. Please try again.'),
+          success: false,
         }),
       );
     }
@@ -128,7 +133,7 @@ const EnrollAsServiceProvider: React.FC = () => {
           />
           <Switch
             value={isServiceProviderEnrolled}
-            onValueChange={value => setIsServiceProviderEnrolled(value)}
+            onValueChange={(value: boolean) => setIsServiceProviderEnrolled(value)}
             trackColor={{true: COLORS.primary, false: COLORS.primary}}
             thumbColor={isServiceProviderEnrolled ? COLORS.white : COLORS.gray}
           />
@@ -155,6 +160,8 @@ const EnrollAsServiceProvider: React.FC = () => {
         onPress={handleEnrollment}
         label={WORD_DIR.submit}
         disabled={!(isServiceProviderEnrolled && checked)}
+        showLoader={true}
+        loaderMessage="Enrolling..."
       />
     </View>
   );
@@ -180,7 +187,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderWidth: 2,
-    borderColor: '#000',
+    borderColor: COLORS.black,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 8,
@@ -190,7 +197,7 @@ const styles = StyleSheet.create({
     height: 10,
   },
   checked: {
-    backgroundColor: '#000',
+    backgroundColor: COLORS.black,
   },
   infoBox: {
     padding: Spacing.medium,

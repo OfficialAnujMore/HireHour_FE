@@ -72,7 +72,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       let formattedText =
         keyboardType === 'phone-pad' ? formatPhoneNumber(text) : text;
       if (maxLength) formattedText = formattedText.slice(0, maxLength);
-      onValueChange(formattedText);
+      onValueChange?.(formattedText);
     },
     [disabled, keyboardType, maxLength, onValueChange],
   );
@@ -101,10 +101,10 @@ const CustomInput: React.FC<CustomInputProps> = ({
             onChangeText={handleChangeText}
             value={value || ''}
             keyboardType={keyboardType}
-            secureTextEntry={secureTextEntry && !isPasswordVisible} // Fix for toggling secureTextEntry
+            secureTextEntry={secureTextEntry && !isPasswordVisible}
             editable={!disabled}
             maxLength={maxLength}
-            multiline={true}
+            multiline={keyboardType !== 'default' && !secureTextEntry}
             {...textInputProps}
           />
           {secureTextEntry && !disabled && (

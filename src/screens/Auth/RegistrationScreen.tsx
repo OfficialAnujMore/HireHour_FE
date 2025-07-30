@@ -17,29 +17,29 @@ import CustomButton from '../../components/CustomButton';
 import CustomText from '../../components/CustomText';
 import {FontSize, Screen, Spacing} from '../../utils/dimension';
 import {COLORS} from '../../utils/globalConstants/color';
-import {USER_DETAILS} from '../../utils/constants';
 import {WORD_DIR} from '../../utils/local/en';
 import {PLACEHOLDER_DIR} from '../../utils/local/placeholder';
 import {ErrorResponse, RootStackParamList, User} from 'interfaces';
 import {ApiResponse} from 'services/apiClient';
 import {globalStyle} from '../../utils/globalStyle';
-import renderInput from '../../utils/renderInputUtil'; // Import the global renderInput function
+import renderInput from '../../utils/renderInputUtil';
+import {apiWithLoader} from '../../utils/apiWithLoader';
+import {getErrorMessage} from '../../utils/errorHandler';
 
 // Validation patterns
 const PASSWORD_PATTERN = /^.{6,}$/;
 const UPPERCASE_PATTERN = /[A-Z]/;
 const DIGIT_PATTERN = /\d/;
 
-// Initial states
-const initialUserState = {
-  firstName: USER_DETAILS.firstName,
-  lastName: USER_DETAILS.lastName,
-  username: USER_DETAILS.username,
-  email: USER_DETAILS.email,
-  phoneNumber: USER_DETAILS.phoneNumber,
-  password: USER_DETAILS.password,
-  confirmPassword: USER_DETAILS.password,
-};
+interface RegistrationUser {
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  confirmPassword: string;
+}
 
 const initialErrorState = {
   firstName: '',
@@ -55,34 +55,42 @@ const RegistrationScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const [user, setUser] = useState(initialUserState);
+  const [user, setUser] = useState<RegistrationUser>({
+    firstName: '',
+    lastName: '',
+    username: '',
+    email: '',
+    phoneNumber: '',
+    password: '',
+    confirmPassword: '',
+  });
   const [errors, setErrors] = useState(initialErrorState);
 
-  const handleValueChange = (field: keyof typeof user, value: string) => {
+  const handleValueChange = (field: string, value: string) => {
     setUser(prev => ({...prev, [field]: value}));
-    validateField(field, value);
+    validateField(field as keyof RegistrationUser, value);
   };
 
-  const validateField = (field: keyof typeof user, value: string) => {
+  const validateField = (field: keyof RegistrationUser, value: string) => {
     let error = '';
     switch (field) {
       case 'email':
         if (!value || !EMAIL_REGEX.test(value)) {
-          error = 'Invalid email format';
+          error = WORD_DIR.invalidEmailFormat;
         }
         break;
       case 'password':
         if (!PASSWORD_PATTERN.test(value)) {
           error = 'Password must be at least 6 characters long';
         } else if (!UPPERCASE_PATTERN.test(value)) {
-          error = 'Password must contain at least one uppercase letter';
+          error = WORD_DIR.passwordUppercaseRequired;
         } else if (!DIGIT_PATTERN.test(value)) {
-          error = 'Password must contain at least one digit';
+          error = WORD_DIR.passwordDigitRequired;
         }
         break;
       case 'confirmPassword':
         if (value !== user.password) {
-          error = 'Passwords do not match';
+          error = WORD_DIR.passwordsDoNotMatch;
         }
         break;
     }
@@ -98,15 +106,26 @@ const RegistrationScreen = () => {
   const verifyEmail = async () => {
     const {confirmPassword, ...payload} = user;
     try {
-      const response: ApiResponse<User> | ErrorResponse =
-        await verifyUsernameAndEmail(payload);
+      const response: ApiResponse<User> | ErrorResponse = await apiWithLoader(
+        () => verifyUsernameAndEmail(payload),
+        WORD_DIR.register,
+      );
+
       if (response?.data) {
         navigation.navigate('VerifyOTP', payload);
       } else {
-        dispatch(showSnackbar({message: WORD_DIR.verificationFailed}));
+        dispatch(
+          showSnackbar({
+            message: getErrorMessage(response, WORD_DIR.verificationFailed),
+          }),
+        );
       }
     } catch (error: any) {
-      dispatch(showSnackbar({message: error.message}));
+      dispatch(
+        showSnackbar({
+          message: getErrorMessage(error, WORD_DIR.registrationFailed),
+        }),
+      );
     }
   };
 
@@ -127,7 +146,6 @@ const RegistrationScreen = () => {
               label={WORD_DIR.registerSubHeading}
             />
             {renderInput({
-              label: WORD_DIR.firstName,
               value: user.firstName,
               placeholder: PLACEHOLDER_DIR.PLACEHOLDER_FIRSTNAME,
               field: 'firstName',
@@ -135,7 +153,6 @@ const RegistrationScreen = () => {
               handleValueChange,
             })}
             {renderInput({
-              label: WORD_DIR.lastName,
               value: user.lastName,
               placeholder: PLACEHOLDER_DIR.PLACEHOLDER_LASTNAME,
               field: 'lastName',
@@ -143,7 +160,6 @@ const RegistrationScreen = () => {
               handleValueChange,
             })}
             {renderInput({
-              label: WORD_DIR.username,
               value: user.username,
               placeholder: PLACEHOLDER_DIR.PLACEHOLDER_USERNAME,
               field: 'username',
@@ -151,7 +167,6 @@ const RegistrationScreen = () => {
               handleValueChange,
             })}
             {renderInput({
-              label: WORD_DIR.email,
               value: user.email,
               placeholder: PLACEHOLDER_DIR.PLACEHOLDER_EMAIL,
               field: 'email',
@@ -160,7 +175,6 @@ const RegistrationScreen = () => {
               handleValueChange,
             })}
             {renderInput({
-              label: 'Phone Number',
               value: user.phoneNumber,
               placeholder: PLACEHOLDER_DIR.PLACEHOLDER_PHONE_NUMBER,
               field: 'phoneNumber',
@@ -169,7 +183,6 @@ const RegistrationScreen = () => {
               handleValueChange,
             })}
             {renderInput({
-              label: WORD_DIR.password,
               value: user.password,
               placeholder: PLACEHOLDER_DIR.PLACEHOLDER_PASSWORD,
               field: 'password',
@@ -178,7 +191,6 @@ const RegistrationScreen = () => {
               handleValueChange,
             })}
             {renderInput({
-              label: WORD_DIR.confirmPassword,
               value: user.confirmPassword,
               placeholder: PLACEHOLDER_DIR.PLACEHOLDER_CONFIRM_PASSWORD,
               field: 'confirmPassword',
@@ -190,6 +202,8 @@ const RegistrationScreen = () => {
               label={WORD_DIR.register}
               onPress={verifyEmail}
               disabled={!isFormValid}
+              showLoader={true}
+              loaderMessage={WORD_DIR.register}
               textStyle={{fontSize: FontSize.large}}
             />
           </View>
@@ -223,7 +237,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     borderRadius: 20,
     padding: Spacing.large,
-    shadowColor: '#000',
+    shadowColor: COLORS.black,
     shadowOffset: {width: 0, height: 6},
     shadowOpacity: 0.1,
     shadowRadius: 10,

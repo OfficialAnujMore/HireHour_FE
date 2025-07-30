@@ -1,9 +1,8 @@
 // authSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { persistReducer } from 'redux-persist';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {persistReducer} from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AuthState, User } from 'interfaces';
-
+import {AuthState, User} from 'interfaces';
 
 // Initial State
 const initialState: AuthState = {
@@ -17,14 +16,14 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<{ user: User }>) => {
+    login: (state, action: PayloadAction<{user: User}>) => {
       state.isAuthenticated = true;
       state.user = action.payload.user;
       state.token = action.payload.user.token;
 
       AsyncStorage.setItem('token', action.payload.user.token);
     },
-    logout: (state) => {
+    logout: state => {
       state.isAuthenticated = false;
       state.user = null;
       state.token = null;
@@ -34,7 +33,7 @@ const authSlice = createSlice({
 });
 
 // Export Actions
-export const { login, logout } = authSlice.actions;
+export const {login, logout} = authSlice.actions;
 
 // Persist Config
 const persistConfig = {

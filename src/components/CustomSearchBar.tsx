@@ -74,14 +74,18 @@ const CustomSearchBar: React.FC<SearchInputProps> = ({
             style={styles.input}
             placeholder={placeholder}
           />
-          <TouchableOpacity onPress={onFilterPress}>
-            <Icon
-              name="options-outline"
-              size={22}
-              color={COLORS.black}
-              style={styles.filterIcon}
-            />
-          </TouchableOpacity>
+          {onFilterPress && (
+            <TouchableOpacity
+              onPress={onFilterPress}
+              style={styles.filterButton}>
+              <Icon
+                name="options-outline"
+                size={22}
+                color={COLORS.primary}
+                style={styles.filterIcon}
+              />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -111,6 +115,10 @@ const styles = StyleSheet.create({
   },
   searchIcon: {
     marginRight: 8,
+  },
+  filterButton: {
+    padding: 4,
+    borderRadius: 4,
   },
   filterIcon: {
     marginLeft: 8,

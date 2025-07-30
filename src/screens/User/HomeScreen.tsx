@@ -1,5 +1,13 @@
-import React, {useState, useCallback, useEffect} from 'react';
-import {View, FlatList, StyleSheet, Image, RefreshControl} from 'react-native';
+import React, {useState, useCallback, useEffect, useMemo} from 'react';
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  Image,
+  RefreshControl,
+  StatusBar,
+  ScrollView,
+} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import CustomSearchBar from '../../components/CustomSearchBar';
@@ -13,7 +21,7 @@ import CustomServiceCards from '../../components/CustomServiceCard';
 import {FallBack} from '../../components/FallBack';
 import dataNotFound from '../../assets/error-in-calendar.png';
 import {WORD_DIR} from '../../utils/local/en';
-import {MAX_SCHEDULE_DISPLAY} from '../../utils/constants';
+import {SCHEDULE} from '../../utils/constants';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {ApiResponse} from '../../services/apiClient';
 import {COLORS} from '../../utils/globalConstants/color';
@@ -30,56 +38,157 @@ import {
 import PushNotification from 'react-native-push-notification';
 import {upsertFCMToken} from '../../services/userService';
 import {login} from '../../redux/authSlice';
-import { PLACEHOLDER_DIR } from '../../utils/local/placeholder';
+import {PLACEHOLDER_DIR} from '../../utils/local/placeholder';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from 'interfaces';
+import {apiWithLoader} from '../../utils/apiWithLoader';
+import {getErrorMessage} from '../../utils/errorHandler';
+import SearchFilterModal, {
+  FilterOptions,
+} from '../../components/SearchFilterModal';
 
-const HomeScreen = ({navigation}: any) => {
+const HomeScreen: React.FC = () => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  const [data, setData] = useState<User[]>([]);
-  const [filteredData, setFilteredData] = useState<User[]>([]);
-  const [isRefreshing, setIsRefreshing] = useState(false); // State to handle refreshing
+  const [data, setData] = useState<ServiceDetails[]>([]);
+  const [filteredData, setFilteredData] = useState<ServiceDetails[]>([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [currentFilters, setCurrentFilters] = useState<FilterOptions>({
+    priceRange: [0, 1000],
+    selectedCategories: [],
+    searchQuery: '',
+  });
+
+  // Memoize the categories array to prevent recreation on every render
+  const categories = useMemo(
+    () => ['Photography', 'Guitar', 'Art', 'Music', 'Sports'],
+    [],
+  );
 
   const fetchServiceProviders = useCallback(async (): Promise<void> => {
-    const categories = ['Photography', 'Guitar', 'Art', 'Music', 'Sports'];
+    if (!user?.id) {
+      console.error('User ID not available');
+      return;
+    }
+
     const response: ApiResponse<ServiceDetails[]> | ErrorResponse =
-      await getServiceProviders(user?.id, categories);
+      await apiWithLoader(
+        () => getServiceProviders(user.id, categories),
+        'Loading services...',
+      );
 
     if (response.success && response.data) {
       setData(response.data);
-      setFilteredData(response.data); // Set filtered data as the default
+      // Apply current filters to new data
+      applyFilters(response.data, currentFilters);
     } else {
       dispatch(
         showSnackbar({
-          message: response.message,
+          message: getErrorMessage(
+            response,
+            'Failed to load services. Please try again.',
+          ),
         }),
       );
     }
-    askNotificationPermission();
-  }, [user?.id]);
+  }, [user?.id, categories, dispatch, currentFilters]);
 
-  // Use `useFocusEffect` to call the API whenever the screen is focused
+  // Function to apply filters to data
+  const applyFilters = useCallback(
+    (services: ServiceDetails[], filters: FilterOptions) => {
+      let filtered = [...services];
+
+      // Apply search query filter
+      if (filters.searchQuery) {
+        filtered = filtered.filter(
+          (item: ServiceDetails) =>
+            item.title
+              .toLowerCase()
+              .includes(filters.searchQuery.toLowerCase()) ||
+            item.description
+              .toLowerCase()
+              .includes(filters.searchQuery.toLowerCase()),
+        );
+      }
+
+      // Apply category filter
+      if (filters.selectedCategories.length > 0) {
+        filtered = filtered.filter((item: ServiceDetails) =>
+          filters.selectedCategories.includes(item.category),
+        );
+      }
+
+      // Apply price range filter
+      filtered = filtered.filter((item: ServiceDetails) => {
+        const price = parseFloat(item.pricing?.toString() || '0');
+        return price >= filters.priceRange[0] && price <= filters.priceRange[1];
+      });
+
+      setFilteredData(filtered);
+    },
+    [],
+  );
+
+  // Optimize useFocusEffect to only run when necessary
   useFocusEffect(
     useCallback(() => {
       fetchServiceProviders();
     }, [fetchServiceProviders]),
   );
 
-  // Search handler
-  const handleSearch = (query: string) => {
-    if (query) {
-      const filtered = data.filter(
-        item =>
-          item.title.toLowerCase().includes(query.toLowerCase()) ||
-          item.description.toLowerCase().includes(query.toLowerCase()),
-      );
-      setFilteredData(filtered);
-    } else {
-      setFilteredData(data); // Reset filtered data to the full data if no query
-    }
-  };
+  // Clear search when screen loses focus
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        // Clear search when navigating away
+        setSearchQuery('');
+        setCurrentFilters({
+          priceRange: [0, 1000],
+          selectedCategories: [],
+          searchQuery: '',
+        });
+        setFilteredData(data);
+      };
+    }, [data]),
+  );
 
-  const getFCMToken = async () => {
+  // Memoize search handler to prevent recreation
+  const handleSearch = useCallback(
+    (query: string) => {
+      setSearchQuery(query);
+      const newFilters = {
+        ...currentFilters,
+        searchQuery: query,
+      };
+      setCurrentFilters(newFilters);
+      applyFilters(data, newFilters);
+    },
+    [data, currentFilters, applyFilters],
+  );
+
+  // Handle filter modal open
+  const handleFilterPress = useCallback(() => {
+    setShowFilterModal(true);
+  }, []);
+
+  // Handle filter apply
+  const handleApplyFilters = useCallback(
+    (filters: FilterOptions) => {
+      setCurrentFilters(filters);
+      setSearchQuery(filters.searchQuery);
+      applyFilters(data, filters);
+    },
+    [data, applyFilters],
+  );
+
+  // Memoize FCM token function
+  const getFCMToken = useCallback(async () => {
     const fcmToken = await messaging().getToken();
 
     if (fcmToken) {
@@ -89,140 +198,253 @@ const HomeScreen = ({navigation}: any) => {
       });
       dispatch(login({user: res.data}));
     }
-  };
+  }, [user?.id, dispatch]);
 
-  const askNotificationPermission = async (): Promise<PermissionStatus> => {
-    let permission: (typeof PERMISSIONS)[keyof typeof PERMISSIONS] | null =
-      null;
+  const askNotificationPermission =
+    useCallback(async (): Promise<PermissionStatus> => {
+      let permission: any = null;
 
-    if (Platform.OS === 'ios') {
-      const authStatus = await messaging().requestPermission();
-      const enabled =
-        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+      if (Platform.OS === 'ios') {
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-      if (enabled) {
-        getFCMToken(); // Call it after permission is granted
-        return RESULTS.GRANTED;
-      } else {
-        console.warn('iOS notification permission denied');
-        return RESULTS.DENIED;
+        if (enabled) {
+          getFCMToken();
+          return RESULTS.GRANTED;
+        } else {
+          console.warn('iOS notification permission denied');
+          return RESULTS.DENIED;
+        }
+      } else if (Platform.OS === 'android' && Platform.Version >= 33) {
+        permission = 'android.permission.POST_NOTIFICATIONS';
       }
-    } else if (Platform.OS === 'android' && Platform.Version >= 33) {
-      permission = 'android.permission.POST_NOTIFICATIONS';
-    }
 
-    if (!permission) {
-      getFCMToken(); // Call it for Android if no specific permission is required
-      return RESULTS.GRANTED;
-    }
+      if (!permission) {
+        getFCMToken();
+        return RESULTS.GRANTED;
+      }
 
-    const result = await check(permission);
+      const result = await check(permission);
 
-    if (result === RESULTS.GRANTED) {
-      getFCMToken(); // Call it after permission check
-      return result;
-    }
+      if (result === RESULTS.GRANTED) {
+        getFCMToken();
+        return result;
+      }
 
-    const newStatus = await request(permission);
+      const newStatus = await request(permission);
 
-    if (newStatus === RESULTS.GRANTED) {
-      getFCMToken(); // Call it after permission granted
-    } else {
-      console.warn('Notification permission denied or blocked');
-    }
+      if (newStatus === RESULTS.GRANTED) {
+        getFCMToken();
+      } else {
+        console.warn('Notification permission denied or blocked');
+      }
 
-    return newStatus;
-  };
+      return newStatus;
+    }, [getFCMToken]);
 
-  const createNotificationChannel = () => {
+  const createNotificationChannel = useCallback(() => {
     if (Platform.OS === 'android' && Platform.Version >= 26) {
       PushNotification.createChannel(
         {
-          channelId: 'default-channel', // Channel ID (unique)
-          channelName: 'Default Channel', // Channel Name (can be anything)
-          channelDescription: 'A default channel for notifications', // Channel Description
-          soundName: 'default', // Sound for notifications
-          importance: 4, // Importance level (4 is high importance)
-          vibrate: true, // Vibration for notifications
+          channelId: 'default-channel',
+          channelName: 'Default Channel',
+          channelDescription: 'A default channel for notifications',
+          soundName: 'default',
+          importance: 4,
+          vibrate: true,
         },
-        (created: any) => console.log(`Create channel returned ${created}`),
+        (created: any) => {
+          // Create channel returned ${created}
+        },
       );
     }
-  };
+  }, []);
 
   useEffect(() => {
     createNotificationChannel();
+    askNotificationPermission();
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       if (remoteMessage.notification) {
         PushNotification.localNotification({
-          channelId: 'default-channel', // Use the channel ID here
-          title: remoteMessage.notification.title,
-          message: remoteMessage.notification.body,
+          channelId: 'default-channel',
+          title: remoteMessage.notification?.title || 'Notification',
+          message: remoteMessage.notification?.body || 'No message',
+          date: new Date(),
         });
       }
     });
 
-    return unsubscribe;
-  }, []);
+    return () => unsubscribe();
+  }, [createNotificationChannel]);
 
-  // Refresh handler function
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     await fetchServiceProviders();
     setIsRefreshing(false);
-  };
+  }, [fetchServiceProviders]);
+
+  // Memoize the render item function
+  const renderItem = useCallback(
+    ({item}: {item: ServiceDetails}) => <CustomServiceCards item={item} />,
+    [navigation],
+  );
+
+  // Memoize the key extractor
+  const keyExtractor = useCallback(
+    (item: ServiceDetails) => item.userId || item.id || '',
+    [],
+  );
+
+  // Memoize the empty component
+  const EmptyComponent = useMemo(
+    () => (
+      <FallBack
+        imageSrc={dataNotFound}
+        heading={WORD_DIR.noService}
+        subHeading=""
+      />
+    ),
+    [],
+  );
 
   return (
-    <View style={globalStyle.globalContainer}>
-      <CustomText
-        label={`${getGreeting()}, ${user?.firstName}`}
-        style={styles.greetingText}
-      />
-      <CustomSearchBar  placeholder={PLACEHOLDER_DIR.PLACEHOLDER_SEARCH} onChange={handleSearch} />
+    <>
+      <View style={styles.container}>
+        {/* Header Section */}
+        <View style={styles.headerSection}>
+          <View style={styles.greetingContainer}>
+            <CustomText style={styles.greeting} label={`${getGreeting()},`} />
+            <CustomText
+              style={styles.userName}
+              label={user?.firstName || 'User'}
+            />
+          </View>
+          <CustomText
+            style={styles.subtitle}
+            label="Discover amazing services from talented providers"
+            numberOfLines={3}
+          />
+        </View>
 
-      {filteredData?.length > 0 ? (
-        <FlatList
-          data={filteredData}
-          keyExtractor={item => item.id}
-          renderItem={({item}) => (
-            <CustomServiceCards
-              item={item}
-              maxDisplay={MAX_SCHEDULE_DISPLAY}
-              handlePress={() => {
-                navigation.navigate('ServiceDetails', item);
-              }}
+        {/* Search Section */}
+        <View style={styles.searchSection}>
+          <CustomSearchBar
+            placeholder={PLACEHOLDER_DIR.PLACEHOLDER_SEARCH}
+            onChange={handleSearch}
+            value={searchQuery}
+            onFilterPress={handleFilterPress}
+          />
+        </View>
+
+        {/* Services Section */}
+        <View style={styles.servicesSection}>
+          <View style={styles.sectionHeader}>
+            <CustomText
+              style={styles.sectionTitle}
+              label="Available Services"
             />
-          )}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefreshing}
-              onRefresh={handleRefresh} // Bind the refresh function
-              colors={[COLORS.primary]}
-              progressBackgroundColor={COLORS.white}
+            <CustomText
+              style={styles.serviceCount}
+              label={`${filteredData.length} service${
+                filteredData.length !== 1 ? 's' : ''
+              } found`}
             />
-          }
-        />
-      ) : (
-        <FallBack imageSrc={dataNotFound} heading={WORD_DIR.noService} />
-      )}
-    </View>
+          </View>
+
+          <FlatList
+            data={filteredData}
+            renderItem={renderItem}
+            keyExtractor={keyExtractor}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listContainer}
+            ListEmptyComponent={EmptyComponent}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefreshing}
+                onRefresh={handleRefresh}
+                colors={[COLORS.primary]}
+                tintColor={COLORS.primary}
+              />
+            }
+          />
+        </View>
+      </View>
+
+      {/* Search Filter Modal */}
+      <SearchFilterModal
+        visible={showFilterModal}
+        onClose={() => setShowFilterModal(false)}
+        onApply={handleApplyFilters}
+        currentFilters={currentFilters}
+      />
+    </>
   );
 };
 
+HomeScreen.displayName = 'HomeScreen';
+
 const styles = StyleSheet.create({
-  greetingText: {
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.white,
+  },
+  headerSection: {
+    paddingTop: Spacing.large,
+    paddingHorizontal: Spacing.medium,
+    paddingBottom: Spacing.medium,
+    backgroundColor: COLORS.white,
+  },
+  greetingContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginBottom: Spacing.small,
+  },
+  greeting: {
     fontSize: FontSize.large,
     fontWeight: '600',
+    color: COLORS.primary,
+    marginRight: Spacing.small,
   },
-  dataNotFound: {
-    justifyContent: 'center',
+  userName: {
+    fontSize: FontSize.large + 2,
+    fontWeight: 'bold',
+    color: COLORS.black,
+  },
+  subtitle: {
+    fontSize: FontSize.medium,
+    color: COLORS.gray,
+    lineHeight: 22,
+  },
+  searchSection: {
+    paddingHorizontal: Spacing.medium,
+    paddingBottom: Spacing.medium,
+    backgroundColor: COLORS.white,
+  },
+  servicesSection: {
+    flex: 1,
+    backgroundColor: COLORS.white,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: Spacing.medium,
+    paddingBottom: Spacing.medium,
   },
-  noDataText: {
+  sectionTitle: {
     fontSize: FontSize.large,
     fontWeight: '600',
+    color: COLORS.black,
+  },
+  serviceCount: {
+    fontSize: FontSize.small,
+    color: COLORS.gray,
+  },
+  listContainer: {
+    paddingHorizontal: Spacing.medium,
+    paddingBottom: Spacing.large,
   },
 });
 

@@ -13,19 +13,26 @@ import CustomButton from '../../components/CustomButton';
 import {verifyOTP} from '../../services/authService';
 import {registerUser} from '../../services/authService';
 import {useDispatch} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from 'interfaces';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {Screen, Spacing} from '../../utils/dimension';
 import {ErrorResponse, RegisterUser, User} from 'interfaces';
 import {login} from '../../redux/authSlice';
 import {ApiResponse} from 'services/apiClient';
 import { globalStyle } from '../../utils/globalStyle';
+import { COLORS } from '../../utils/globalConstants/color';
+import {apiWithLoader} from '../../utils/apiWithLoader';
+import {getErrorMessage} from '../../utils/errorHandler';
 const OTP_LENGTH: number = 6;
 
-const VerifyOTPScreen: React.FC<RegisterUser> = props => {
+const VerifyOTPScreen: React.FC = () => {
   const dispatch = useDispatch();
-  const navigation = useNavigation();
-  const data = props.route.params;
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const route = useRoute<RouteProp<RootStackParamList, 'VerifyOTP'>>();
+  const data = route.params;
 
   const [emailOTP, setEmailOTP] = useState<string[]>(
     Array(OTP_LENGTH).fill(''),
@@ -90,41 +97,54 @@ const VerifyOTPScreen: React.FC<RegisterUser> = props => {
   const handleSubmit = async (): Promise<any> => {
     Keyboard.dismiss();
 
-    // Verify OTP before proceeding with registration
-    const emailOTPResponse = await verifyOTP({
-      key: data.email,
-      otp: emailOTP.join(''),
-    });
-
-    if (!emailOTPResponse.success) {
-      dispatch(
-        showSnackbar({
-          message: emailOTPResponse.message,
+    try {
+      // Verify OTP before proceeding with registration
+      const emailOTPResponse = await apiWithLoader(
+        () => verifyOTP({
+          key: data.email,
+          otp: emailOTP.join(''),
         }),
+        'Verifying OTP...'
       );
-      return;
-    }
 
-    // Register the user if OTP verification is successful
-    const registerUserResponse: ApiResponse<User> | ErrorResponse =
-      await registerUser(data);
+      if (!emailOTPResponse.success) {
+        dispatch(
+          showSnackbar({
+            message: getErrorMessage(emailOTPResponse, 'OTP verification failed. Please try again.'),
+          }),
+        );
+        return;
+      }
 
-    if (registerUserResponse.success && registerUserResponse.data) {
+      // Register the user if OTP verification is successful
+      const registerUserResponse: ApiResponse<User> | ErrorResponse = await apiWithLoader(
+        () => registerUser(data),
+        'Creating account...'
+      );
+
+      if (registerUserResponse.success && registerUserResponse.data) {
+        dispatch(
+          showSnackbar({
+            message: WORD_DIR.registerUser,
+            success: true,
+          }),
+        );
+        // Save token in AsyncStorage if available
+        dispatch(login({user: registerUserResponse.data}));
+
+        // Navigate to the home screen
+        navigation.navigate('Home');
+      } else {
+        dispatch(
+          showSnackbar({
+            message: getErrorMessage(registerUserResponse, 'Account creation failed. Please try again.'),
+          }),
+        );
+      }
+    } catch (error: any) {
       dispatch(
         showSnackbar({
-          message: WORD_DIR.registerUser,
-          success: true,
-        }),
-      );
-      // Save token in AsyncStorage if available
-      dispatch(login({user: registerUserResponse.data}));
-
-      // Navigate to the home screen
-      navigation.navigate('Home');
-    } else {
-      dispatch(
-        showSnackbar({
-          message: registerUserResponse.message,
+          message: getErrorMessage(error, 'An error occurred. Please try again.'),
         }),
       );
     }
@@ -174,7 +194,12 @@ const VerifyOTPScreen: React.FC<RegisterUser> = props => {
         style={{alignSelf:'center'}}
       />
       {renderOtpInputs(emailOTP, 'email')}
-      <CustomButton label={WORD_DIR.verifyOTP} onPress={handleSubmit} />
+      <CustomButton 
+        label={WORD_DIR.verifyOTP} 
+        onPress={handleSubmit}
+        showLoader={true}
+        loaderMessage="Verifying..."
+      />
     </ScrollView>
   );
 };
@@ -185,7 +210,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'flex-start',
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
     paddingHorizontal: Spacing.medium,
   },
   title: {
@@ -203,18 +228,18 @@ const styles = StyleSheet.create({
     height: 50,
     borderWidth: 1,
     borderRadius: 5,
-    borderColor: '#ccc',
+    borderColor: COLORS.lightGray,
     fontSize: 18,
     textAlign: 'center',
   },
   button: {
     marginTop: 20,
-    backgroundColor: '#007BFF',
+    backgroundColor: COLORS.primary,
     padding: 12,
     borderRadius: 5,
   },
   buttonText: {
-    color: '#fff',
+    color: COLORS.white,
     fontSize: 16,
     fontWeight: 'bold',
   },

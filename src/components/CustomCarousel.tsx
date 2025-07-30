@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import {Screen, Spacing} from '../utils/dimension';
 import {CustomCarouselProps} from 'interfaces';
+import {COLORS} from '../utils/globalConstants/color';
 
 const {width} = Dimensions.get('window');
 
@@ -38,7 +39,10 @@ const CustomCarousel: React.FC<CustomCarouselProps> = ({data}) => {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onScroll={handleScroll}
-        scrollEventThrottle={16}>
+        scrollEventThrottle={16}
+        decelerationRate="fast"
+        snapToInterval={Screen.width - 16}
+        snapToAlignment="center">
         {data.map((item, index) => (
           <View key={index} style={styles.card}>
             <Image source={{uri: item.uri}} style={styles.image} />
@@ -58,9 +62,12 @@ const CustomCarousel: React.FC<CustomCarouselProps> = ({data}) => {
 
 const styles = StyleSheet.create({
   card: {
-    width: Screen.width,
-    height: Screen.height / 3,
+    width: Screen.width - 32, // Account for padding
+    height: 200,
+    marginHorizontal: 8,
+    borderRadius: 16,
     overflow: 'hidden',
+    backgroundColor: COLORS.lightGray,
   },
   image: {
     width: '100%',
@@ -72,17 +79,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Spacing.small,
+    paddingVertical: Spacing.small,
   },
   indicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#D3D3D3',
-    marginHorizontal: 4,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: COLORS.lightGray,
+    marginHorizontal: 3,
   },
   activeIndicator: {
-    backgroundColor: '#000',
-    width: 16,
+    backgroundColor: COLORS.primary,
+    width: 20,
   },
 });
 

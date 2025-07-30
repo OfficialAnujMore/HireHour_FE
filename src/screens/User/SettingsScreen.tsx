@@ -6,17 +6,19 @@ import CustomText from '../../components/CustomText';
 import {COLORS} from '../../utils/globalConstants/color';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from 'interfaces';
 import {showSnackbar} from '../../redux/snackbarSlice';
 import {WORD_DIR} from '../../utils/local/en';
 import CustomSwitch from '../../components/CustomSwitch';
 import { globalStyle } from '../../utils/globalStyle';
 
 const userCategories = [
-  {name: 'Art', selected: false},
-  {name: 'Music', selected: false},
-  {name: 'Sports', selected: false},
-  {name: 'Baking', selected: false},
-  {name: 'Helper', selected: false},
+  {name: WORD_DIR.art, selected: false},
+  {name: WORD_DIR.music, selected: false},
+  {name: WORD_DIR.sports, selected: false},
+  {name: WORD_DIR.baking, selected: false},
+  {name: WORD_DIR.helper, selected: false},
 ];
 
 const SettingsScreen: React.FC = () => {
@@ -24,7 +26,7 @@ const SettingsScreen: React.FC = () => {
   const [emailNotification, setEmailNotification] = useState<boolean>(false);
   const [categories, setCategories] = useState(userCategories);
   const dispatch = useDispatch();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handleCategoryToggle = (categoryName: string) => {
     setCategories(prevCategories =>

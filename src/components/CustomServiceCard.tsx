@@ -1,21 +1,28 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, Image, TouchableOpacity, Text} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from 'interfaces';
 import {CustomRatingInfo} from './CustomRatingInfo';
 import {COLORS} from '../utils/globalConstants/color';
 import {FontSize, Screen, Spacing} from '../utils/dimension';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Importing MaterialIcons for icons
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {CustomCardsProps, ScheduleItem, ServiceDetails} from 'interfaces';
 import CustomText from './CustomText';
 import {removeServiceFromCart} from '../redux/cartSlice';
 import {useDispatch} from 'react-redux';
-import {MAX_SCHEDULE_DISPLAY} from '../utils/constants';
+import {SCHEDULE} from '../utils/constants';
+import {formatDateUS} from '../utils/dateUtils';
 
 // Type definition for the component props
 interface CustomServiceCardsProps {
-  item: CustomCardsProps;
-  handlePress: (id: string) => void;
-  setApprovedSlot: () => void;
+  item: ServiceDetails | any;
+  handleRemoveService?: (serviceId: string) => void;
+  handleRemoveScheduledDate?: (
+    serviceId: string | undefined,
+    scheduleId: string,
+  ) => void;
+  setApprovedSlot?: () => void;
 }
 
 // Component for rendering schedule details
@@ -24,14 +31,12 @@ export const ScheduleDetails: React.FC<{
   maxDisplay: number;
   serviceId?: string;
   visibleSchedules?: Record<string, boolean>;
-  onServiceSelect: (service: ServiceDetails) => void;
-  selectedServices: ServiceDetails[];
+  onServiceSelect: (service: ScheduleItem) => void;
+  selectedServices: ScheduleItem[];
   handleRemoveScheduledDate?: (
     serviceId: string | undefined,
     scheduleId: string,
   ) => void;
-  setApprovedSlot?: (data: any) => void;
-  actionedSlots: Set<string>;
 }> = ({
   schedule,
   maxDisplay,
@@ -39,86 +44,64 @@ export const ScheduleDetails: React.FC<{
   onServiceSelect,
   selectedServices,
   handleRemoveScheduledDate,
-  setApprovedSlot,
-  actionedSlots,
 }) => {
   const [showAll, setShowAll] = useState(false);
 
   const displayedSchedules = showAll ? schedule : schedule.slice(0, maxDisplay);
   const dispatch = useDispatch();
-  const isSelected = (service: ServiceDetails) =>
+  const isSelected = (service: ScheduleItem) =>
     selectedServices?.some(s => s.id === service.id);
-  const toUSDateFormat = (isoDate: string) => {
-    const date = new Date(isoDate);
-    // console.log({date});
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${month}/${day}/${year}`;
-  };
 
   return (
     <View style={styles.scheduleContainer}>
-      {displayedSchedules.map(scheduleItem => (
-        <TouchableOpacity
-          key={scheduleItem.id}
-          onPress={() => onServiceSelect(scheduleItem)}
-          style={[
-            styles.scheduleItemContainer,
-            isSelected(scheduleItem) && styles.selectedSchedule,
-          ]}>
-          <CustomText
+      <CustomText style={styles.scheduleSectionTitle} label="Selected Dates" />
+      <View style={styles.scheduleItemsWrapper}>
+        {displayedSchedules.map(scheduleItem => (
+          <TouchableOpacity
+            key={scheduleItem.id}
+            onPress={() => onServiceSelect(scheduleItem)}
             style={[
-              styles.scheduleTitle,
-              isSelected(scheduleItem) && styles.selectedTextColor,
-            ]}
-            label={toUSDateFormat(scheduleItem.date)}
-          />
-          {setApprovedSlot && !actionedSlots?.has(scheduleItem.id) && (
-            <View style={{flexDirection: 'row', gap: 10}}>
+              styles.scheduleItemContainer,
+              isSelected(scheduleItem) && styles.selectedSchedule,
+            ]}>
+            <CustomText
+              style={[
+                styles.scheduleTitle,
+                isSelected(scheduleItem) && styles.selectedTextColor,
+              ]}
+              label={formatDateUS(scheduleItem.date)}
+            />
+            {handleRemoveScheduledDate && (
               <TouchableOpacity
-                onPress={() =>
-                  setApprovedSlot({
-                    ...scheduleItem,
-                    isApproved: true,
-                  })
-                }>
-                <Icon
-                  name="check"
-                  size={FontSize.medium}
-                  color={COLORS.success}
-                />
+                style={styles.removeButton}
+                onPress={() => {
+                  if (schedule.length === 1 && serviceId) {
+                    dispatch(removeServiceFromCart(serviceId));
+                  }
+                  if (serviceId) {
+                    handleRemoveScheduledDate(serviceId, scheduleItem.id);
+                  }
+                }}>
+                <Icon name="close" size={FontSize.small} color={COLORS.error} />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setApprovedSlot(scheduleItem)}>
-                <Icon
-                  name="close"
-                  size={FontSize.medium}
-                  color={COLORS.error}
-                />
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {handleRemoveScheduledDate && (
-            <TouchableOpacity
-              onPress={() => {
-                if (schedule.length === 1) {
-                  dispatch(removeServiceFromCart(serviceId));
-                }
-                handleRemoveScheduledDate(serviceId, scheduleItem.id);
-              }}>
-              <Icon name="delete" size={FontSize.medium} color={COLORS.error} />
-            </TouchableOpacity>
-          )}
-        </TouchableOpacity>
-      ))}
+            )}
+          </TouchableOpacity>
+        ))}
+      </View>
 
       {schedule.length > maxDisplay && (
-        <CustomText
-          style={styles.moreText}
-          label={showAll ? 'View less' : 'View more'}
-          action={() => setShowAll(prev => !prev)}
-        />
+        <TouchableOpacity
+          style={styles.moreButton}
+          onPress={() => setShowAll(prev => !prev)}>
+          <CustomText
+            style={styles.moreText}
+            label={
+              showAll
+                ? 'View less'
+                : `View ${schedule.length - maxDisplay} more`
+            }
+          />
+        </TouchableOpacity>
       )}
     </View>
   );
@@ -128,15 +111,22 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
   item,
   handleRemoveService,
   handleRemoveScheduledDate,
-  handlePress,
   setApprovedSlot,
-  actionedSlots,
 }) => {
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  // Helper functions to safely access properties
+  const getServiceId = (): string => {
+    return item.serviceId || item.id || '';
+  };
+
+  const getSchedule = (): any[] => {
+    return item.schedule || item.selectedDates || [];
+  };
   const [visibleSchedules, setVisibleSchedules] = useState<
     Record<string, boolean>
   >({});
-  console.log('serviceItem', item);
 
   // Toggle schedule visibility based on serviceId
   const toggleScheduleVisibility = (serviceId: string) => {
@@ -147,149 +137,260 @@ const CustomServiceCards: React.FC<CustomServiceCardsProps> = ({
   };
 
   return (
-    <TouchableOpacity
-      key={item.serviceId}
-      style={styles.container}
-      onPress={() => {
-        navigation.navigate('Service Details', item);
-      }}>
-      <View style={styles.serviceContainer}>
-        <View style={styles.detailsContainer}>
+    <View style={styles.container}>
+      <TouchableOpacity
+        key={getServiceId()}
+        style={styles.serviceContainer}
+        onPress={() => {
+          navigation.navigate('Service Details', item);
+        }}>
+        {/* Service Image */}
+        <View style={styles.imageContainer}>
           <Image
             source={{
-              uri:
-                item.servicePreview[0]?.uri || 'https://via.placeholder.com/60',
+              uri: item.servicePreview[0]?.uri,
             }}
-            style={styles.orderImage}
+            style={styles.serviceImage}
           />
-          <View style={styles.orderDetails}>
+        </View>
+
+        {/* Service Details */}
+        <View style={styles.detailsContainer}>
+          <View style={styles.titleRow}>
             <CustomText
-              style={styles.orderTitle}
+              style={styles.serviceTitle}
               label={item.title}
               numberOfLines={2}
             />
+            {handleRemoveService && (
+              <TouchableOpacity
+                style={styles.removeServiceButton}
+                onPress={() => {
+                  handleRemoveService(item.serviceId);
+                }}>
+                <Icon
+                  name="delete-outline"
+                  size={FontSize.medium}
+                  color={COLORS.error}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+          <CustomText
+            style={styles.descriptionText}
+            label={item.description}
+            numberOfLines={2}
+          />
+          <CustomText
+            style={styles.descriptionText}
+            label={item.category}
+            numberOfLines={2}
+          />
+
+          <View style={styles.metaRow}>
+            <View style={styles.ratingContainer}>
+              <Icon name="star" size={FontSize.small} color={COLORS.warning} />
+              <CustomText
+                style={styles.ratingText}
+                label={` ${item.ratings}`}
+              />
+            </View>
             <CustomText
-              style={styles.orderMeta}
-              label={`Artist: ${item.name}`}
-              numberOfLines={2}
-            />
-            <CustomText
-              style={styles.orderMeta}
-              label={` ${item.ratings} ★ | $ ${item.pricing}`}
-            />
-            <CustomText
-              style={styles.orderMeta}
-              label={item.description}
-              numberOfLines={4}
+              style={styles.priceText}
+              label={`$${item.pricing}/day`}
             />
           </View>
-        </View>
-        {handleRemoveService ? (
-          <TouchableOpacity
-            onPress={() => {
-              handleRemoveService(item.serviceId);
-            }}>
-            <Icon name="delete" size={FontSize.medium} color={COLORS.error} />
-          </TouchableOpacity>
-        ) : (
-          <CustomText
-            label={
-              visibleSchedules[item.serviceId]
-                ? 'Hide Schedule'
-                : 'View Schedule'
-            }
-            action={() => toggleScheduleVisibility(item.serviceId)}
-            style={styles.viewScheduleText}
-          />
-        )}
-      </View>
 
-      {/* Conditionally render ScheduleDetails based on visibility state */}
+          {!handleRemoveService && (
+            <TouchableOpacity
+              style={styles.viewScheduleButton}
+              onPress={() => toggleScheduleVisibility(item.serviceId)}>
+              <CustomText
+                style={styles.viewScheduleText}
+                label={
+                  visibleSchedules[item.serviceId]
+                    ? 'Hide Schedule'
+                    : 'View Schedule'
+                }
+              />
+              <Icon
+                name={
+                  visibleSchedules[item.serviceId]
+                    ? 'keyboard-arrow-up'
+                    : 'keyboard-arrow-down'
+                }
+                size={FontSize.small}
+                color={COLORS.primary}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+      </TouchableOpacity>
+
+      {/* Schedule Details Section */}
       {(visibleSchedules[item.serviceId] || handleRemoveService) && (
-        <ScheduleDetails
-          schedule={item.schedule}
-          maxDisplay={MAX_SCHEDULE_DISPLAY}
-          serviceId={item.serviceId}
-          handleRemoveScheduledDate={handleRemoveScheduledDate}
-          onServiceSelect={() => {}}
-          selectedServices={[]}
-          setApprovedSlot={setApprovedSlot}
-          actionedSlots={new Set(actionedSlots)}
-        />
+        <View style={styles.scheduleSection}>
+          <ScheduleDetails
+            schedule={item.schedule}
+            maxDisplay={SCHEDULE.MAX_SCHEDULE_DISPLAY}
+            serviceId={item.serviceId}
+            handleRemoveScheduledDate={handleRemoveScheduledDate}
+            onServiceSelect={() => {}}
+            selectedServices={[]}
+          />
+        </View>
       )}
-    </TouchableOpacity>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.white,
-    borderRadius: Spacing.small,
+    borderRadius: 16,
     marginVertical: Spacing.small,
-    padding: Spacing.small,
+    padding: Spacing.medium,
     shadowColor: COLORS.black,
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-    justifyContent: 'space-between',
+    shadowRadius: 8,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: COLORS.lightGray,
   },
   serviceContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
   },
-  orderImage: {
-    width: Screen.moderateScale(60),
-    height: Screen.moderateScale(60),
-    borderRadius: Screen.moderateScale(8),
+  imageContainer: {
+    marginRight: Spacing.medium,
+  },
+  serviceImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 12,
+    backgroundColor: COLORS.lightGray,
   },
   detailsContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  titleRow: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    // marginBottom: Spacing.small,
   },
-  orderDetails: {
-    marginLeft: Spacing.small,
-    width: Screen.width / 2,
+  serviceTitle: {
+    fontSize: FontSize.large,
+    fontWeight: '600',
+    color: COLORS.black,
+    flex: 1,
+    marginRight: Spacing.small,
   },
-  orderTitle: {
-    fontSize: FontSize.medium,
-    fontWeight: 'bold',
-    color: '#333',
+  removeServiceButton: {
+    padding: Spacing.small,
   },
-  orderMeta: {
+  metaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  ratingText: {
     fontSize: FontSize.small,
-    color: '#666',
+    color: COLORS.gray,
+    fontWeight: '500',
+  },
+  priceText: {
+    fontSize: FontSize.medium,
+    fontWeight: '600',
+    color: COLORS.primary,
+  },
+  descriptionText: {
+    fontSize: FontSize.small,
+    color: COLORS.gray,
+    lineHeight: 18,
+  },
+  viewScheduleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
   },
   viewScheduleText: {
     fontSize: FontSize.small,
     color: COLORS.primary,
+    fontWeight: '500',
+    marginRight: 4,
   },
-  scheduleItemContainer: {
-    backgroundColor: COLORS.white, // Background color from your COLORS object
-    borderRadius: Screen.moderateScale(8), // Rounded corners
-    padding: Spacing.small,
-    borderWidth: 0.5,
-    borderColor: COLORS.primary,
+  scheduleSection: {
+    marginTop: Spacing.medium,
+    paddingTop: Spacing.medium,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.lightGray,
   },
-  scheduleContainer: {
+  scheduleSectionTitle: {
+    fontSize: FontSize.medium,
+    fontWeight: '600',
+    color: COLORS.black,
+  },
+  scheduleItemsWrapper: {
     flexDirection: 'row',
-    alignItems: 'center',
     flexWrap: 'wrap',
     gap: Spacing.small,
   },
+  scheduleItemContainer: {
+    backgroundColor: COLORS.white,
+    borderRadius: 8,
+    paddingHorizontal: Spacing.medium,
+    paddingVertical: Spacing.small,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    position: 'relative',
+    minWidth: 100,
+  },
+  scheduleContainer: {
+    flex: 1,
+  },
   scheduleTitle: {
-    fontSize: FontSize.medium,
-    fontWeight: 'bold',
+    fontSize: FontSize.small,
+    fontWeight: '500',
     color: COLORS.primary,
+    textAlign: 'center',
+  },
+  moreButton: {
+    alignSelf: 'flex-start',
+    paddingVertical: Spacing.small,
   },
   moreText: {
     color: COLORS.primary,
-    fontSize: 14,
+    fontSize: FontSize.small,
+    fontWeight: '500',
   },
   selectedSchedule: {
     backgroundColor: COLORS.primary,
-    borderColor: COLORS.white,
+    borderColor: COLORS.primary,
   },
   selectedTextColor: {
     color: COLORS.white,
+  },
+  removeButton: {
+    position: 'absolute',
+    top: -6,
+    right: -6,
+    backgroundColor: COLORS.white,
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: COLORS.black,
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
   },
 });
 

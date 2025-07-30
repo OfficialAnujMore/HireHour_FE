@@ -3,9 +3,8 @@ import {
   View,
   StyleSheet,
   FlatList,
-  Image,
-  Text,
-  TouchableOpacity,
+  ActivityIndicator,
+  StatusBar,
 } from 'react-native';
 import CustomText from '../components/CustomText';
 import {getUpcomingEvents} from '../services/serviceProviderService';
@@ -15,99 +14,121 @@ import {useFocusEffect} from '@react-navigation/native';
 import {WORD_DIR} from '../utils/local/en';
 import {FallBack} from '../components/FallBack';
 import dataNotFound from '../assets/error-in-calendar.png';
-import {globalStyle} from '../utils/globalStyle';
 import {ApiResponse} from 'services/apiClient';
 import {ErrorResponse, ServiceDetails} from 'interfaces';
 import {showSnackbar} from '../redux/snackbarSlice';
-import {FontSize, Screen, Spacing} from '../utils/dimension';
-import { formatDateUS } from '../utils/globalFunctions';
+import {FontSize, Spacing} from '../utils/dimension';
+import {COLORS} from '../utils/globalConstants/color';
+import {apiWithLoader} from '../utils/apiWithLoader';
+import {getErrorMessage} from '../utils/errorHandler';
+import EventCard from '../components/EventCard';
+import EventHeader from '../components/EventHeader';
 
-const UpcomingEvents = () => {
+interface UpcomingEventItem {
+  id: string;
+  services: ServiceDetails;
+  date: string;
+}
+
+const UpcomingEvents: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
-  const [data, setData] = useState<ServiceDetails[]>([]);
+  const [data, setData] = useState<UpcomingEventItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const dispatch = useDispatch();
 
-  const apiCall = async (): Promise<void> => {
-    const response: ApiResponse<ServiceDetails[]> | ErrorResponse =
-      await getUpcomingEvents({userId: user?.id});
-    if (response.success && response.data) {
-      setData(response.data);
-    } else {
-      dispatch(
-        showSnackbar({
-          message: response.message,
-          success: false,
-        }),
+  const apiCall = useCallback(async (): Promise<void> => {
+    setLoading(true);
+    try {
+      if (!user?.id) {
+        console.error('User ID not available');
+        return;
+      }
+
+      const response: ApiResponse<ServiceDetails[]> | ErrorResponse = await apiWithLoader(
+        () => getUpcomingEvents({userId: user.id}),
+        'Loading upcoming events...'
       );
+      if (response.success && response.data) {
+        setData(response.data as any);
+      } else {
+        dispatch(
+          showSnackbar({
+            message: getErrorMessage(response, 'Failed to load upcoming events. Please try again.'),
+            success: false,
+          }),
+        );
+      }
+    } catch (error) {
+      console.error('Error fetching upcoming events:', error);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [user?.id, dispatch]);
 
   useFocusEffect(
     useCallback(() => {
       apiCall();
-    }, []),
+    }, [apiCall]),
   );
 
-  const renderScheduleCard = useCallback(({item}: {item: ServiceDetails}) => {
-    console.log(item);
-    
+  const renderScheduleCard = useCallback(({item}: {item: UpcomingEventItem}) => {
     const {services, date} = item;
-    const {user, servicePreview} = services;
+    const user = (services as any).user;
 
-    const formattedDate = formatDateUS(date)
     return (
-      <View style={styles.card}>
-        <Image
-          source={{
-            uri: servicePreview?.[0]?.uri || '',
-          }}
-          style={styles.image}
-        />
-        <View style={styles.content}>
-          <CustomText
-            label={services?.title || 'No Title'}
-            style={styles.title}
-            numberOfLines={2}
-          />
-          <CustomText
-            label={services?.description || 'No Description'}
-            style={styles.description}
-            numberOfLines={4}
-          />
-          <CustomText
-            label={`Scheduled Date: ${formattedDate}`}
-            style={styles.date}
-          />
-
-          <View style={styles.userInfo}>
-            <CustomText label="Artist details:" style={styles.userTitle} />
-            <CustomText
-              label={`${user?.firstName ?? ''} ${user?.lastName ?? ''}`}
-            />
-            <CustomText label={user?.email ?? ''} />
-            <CustomText label={user?.phoneNumber ?? ''} />
-          </View>
-        </View>
-      </View>
+      <EventCard
+        service={services}
+        user={user}
+        date={date}
+        showActions={false}
+        showPrice={true}
+        showCategory={true}
+        showDescription={true}
+        showDate={true}
+        showUserInfo={true}
+        userLabel={WORD_DIR.artistDetails}
+      />
     );
   }, []);
 
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+        <CustomText
+          label="Loading upcoming events..."
+          style={styles.loaderText}
+        />
+      </View>
+    );
+  }
+
   return (
-    <View style={globalStyle.globalContainer}>
-      {data && data.length === 0 ? (
-        <FallBack
-          imageSrc={dataNotFound}
-          heading={WORD_DIR.noUpcomingEvents}
-          subHeading={WORD_DIR.scheduleEvent}
+    <View style={styles.container}>
+
+      {/* Header Section */}
+      <EventHeader
+        title={WORD_DIR.upcomingEvents}
+        count={data.length}
+        icon="event"
+        color={COLORS.success}
+      />
+
+      {/* Content */}
+      {data && data.length > 0 ? (
+        <FlatList
+          data={data}
+          keyExtractor={item => item.id || ''}
+          renderItem={renderScheduleCard}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listContainer}
         />
       ) : (
-        <View>
-          <CustomText label={WORD_DIR.upcomingEvents} />
-          <FlatList
-            data={data}
-            keyExtractor={item => item.id}
-            renderItem={renderScheduleCard}
-            showsVerticalScrollIndicator={false}
+        <View style={styles.emptyContainer}>
+          <FallBack
+            imageSrc={dataNotFound}
+            heading={WORD_DIR.noUpcomingEvents}
+            subHeading={WORD_DIR.scheduleEvent}
           />
         </View>
       )}
@@ -118,38 +139,27 @@ const UpcomingEvents = () => {
 export default UpcomingEvents;
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#fff',
-    marginBottom: Spacing.small,
-    borderRadius: Spacing.small,
-    overflow: 'hidden',
-    elevation: 4,
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.white,
   },
-  image: {
-    width: '100%',
-    height: Screen.height / 4,
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.white,
   },
-  content: {
-    padding: Spacing.small,
+  loaderText: {
+    marginTop: Spacing.medium,
+    fontSize: FontSize.medium,
+    color: COLORS.gray,
   },
-  title: {
-    fontSize: FontSize.small + 2,
-    fontWeight: 'bold',
-    marginBottom: 4,
+  listContainer: {
+    padding: Spacing.medium,
   },
-  description: {
-    marginBottom: Spacing.small,
-    color: '#555',
-  },
-  date: {
-    marginBottom: 8,
-    fontStyle: 'italic',
-  },
-  userInfo: {
-    marginBottom: 12,
-  },
-  userTitle: {
-    fontWeight: 'bold',
-    marginBottom: 4,
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

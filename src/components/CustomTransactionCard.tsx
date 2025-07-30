@@ -2,8 +2,10 @@ import React from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {COLORS} from '../utils/globalConstants/color';
+import {WORD_DIR} from '../utils/local/en';
 import {FontSize, Spacing} from '../utils/dimension';
 import CustomText from './CustomText';
+import {formatDateUS} from '../utils/dateUtils';
 
 interface CustomTransactionCardProps {
   item: {
@@ -58,11 +60,7 @@ const getStatusColor = (status: string) => {
 const formatTransactionDateTime = (transactionDateTime: string) => {
   const dateObj = new Date(transactionDateTime);
   return {
-    date: dateObj.toLocaleDateString('en-US', {
-      month: 'short',
-      day: '2-digit',
-      year: 'numeric',
-    }),
+    date: formatDateUS(dateObj),
     time: dateObj.toLocaleTimeString('en-GB', {
       hour: '2-digit',
       minute: '2-digit',
@@ -75,8 +73,6 @@ const CustomTransactionCard: React.FC<CustomTransactionCardProps> = ({
   item,
   handlePress,
 }) => {
-
-
   const formatted = formatTransactionDateTime(item.createdAt);
   const transactionIcon = getTransactionIcon(item.transactionType);
   const statusColor = getStatusColor(item.paymentStatus);
@@ -95,14 +91,18 @@ const CustomTransactionCard: React.FC<CustomTransactionCardProps> = ({
   return (
     <TouchableOpacity
       style={[styles.container, {borderLeftColor: statusColor}]}
-      onPress={() => handlePress(item.serviceId)}
+      onPress={() => handlePress(item.id)}
       activeOpacity={0.7}>
       <View style={styles.detailsContainer}>
         <Icon name={transactionIcon} size={24} color={COLORS.primary} />
 
         <View style={styles.orderDetails}>
           <View style={styles.row}>
-            <CustomText style={styles.orderTitle} label={getDisplayTitle()} numberOfLines={2} />
+            <CustomText
+              style={styles.orderTitle}
+              label={getDisplayTitle()}
+              numberOfLines={2}
+            />
             <CustomText
               style={styles.orderTitle}
               label={`$${item.totalAmount}`}
@@ -110,7 +110,7 @@ const CustomTransactionCard: React.FC<CustomTransactionCardProps> = ({
           </View>
 
           <View style={styles.row}>
-            <CustomText style={styles.orderMeta} label="Transaction ID:" />
+            <CustomText style={styles.orderMeta} label={WORD_DIR.transactionId} />
             <View
               style={[
                 styles.statusContainer,
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     color: COLORS.black,
   },
   orderMeta: {
-    fontSize: FontSize.small+2,
+    fontSize: FontSize.small + 2,
     color: COLORS.gray,
   },
   statusContainer: {

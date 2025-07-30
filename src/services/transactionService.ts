@@ -7,12 +7,11 @@ export const getTransactions = async (
   userId: string,
 ): Promise<ApiResponse<any[]> | ErrorResponse> => {
   try {
-    
-    return await post<any>(
+    return await post<any[]>(
       `${V1_TRANSACTION_BASE_ROUTE}${GET_USER_TRANSACTION}`,
       {userId: userId},
     );
-  } catch (error) {
-    return handleError(error, 'getTransactions'); // Return the error handled by handleError function
+  } catch (error: unknown) {
+    return handleError(error, 'getTransactions');
   }
 };

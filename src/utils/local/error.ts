@@ -1,10 +1,12 @@
-export const PLACEHOLDER_DIR = {
-  PLACEHOLDER_FIRSTNAME: 'First name',
-  PLACEHOLDER_LASTNAME: 'Last name',
-  PLACEHOLDER_EMAIL: 'Email address',
-  PLACEHOLDER_USERNAME: 'Username',
-  PLACEHOLDER_PASSWORD: 'Password',
-  PLACEHOLDER_CONFIRM_PASSWORD: 'Confirm password',
-  PLACEHOLDER_PHONE_NUMBER: 'Phone number',
-  PLACEHOLDER_SEARCH: 'Search artists, genres, or services...',
+export const ERROR = {
+  networkError: 'Network error. Please check your connection.',
+  error: 'An unexpected error occurred. Please try again.',
+  invalidDate: 'Invalid date format.',
+  invalidInput: 'Invalid input provided.',
+  authenticationFailed: 'Authentication failed. Please log in again.',
+  accessDenied: 'Access denied. You do not have permission to perform this action.',
+  resourceNotFound: 'The requested resource was not found.',
+  serverError: 'Server error. Please try again later.',
+  timeoutError: 'Request timed out. Please check your connection and try again.',
+  connectionRefused: 'Connection refused. Please check your network settings.',
 };

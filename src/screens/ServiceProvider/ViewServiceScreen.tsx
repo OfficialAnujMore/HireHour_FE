@@ -8,10 +8,29 @@ import {
 import {FontSize, Spacing} from '../../utils/dimension';
 import CustomText from '../../components/CustomText';
 import { globalStyle } from '../../utils/globalStyle';
+import { useRoute } from '@react-navigation/native';
+import { RouteProp } from '@react-navigation/native';
+import { RootStackParamList, ServiceDetails } from 'interfaces';
+import { COLORS } from '../../utils/globalConstants/color';
+import {WORD_DIR} from '../../utils/local/en';
 
-const ViewServiceScreen = (props: any) => {
-  const item = props.route.params;
-  
+interface ViewServiceScreenProps {
+  route: {
+    params: ServiceDetails;
+  };
+}
+
+const ViewServiceScreen: React.FC = () => {
+  const route = useRoute<RouteProp<RootStackParamList, 'ViewService'>>();
+  const item = route.params;
+
+  if (!item) {
+    return (
+      <ScrollView style={globalStyle.globalContainer}>
+        <CustomText label={WORD_DIR.noServiceDetails} style={styles.heading} />
+      </ScrollView>
+    );
+  }
 
   return (
     <ScrollView style={globalStyle.globalContainer}>
@@ -26,9 +45,9 @@ const ViewServiceScreen = (props: any) => {
         style={styles.text}
       />
 
-      <CustomText label="Service Images" style={styles.subHeading} />
+      <CustomText label={WORD_DIR.serviceImages} style={styles.subHeading} />
       <View style={styles.imageContainer}>
-        {item.servicePreview.map((image, index) => (
+        {item.servicePreview?.map((image: any, index: number) => (
           <Image
             key={index}
             source={{uri: image.uri}}
@@ -37,19 +56,21 @@ const ViewServiceScreen = (props: any) => {
         ))}
       </View>
 
-      <CustomText label="Service Schedule" style={styles.subHeading} />
-      {item.schedule.map((schedule, index) => (
-        <View key={index} style={styles.scheduleItem}>
-          <CustomText
-            label={`${schedule.day}, ${schedule.date} ${schedule.month}`}
-          />
-          <CustomText
-            label={`Time Slots: ${schedule.timeSlots
-              .map(slot => slot.time)
-              .join(', ')}`}
-          />
-        </View>
-      ))}
+      <CustomText label={WORD_DIR.serviceSchedule} style={styles.subHeading} />
+      {item.selectedDates && typeof item.selectedDates === 'object' ? (
+        Object.keys(item.selectedDates).map((dateKey, index) => (
+          <View key={index} style={styles.scheduleItem}>
+            <CustomText
+              label={`Date: ${dateKey}`}
+            />
+            <CustomText
+              label={`Available: ${(item.selectedDates as any)[dateKey]?.isAvailable ? 'Yes' : 'No'}`}
+            />
+          </View>
+        ))
+      ) : (
+        <CustomText label={WORD_DIR.noScheduleAvailable} style={styles.text} />
+      )}
     </ScrollView>
   );
 };
@@ -58,7 +79,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: Spacing.medium,
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
   },
   heading: {
     fontSize: FontSize.large,

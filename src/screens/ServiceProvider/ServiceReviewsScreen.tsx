@@ -13,6 +13,8 @@ import { AirbnbRating } from "react-native-ratings"; // Import AirbnbRating from
 import { Screen, Spacing, FontSize } from "../../utils/dimension";
 import CustomButton from "../../components/CustomButton";
 import { globalStyle } from "../../utils/globalStyle";
+import { COLORS } from "../../utils/globalConstants/color";
+import { WORD_DIR } from "../../utils/local/en";
 
 // Reviews Data (for rendering)
 const reviews = [
@@ -53,8 +55,7 @@ const RatingInput = ({ rating, onRatingChange }: any) => {
       onFinishRating={onRatingChange}
       size={30} // Adjust size for better visibility
       showRating={false} // Hide the text rating and just show stars
-      selectedColor="#FFD700" // Gold color for selected stars
-      unSelectedColor="#d3d3d3" // Light gray for unselected stars
+      selectedColor={COLORS.warning} // Gold color for selected stars
     />
   );
 };
@@ -88,12 +89,12 @@ const ServiceReviewScreen: React.FC = () => {
   const handleSubmitReview = () => {
     // Validation
     if (rating === 0) {
-      setErrorMessage("Please select a rating.");
+      setErrorMessage(WORD_DIR.pleaseSelectRating);
       return;
     }
 
     if (!reviewText.trim()) {
-      setErrorMessage("Please write a review.");
+      setErrorMessage(WORD_DIR.pleaseWriteReview);
       return;
     }
 
@@ -141,8 +142,10 @@ const ServiceReviewScreen: React.FC = () => {
 
       {/* Write Review Button */}
       <CustomButton
-        label="Write a Review"
+        label={WORD_DIR.writeReview}
         onPress={() => setIsModalVisible(true)}
+        showLoader={true}
+        loaderMessage="Opening review form..."
       />
 
       {/* Modal for Writing a Review */}
@@ -160,7 +163,7 @@ const ServiceReviewScreen: React.FC = () => {
 
             <TextInput
               style={styles.textInput}
-              placeholder="Write your review..."
+              placeholder={WORD_DIR.writeYourReview}
               value={reviewText}
               onChangeText={setReviewText}
               multiline
@@ -171,8 +174,8 @@ const ServiceReviewScreen: React.FC = () => {
             ) : null}
 
             <View style={styles.modalActions}>
-              <RNButton title="Cancel" onPress={() => setIsModalVisible(false)} />
-              <RNButton title="Submit" onPress={handleSubmitReview} />
+                      <RNButton title={WORD_DIR.cancel} onPress={() => setIsModalVisible(false)} />
+        <RNButton title={WORD_DIR.submit} onPress={handleSubmitReview} />
             </View>
           </View>
         </View>
@@ -185,7 +188,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: Spacing.medium,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: COLORS.white,
   },
   header: {
     marginBottom: Spacing.large,
@@ -193,7 +196,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: FontSize.large,
     fontWeight: "bold",
-    color: "#333",
+    color: COLORS.black,
     marginBottom: Spacing.small,
   },
   ratingSummary: {
@@ -211,19 +214,19 @@ const styles = StyleSheet.create({
   },
   starLabel: {
     fontSize: FontSize.small,
-    color: "#333",
+    color: COLORS.black,
     marginRight: Spacing.small,
   },
   progressBar: {
     flex: 1,
     height: Screen.moderateScale(6),
-    backgroundColor: "#E0E0E0",
+    backgroundColor: COLORS.lightGray,
     borderRadius: Screen.moderateScale(3),
     overflow: "hidden",
   },
   progressFill: {
     height: "100%",
-    backgroundColor: "#4CAF50",
+    backgroundColor: COLORS.success,
   },
   overallRating: {
     flex: 1,
@@ -233,11 +236,11 @@ const styles = StyleSheet.create({
   rating: {
     fontSize: FontSize.extraLarge,
     fontWeight: "bold",
-    color: "#333",
+    color: COLORS.black,
   },
   reviewCount: {
     fontSize: FontSize.small,
-    color: "#666",
+    color: COLORS.gray,
   },
   reviewList: {
     paddingVertical: Spacing.medium,
@@ -246,7 +249,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginBottom: Spacing.large,
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
+    borderBottomColor: COLORS.lightGray,
     paddingBottom: Spacing.medium,
   },
   avatar: {
@@ -266,18 +269,18 @@ const styles = StyleSheet.create({
   name: {
     fontSize: FontSize.medium,
     fontWeight: "bold",
-    color: "#333",
+    color: COLORS.black,
   },
   time: {
     fontSize: FontSize.small,
-    color: "#999",
+    color: COLORS.gray,
   },
   reviewText: {
     fontSize: FontSize.medium,
-    color: "#666",
+    color: COLORS.gray,
   },
   writeReviewButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: COLORS.success,
     paddingVertical: Spacing.medium,
     borderRadius: Screen.moderateScale(8),
     alignItems: "center",
@@ -286,7 +289,7 @@ const styles = StyleSheet.create({
   },
   writeReviewText: {
     fontSize: FontSize.large,
-    color: "#FFFFFF",
+    color: COLORS.white,
     fontWeight: "bold",
   },
 
@@ -298,7 +301,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: "#FFF",
+    backgroundColor: COLORS.white,
     padding: Spacing.large,
     borderRadius: 10,
     width: Screen.width - 40,
@@ -311,7 +314,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 100,
-    borderColor: "#DDD",
+    borderColor: COLORS.lightGray,
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: Spacing.small,
@@ -320,7 +323,7 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
   },
   errorText: {
-    color: "error",
+    color: COLORS.error,
     fontSize: FontSize.small,
     marginBottom: Spacing.small,
   },

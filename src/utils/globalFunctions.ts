@@ -1,27 +1,31 @@
 import { ErrorResponse} from 'interfaces';
 import {ERROR} from './local/error';
+import { formatDateUS as formatDateUSFixed } from './dateUtils';
+import { getNetworkErrorMessage } from './networkUtils';
 
-export const getGreeting = () => {
+export const getGreeting = (): string => {
   const currentHour = new Date().getHours();
   if (currentHour < 12) {
     return 'Good Morning';
   } else if (currentHour >= 12 && currentHour < 18) {
     return 'Good Afternoon';
   } else {
-    return 'Hello';
+    return 'Good Evening';
   }
 };
+
 export const handleError = (error: unknown, context: string): ErrorResponse => {
   // Log the error with context for debugging
-  console.log(
-    `An API error has occurred in => ${context} \n ${JSON.stringify(error)}`,
-  );
+  console.error(`An error occurred in ${context}:`, error);
 
   // Check if the error is an instance of Error (standard Error object)
   if (error instanceof Error) {
-    // If it's a network error
-    if (error.message.includes('Network Error')) {
-      return {success: false, message: ERROR.networkError};
+    // If it's a network error, use the network utility for better error messages
+    if (error.message.includes('Network Error') || 
+        error.message.includes('timeout') ||
+        error.message.includes('ENOTFOUND') ||
+        error.message.includes('ECONNREFUSED')) {
+      return {success: false, message: getNetworkErrorMessage(error)};
     }
 
     // Return the message from the Error instance
@@ -53,10 +57,5 @@ export const handleError = (error: unknown, context: string): ErrorResponse => {
 };
 
 export const formatDateUS = (date: Date): string => {
-  date = new Date(date);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-  const day = String(date.getDate()+1).padStart(2, '0');
-
-  return `${month}/${day}/${year}`;
+  return formatDateUSFixed(date);
 };
