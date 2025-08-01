@@ -110,10 +110,10 @@ const HomeScreen: React.FC = () => {
           (item: ServiceDetails) =>
             item.title
               .toLowerCase()
-              .includes(filters.searchQuery.toLowerCase()) ||
+              .includes(filters.searchQuery!.toLowerCase()) ||
             item.description
               .toLowerCase()
-              .includes(filters.searchQuery.toLowerCase()),
+              .includes(filters.searchQuery!.toLowerCase()),
         );
       }
 
@@ -181,7 +181,7 @@ const HomeScreen: React.FC = () => {
   const handleApplyFilters = useCallback(
     (filters: FilterOptions) => {
       setCurrentFilters(filters);
-      setSearchQuery(filters.searchQuery);
+      setSearchQuery(filters.searchQuery || '');
       applyFilters(data, filters);
     },
     [data, applyFilters],

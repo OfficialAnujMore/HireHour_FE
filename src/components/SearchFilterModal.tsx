@@ -25,6 +25,7 @@ interface SearchFilterModalProps {
 export interface FilterOptions {
   priceRange: [number, number];
   selectedCategories: string[];
+  searchQuery?: string;
 }
 
 const SearchFilterModal: React.FC<SearchFilterModalProps> = ({

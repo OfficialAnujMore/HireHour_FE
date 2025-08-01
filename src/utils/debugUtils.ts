@@ -1,4 +1,5 @@
 import { logNetworkDiagnostics } from './apiHealthCheck';
+import {API_BASE_URL} from '@env';
 
 export interface DebugInfo {
   timestamp: number;
@@ -49,8 +50,8 @@ export const debugVerifyUsernameAndEmail = async (error: any) => {
   const debugInfo = await logErrorWithDiagnostics(error, 'verifyUsernameAndEmail');
   
   // Additional specific checks for this endpoint
-  console.log('API Base URL:', process.env.API_BASE_URL || 'https://api.hirehour.com');
-  console.log('Full URL would be:', `${process.env.API_BASE_URL || 'https://api.hirehour.com'}/api/v1/auth/verifyUsernameAndEmail`);
+  console.log('API Base URL:', API_BASE_URL || 'https://api.hirehour.com');
+  console.log('Full URL would be:', `${API_BASE_URL || 'https://api.hirehour.com'}/api/v1/auth/verifyUsernameAndEmail`);
   
   return debugInfo;
 };

@@ -1,8 +1,9 @@
 import axios, {AxiosRequestConfig, AxiosResponse, CancelTokenSource} from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {API_BASE_URL} from '@env';
 
 // Get API_BASE_URL from environment or use fallback
-const API_BASE_URL = process.env.API_BASE_URL || 'https://api.hirehour.com';
+const API_URL = API_BASE_URL || 'https://api.hirehour.com';
 
 export interface ApiResponse<T> {
   data: T;
@@ -33,7 +34,7 @@ const unprotectedRoutes = [
 ];
 
 const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_URL,
   timeout: 10000, // Timeout after 10 seconds
   headers: {
     'Content-Type': 'application/json',

@@ -33,6 +33,7 @@ import renderInput from '../../utils/renderInputUtil';
 import InteractiveButton from '../../components/ExpandableUploadButton';
 import ExpandableUploadButton from '../../components/ExpandableUploadButton';
 import {getErrorMessage} from '../../utils/errorHandler';
+import {validateImages} from '../../utils/imageCompression';
 
 const CreateService: React.FC = () => {
   const navigation =
@@ -123,14 +124,28 @@ const CreateService: React.FC = () => {
     }));
   };
 
+  const addImagesToState = (processedAssets: any[]) => {
+    const updatedServicePreview = [...serviceDetails.servicePreview, ...processedAssets];
+    setServiceDetails((prev: typeof serviceDetails) => ({
+      ...prev,
+      servicePreview: updatedServicePreview,
+    }));
+    
+    // Update Redux state
+    dispatch(updateServiceDetails({
+      servicePreview: updatedServicePreview,
+    }));
+  };
+
   const handleImagePicker = async () => {
     const options = {
       mediaType: 'photo' as const,
-      includeBase64: false,
-      maxHeight: 2000,
-      maxWidth: 2000,
+      includeBase64: true, // Enable base64 encoding
+      maxHeight: 1200, // Reduced from 2000
+      maxWidth: 1200, // Reduced from 2000
       selectionLimit: 10, // Allow up to 10 images
       multiple: true, // Enable multiple selection
+      quality: 0.6 as const, // Increased compression (reduced from 0.8)
     };
 
     try {
@@ -140,16 +155,30 @@ const CreateService: React.FC = () => {
         return;
       }
       if (response.assets && response.assets.length > 0) {
-        const updatedServicePreview = [...serviceDetails.servicePreview, ...(response.assets || [])];
-        setServiceDetails((prev: typeof serviceDetails) => ({
-          ...prev,
-          servicePreview: updatedServicePreview,
+        // Convert images to base64 format for upload
+        const processedAssets = response.assets.map(asset => ({
+          ...asset,
+          uri: asset.base64 ? `data:${asset.type};base64,${asset.base64}` : asset.uri,
+          isBase64: !!asset.base64,
         }));
-        
-        // Update Redux state
-        dispatch(updateServiceDetails({
-          servicePreview: updatedServicePreview,
-        }));
+
+        // Validate image sizes
+        const imageUris = processedAssets.map(asset => asset.uri).filter((uri): uri is string => uri !== undefined);
+        const validation = validateImages(imageUris, 5, 20); // 5MB per image, 20MB total
+
+        if (!validation.isValid) {
+          Alert.alert(
+            'Image Size Warning',
+            validation.errors.join('\n'),
+            [
+              { text: 'OK', style: 'default' },
+              { text: 'Continue Anyway', onPress: () => addImagesToState(processedAssets) }
+            ]
+          );
+          return;
+        }
+
+        addImagesToState(processedAssets);
       }
     } catch (error) {
       console.error('Error picking image:', error);
